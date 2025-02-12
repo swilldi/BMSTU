@@ -1,3 +1,0 @@
-/Users/dmitry/Documents/BMSTU/Programming/sem_2/C/lab_works/lab_work_2/cmake-build-debug/CMakeFiles/lab_work_2.dir
-/Users/dmitry/Documents/BMSTU/Programming/sem_2/C/lab_works/lab_work_2/cmake-build-debug/CMakeFiles/edit_cache.dir
-/Users/dmitry/Documents/BMSTU/Programming/sem_2/C/lab_works/lab_work_2/cmake-build-debug/CMakeFiles/rebuild_cache.dir
