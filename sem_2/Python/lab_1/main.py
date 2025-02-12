@@ -51,7 +51,7 @@ def converter_from_10(num_n: int, n: int) -> str:
             drob_part = drob
             num += str(full)
 
-    return num if num_n >= 0 else "-" + num
+    return num.rstrip("0") if num_n >= 0 else "-" + num.rstrip("0")
 
 def command_plus(num_1: str, num_2: str) -> str:
     "Функция принимает два числа и возвращает их сумму"

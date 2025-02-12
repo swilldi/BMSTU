@@ -40,7 +40,7 @@ def check_expression(*args):
         return
 
     correct_symbols = {"0", "1", "2", "3", "-", "+", " ", "."}
-    if set(exp) - correct_symbols or not exp[-1].isdigit() or search(PATTERT_BAD_PART, exp):
+    if set(exp) - correct_symbols or not exp[-1].isdigit() or search(PATTERN_BAD_PART_1, exp) or search(PATTERN_BAD_PART_2, exp):
         result.set("Выражение не корректное")
         correct_expression.set(False)
     else:
@@ -62,7 +62,7 @@ def solve_expression():
                 cur_result += converter_to_10(number) * (-1 if minus else 1)
                 number = ""
             minus = False if minus else True
-        elif symbol.isdigit():
+        elif symbol.isdigit() or symbol == ".":
             number += symbol
         elif number:
             cur_result += converter_to_10(number) * (-1 if minus else 1)
@@ -110,7 +110,9 @@ FUNC_BUTTON_STYLE = {
     "font": (30)
 }
 
-PATTERT_BAD_PART = compile(r'[^0-3]\.[0-3]*')
+PATTERN_BAD_PART_1 = compile(r'[^0-3]\.[0-3]*')
+PATTERN_BAD_PART_2 = compile(r'[0-3]*\.[0-3]+\.]')
+
 
 # создаем окно, задаем его размеры и отключаем изменение размера
 window = tk.Tk()
@@ -132,16 +134,12 @@ for row in range(6):
 
 # Установка заголовков полей ввода и вывода
 tk.Label(text="Expression:").grid(row=0, column=0)
-# tk.Label(text="Num_2:").grid(row=1, column=0)
 tk.Label(text="Result:").grid(row=1, column=0)
 tk.Label(text="Clear:").grid(row=2, column=0)
-# tk.Label(text="Operation:").grid(row=4, column=0)
-# tk.Label(text="Selected expression:").grid(row=5, column=0)
 
 
 # Установка кнопок для очистки полей
 tk.Button(text="Expression", command=lambda: expression.set("")).grid(row=2, column=1, **SPEC_CLEAR)
-# tk.Button(text="Num_2", command=lambda: num_2.set("")).grid(row=3, column=2)
 tk.Button(text="Result", command=lambda: result.set("")).grid(row=2, column=2, **SPEC_CLEAR)
 tk.Button(text="All", command=clear_all).grid(row=2, column=3, **SPEC_CLEAR)
 
@@ -169,15 +167,15 @@ expression_field.grid(row=0, column=1, columnspan=3)
 # проверка корректности выражения при вводе символов
 expression.trace_add("write", check_expression)
 
+# установка поля с рещультатом вычислений
 result_field = tk.Label(textvariable=result)
 result_field.grid(row=1, column=1, columnspan=3)
 
+# создание меню
 main_menu = tk.Menu()
 main_menu.add_command(label="help")
 main_menu.add_command(label="About", command=click_menu_about)
 
-
-
-
+# оснвной цикл приложения и подключение меню
 window.config(menu=main_menu)
 window.mainloop()
