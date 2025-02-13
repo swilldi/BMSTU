@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import messagebox
+from tkinter import font
 from re import compile, search
 from main import *
 
@@ -79,7 +80,8 @@ SPEC = {
     "ipadx": 60,
     "ipady": 40,
     "pady": 0,
-    "padx": 0
+    "padx": 0,
+    "sticky": "nsew"
 }
 
 # характеристики расположения кнопок очистки
@@ -105,11 +107,6 @@ SPEC_EQUAL.update((
     ("rowspan",2)
 ))
 
-# характеристики кнопок с числами и выражениями
-FUNC_BUTTON_STYLE = {
-    "font": (30)
-}
-
 PATTERN_BAD_PART_1 = compile(r'[^0-3]\.[0-3]*')
 PATTERN_BAD_PART_2 = compile(r'[0-3]*\.[0-3]+\.]')
 
@@ -118,6 +115,12 @@ PATTERN_BAD_PART_2 = compile(r'[0-3]*\.[0-3]+\.]')
 window = tk.Tk()
 window.geometry("800x800")
 window.resizable(False, False)
+
+# характеристики кнопок с числами и выражениями
+FUNC_BUTTON_STYLE = {
+    "font": font.Font(size=20)
+}
+
 
 # создаем переменные для арифметического выражения, результата выражения и значения
 # корректности введенного выражения
@@ -151,7 +154,7 @@ tk.Button(text="2", command=lambda: add_expression("2"), **FUNC_BUTTON_STYLE).gr
 tk.Button(text="3", command=lambda: add_expression("3"), **FUNC_BUTTON_STYLE).grid(row=5, column=2, **SPEC)
 tk.Button(text=".", command=lambda: add_expression("."), **FUNC_BUTTON_STYLE).grid(row=6, column=0, **SPEC)
 
-tk.Button(text="=", command=solve_expression).grid(row=5, column=3, **SPEC_EQUAL)
+tk.Button(text="=", command=solve_expression, **FUNC_BUTTON_STYLE).grid(row=5, column=3, **SPEC_EQUAL)
 # Установка кнопок для ввода арифметических знаков
 tk.Button(text="+", command=lambda: add_expression(" + "), **FUNC_BUTTON_STYLE).grid(row=7, column=0, **SPEC_SIGN)
 tk.Button(text="-", command=lambda: add_expression(" - "), **FUNC_BUTTON_STYLE).grid(row=7, column=2, **SPEC_SIGN)
