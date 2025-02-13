@@ -10,6 +10,19 @@ def click_menu_about():
     # print("click about")
     messagebox.showinfo(title="About", message="ООО \"ЛучшиеКалькуляторыВВидеПо\"\nДудырев Дмитрий ИУ7-22Б")
 
+
+def click_menu_info():
+    msg = """
+    Clear: 
+        Expression - очистить выражение
+        Result - очистить результат
+        All - очистить всё
+    
+    = - получить значение выражения
+    """
+    messagebox.showinfo(title="Info", message=msg)
+
+
 def del_last():
     """Функция удаляет последний введенный символ выражения"""
     # удаляй сразу с пробелом
@@ -24,6 +37,7 @@ def del_last():
                 expression.set(exp[:-2])
             else:
                 expression.set(exp[:-1])
+
 
 def add_expression(get_digit):
     """Добавляет к выражению символ"""
@@ -114,13 +128,14 @@ PATTERN_BAD_PART_2 = compile(r'[0-3]*\.[0-3]+\.]')
 # создаем окно, задаем его размеры и отключаем изменение размера
 window = tk.Tk()
 window.geometry("800x800")
+window.title("Калькулятор")
+window.option_add("*tearOff", tk.FALSE)
 window.resizable(False, False)
 
 # характеристики кнопок с числами и выражениями
 FUNC_BUTTON_STYLE = {
     "font": font.Font(size=20)
 }
-
 
 # создаем переменные для арифметического выражения, результата выражения и значения
 # корректности введенного выражения
@@ -154,31 +169,41 @@ tk.Button(text="2", command=lambda: add_expression("2"), **FUNC_BUTTON_STYLE).gr
 tk.Button(text="3", command=lambda: add_expression("3"), **FUNC_BUTTON_STYLE).grid(row=5, column=2, **SPEC)
 tk.Button(text=".", command=lambda: add_expression("."), **FUNC_BUTTON_STYLE).grid(row=6, column=0, **SPEC)
 
+
+# Установка кнопки для выполнения введенной операции
 tk.Button(text="=", command=solve_expression, **FUNC_BUTTON_STYLE).grid(row=5, column=3, **SPEC_EQUAL)
+
 # Установка кнопок для ввода арифметических знаков
 tk.Button(text="+", command=lambda: add_expression(" + "), **FUNC_BUTTON_STYLE).grid(row=7, column=0, **SPEC_SIGN)
 tk.Button(text="-", command=lambda: add_expression(" - "), **FUNC_BUTTON_STYLE).grid(row=7, column=2, **SPEC_SIGN)
-# Установка кнопок для удаление последнего символа
+
+# Установка кнопки для удаление последнего символа
 tk.Button(text="del", command=del_last, **FUNC_BUTTON_STYLE).grid(row=6, column=2, **SPEC)
-
-
 
 # Установка поля для ввода выражения
 expression_field = tk.Entry(textvariable=expression)
-expression_field.grid(row=0, column=1, columnspan=3)
+expression_field.grid(row=0, column=1, columnspan=3,  stick="nsew", ipady=20)
 
 # проверка корректности выражения при вводе символов
 expression.trace_add("write", check_expression)
 
-# установка поля с рещультатом вычислений
+# установка поля с результатом вычислений
 result_field = tk.Label(textvariable=result)
-result_field.grid(row=1, column=1, columnspan=3)
+result_field.grid(row=1, column=1, columnspan=3, stick="nsew", ipady=20)
 
 # создание меню
 main_menu = tk.Menu()
-main_menu.add_command(label="help")
+
+clear_menu = tk.Menu()
+clear_menu.add_command(label="All", command=clear_all)
+clear_menu.add_command(label="Expression", command=lambda: expression.set(""))
+clear_menu.add_command(label="Result", command=lambda: result.set(""))
+
+main_menu.add_command(label="Help", command=click_menu_info)
 main_menu.add_command(label="About", command=click_menu_about)
+main_menu.add_cascade(label="Clear", menu=clear_menu)
 
 # оснвной цикл приложения и подключение меню
 window.config(menu=main_menu)
+
 window.mainloop()
