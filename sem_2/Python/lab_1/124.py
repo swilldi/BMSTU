@@ -17,6 +17,10 @@
 
 
 
+def g():
+    a = 0.0
+    return f"{a:g}"
+print(g())
 
 
 # import random

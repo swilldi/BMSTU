@@ -68,26 +68,26 @@ def solve_expression():
     if not correct_expression.get():
         return
 
-    cur_result = 0
+    cur_result = "0"
     minus = False
     number = ""
     for symbol in expression.get():
         if symbol == "-":
             if number:
-                cur_result += converter_to_10(number) * (-1 if minus else 1)
+                cur_result = sum_in_4(str(cur_result), number) if not minus else substract_in_4(str(cur_result), number)
                 number = ""
             minus = False if minus else True
         elif symbol.isdigit() or symbol == ".":
             number += symbol
         elif number:
-            cur_result += converter_to_10(number) * (-1 if minus else 1)
+            cur_result = sum_in_4(str(cur_result), number) if not minus else substract_in_4(str(cur_result), number)
             number = ""
             minus = False
 
     if number:
-        cur_result += converter_to_10(number) * (-1 if minus else 1)
+        cur_result = sum_in_4(str(cur_result), number) if not minus else substract_in_4(str(cur_result), number)
 
-    result.set(converter_from_10(cur_result, 4))
+    result.set(cur_result)
 
 # шаблок характеристики расположения кнопок
 SPEC = {

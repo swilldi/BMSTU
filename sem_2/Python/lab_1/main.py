@@ -6,7 +6,7 @@ def parts_num(num: str) -> (int, float):
     if len(num) == 2:
         return num[0], num[1]
     else:
-        return num[0], 0
+        return num[0], "0"
 
 def greeter_them(num_1: (str, str), num_2: (str, str)) -> bool:
     # проверяем по длине целой части
@@ -81,7 +81,7 @@ def sum_in_4(num_1: str, num_2: str) -> str:
 
     if overflow:
         new_num = str(overflow) + new_num
-    return new_num.strip("0").rstrip(".")
+    return f"{float(new_num):g}"
 
 
 def substract_in_4(num_1: str, num_2: str) -> str:
@@ -136,6 +136,6 @@ def substract_in_4(num_1: str, num_2: str) -> str:
 
     if not is_positive_num:
         new_num = "-" + new_num
-    return new_num.strip("0").rstrip(".")
+    return f"{float(new_num):g}"
 
 
