@@ -1,0 +1,1 @@
+Enter a (max base): Enter b (min base): Enter h: 36.000000
