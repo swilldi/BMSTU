@@ -11,7 +11,7 @@
 
 #include <stdio.h>
 
-int main()
+int main(void)
 {
     float h, t, m;
     float m_normal, bmi;
@@ -30,6 +30,6 @@ int main()
     h /= 100;
     bmi = m / h / h;
 
-    printf("%f\n%f", m_normal, bmi);
+    printf("m_noraml = %f \nBMI = %f \n", m_normal, bmi);
     return 0;
 }

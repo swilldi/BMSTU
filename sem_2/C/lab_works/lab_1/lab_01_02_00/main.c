@@ -11,10 +11,10 @@ int main(void)
     float a, b, h;
     float hip, P;
 
-    printf("Enter a (max base): ");
+    printf("Enter a: ");
     scanf("%f", &a);
 
-    printf("Enter b (min base): ");
+    printf("Enter b: ");
     scanf("%f", &b);
 
     printf("Enter h: ");
@@ -22,6 +22,6 @@ int main(void)
 
     hip = sqrt(pow((a - b) / 2, 2) + pow(h, 2));
     P = a + b + 2 * hip;
-    printf("%f", P);
+    printf("P = %f \n", P);
     return 0;
 }

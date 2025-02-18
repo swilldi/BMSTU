@@ -1,5 +1,1 @@
-.DS_Store
-.idea
-__pycache__
-.vscode
 sem_2/C/lab_works/tamplate_directiry/

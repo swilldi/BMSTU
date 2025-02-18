@@ -21,6 +21,5 @@ int main(void)
 
     can_buy_bottels = (amount_cents - bottel_prise) / (bottel_prise - bottel_cashback) + 1;
     
-    printf("Bottels: %d \n", can_buy_bottels);
-    return 0;
+    printf("%d", can_buy_bottels);
 }
