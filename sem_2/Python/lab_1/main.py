@@ -38,7 +38,7 @@ def greeter_them(num_1: (str, str), num_2: (str, str)) -> bool:
         return False
 
     # числа равны
-    return True
+    return False
 
 
 def sum_in_4(num_1: str, num_2: str) -> str:
@@ -85,12 +85,9 @@ def sum_in_4(num_1: str, num_2: str) -> str:
 
 
 def substract_in_4(num_1: str, num_2: str) -> str:
+
     num_1 = parts_num(num_1)
     num_2 = parts_num(num_2)
-
-    is_positive_num = greeter_them(num_1, num_2)
-    if not is_positive_num:
-        num_1, num_2 = num_2, num_1
 
     max_len_int = max(len(num_1[0]), len(num_2[0]))
     max_len_drob = max(len(num_1[1]), len(num_2[1]))
@@ -134,8 +131,6 @@ def substract_in_4(num_1: str, num_2: str) -> str:
 
         new_num = str(digit) + new_num
 
-    if not is_positive_num:
-        new_num = "-" + new_num
     return f"{float(new_num):g}"
 
 

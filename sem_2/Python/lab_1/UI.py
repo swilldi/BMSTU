@@ -65,6 +65,32 @@ def check_expression(*args):
 
 def solve_expression():
     """выполняет вычисления и задает новое значение в поле Result """
+
+    def make_operation():
+        # ? -
+        if minus:
+            # - -
+            if cur_result[0] == "-":
+                return "-" + sum_in_4(cur_result[1:], number)
+            # + - | б - м
+            elif greeter_them(parts_num(cur_result), parts_num(number)):
+                return substract_in_4(cur_result, number)
+            # - - | м - б
+            else:
+                return "-" + substract_in_4(number, cur_result)
+        # ? +
+        else:
+            # + +
+            if cur_result[0] != "-":
+                return sum_in_4(cur_result, number)
+            # - + | - б + м
+            elif greeter_them(parts_num(cur_result), parts_num(number)):
+                return "-" + substract_in_4(cur_result, number)
+            # - + | - м + б
+            else:
+                return substract_in_4(number, cur_result)
+
+
     if not correct_expression.get():
         return
 
@@ -74,18 +100,21 @@ def solve_expression():
     for symbol in expression.get():
         if symbol == "-":
             if number:
-                cur_result = sum_in_4(str(cur_result), number) if not minus else substract_in_4(str(cur_result), number)
+                cur_result = make_operation()
                 number = ""
+                minus = True
+                continue
+
             minus = False if minus else True
         elif symbol.isdigit() or symbol == ".":
             number += symbol
         elif number:
-            cur_result = sum_in_4(str(cur_result), number) if not minus else substract_in_4(str(cur_result), number)
+            cur_result = make_operation()
             number = ""
             minus = False
 
     if number:
-        cur_result = sum_in_4(str(cur_result), number) if not minus else substract_in_4(str(cur_result), number)
+        cur_result = make_operation()
 
     result.set(cur_result)
 
