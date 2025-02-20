@@ -15,4 +15,3 @@ if [ "$1" = "-v" ]; then
 fi
 
 ./clean.sh
- 
