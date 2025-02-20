@@ -55,7 +55,8 @@ def check_expression(*args):
         return
 
     correct_symbols = {"0", "1", "2", "3", "-", "+", " ", "."}
-    if set(exp) - correct_symbols or not exp[-1].isdigit() or search(PATTERN_BAD_PART_1, exp) or search(PATTERN_BAD_PART_2, exp):
+    if set(exp) - correct_symbols or not exp[-1].isdigit() \
+            or search(PATTERN_BAD_1, exp) or search(PATTERN_BAD_2, exp) or search(PATTERN_BAD_3, exp):
         result.set("Выражение не корректное")
         correct_expression.set(False)
     else:
@@ -65,6 +66,9 @@ def check_expression(*args):
 
 def solve_expression():
     """выполняет вычисления и задает новое значение в поле Result """
+
+    if not correct_expression.get():
+        return
 
     def make_operation():
         # ? -
@@ -89,10 +93,6 @@ def solve_expression():
             # - + | - м + б
             else:
                 return substract_in_4(number, cur_result)
-
-
-    if not correct_expression.get():
-        return
 
     cur_result = "0"
     minus = False
@@ -150,13 +150,15 @@ SPEC_EQUAL.update((
     ("rowspan",2)
 ))
 
-PATTERN_BAD_PART_1 = compile(r'[^0-3]\.[0-3]*')
-PATTERN_BAD_PART_2 = compile(r'[0-3]*\.[0-3]+\.]')
+PATTERN_BAD_1 = compile(r'[^0-3]\.[0-3]*')
+PATTERN_BAD_2 = compile(r'[0-3]*\.[0-3]+\.')
+PATTERN_BAD_3 = compile(r'[0-3]\.[^0-3]+')
+
 
 
 # создаем окно, задаем его размеры и отключаем изменение размера
 window = tk.Tk()
-window.geometry("800x800")
+window.geometry("550x570")
 window.title("Калькулятор")
 window.option_add("*tearOff", tk.FALSE)
 window.resizable(False, False)
@@ -223,13 +225,26 @@ result_field.grid(row=1, column=1, columnspan=3, stick="nsew", ipady=20)
 # создание меню
 main_menu = tk.Menu()
 
+# меню очисткики
 clear_menu = tk.Menu()
 clear_menu.add_command(label="All", command=clear_all)
 clear_menu.add_command(label="Expression", command=lambda: expression.set(""))
 clear_menu.add_command(label="Result", command=lambda: result.set(""))
 
-main_menu.add_command(label="Help", command=click_menu_info)
-main_menu.add_command(label="About", command=click_menu_about)
+# меню информации
+info_menu = tk.Menu()
+info_menu.add_command(label="Help", command=click_menu_info)
+info_menu.add_command(label="About", command=click_menu_about)
+
+# меню операций
+operation_menu = tk.Menu()
+operation_menu.add_command(label="plus", command=lambda: add_expression(" + "))
+operation_menu.add_command(label="minus", command=lambda: add_expression(" - "))
+operation_menu.add_command(label="solve", command=lambda: solve_expression())
+operation_menu.add_command(label="del", command=lambda: del_last())
+
+main_menu.add_cascade(label="Info", menu=info_menu)
+main_menu.add_cascade(label="Operation", menu=operation_menu)
 main_menu.add_cascade(label="Clear", menu=clear_menu)
 
 # оснвной цикл приложения и подключение меню

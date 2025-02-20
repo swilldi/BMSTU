@@ -81,7 +81,7 @@ def sum_in_4(num_1: str, num_2: str) -> str:
 
     if overflow:
         new_num = str(overflow) + new_num
-    return f"{float(new_num):g}"
+    return f"{float(new_num)}"
 
 
 def substract_in_4(num_1: str, num_2: str) -> str:
@@ -131,6 +131,6 @@ def substract_in_4(num_1: str, num_2: str) -> str:
 
         new_num = str(digit) + new_num
 
-    return f"{float(new_num):g}"
+    return f"{float(new_num)}"
 
 
