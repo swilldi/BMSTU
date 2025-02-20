@@ -1,44 +1,60 @@
 #!/bin/bash
 
-# выдает тип и номер теста в формате: <тип>_<номер>
-function test_name
+function run_test
 {
-    echo $1 | grep -Eo -e "pos_[0-9]{2}" -e " neg_[0-9]{2}"
-}
+    type=$1
+    test_count=$(ls ../data | grep -E $type".*in" | wc -l)
 
-# выдает путь к тесту в формате: <path>/<тип>_<номер>
-function get_path
-{
-    if [ "$1" -eq 10 ]; then
-        echo  "../data/pos_"$1""
-    else
-        echo "../data/pos_0"$1""
+    if [ "$test_count" -eq 0 ]; then
+        return
     fi
+
+    for i in $(seq $test_count)
+    do
+        if [ "$i" -lt 10 ]; then
+            file_name=$type"_0"$i
+        else
+            file_name=$type"_"$i
+        fi
+        
+        if [ $type = "pos" ]; then
+            result=$(./pos_case.sh ../data/"$file_name"_in.txt ../data/"$file_name"_out.txt)
+        elif [ $type = "neg" ]; then
+            result=$(./neg_case.sh ../data/"$file_name"_in.txt)
+        fi
+
+        # echo $result $type
+        if [ $result -eq 0 -a $verb ]; then
+            echo "$file_name": Success >> result_tests.txt
+        else
+            if [ $verb ]; then        
+                echo "$file_name": Fail >> result_tests.txt
+            fi
+            count_failed_test=$((count_failed_test+1))
+        fi
+    done
 }
 
-# очищаем файл для сохрания результатов тестов
-echo -n > result_tests.txt
 
-count_test=1
+if [ "$1" = "-v" ]; then
+    verb=True
+fi
+
 count_failed_test=0
-file_path=$(get_path $count_test)
-while [ -f $file_path"_in.txt" ]
-do
-    result=$(./pos_case.sh $file_path"_in.txt" $file_path"_out.txt")
-    # echo $result
-    if [ $result -eq 0 ]; then
-        echo "$(test_name $file_path): Success" >> result_tests.txt
-    else        
-        echo "$(test_name $file_path): Fail" >> result_tests.txt
-        count_failed_test=$((count_failed_test+1))
-    fi
-    count_test=$((count_test+1))
-    file_path=$(get_path $count_test)
-done
+
+# обработка позитивных тестов
+run_test pos
+# обработка негативных тестов
+run_test neg
+
+if [ $verb ]; then
+    ./statistic.sh
+fi
+
+rm *.txt
 
 if [ $count_failed_test -eq 0 ]; then
     exit 0
 else
     exit $count_failed_test
 fi
-

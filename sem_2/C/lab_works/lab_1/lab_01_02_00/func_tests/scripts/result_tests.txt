@@ -1,2 +1,0 @@
-pos_01: Success
-pos_02: Success
