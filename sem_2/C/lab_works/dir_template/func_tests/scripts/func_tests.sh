@@ -2,8 +2,9 @@
 
 function run_test
 {
+    path_data="./../data/"
     type=$1
-    test_count=$(ls ../data | grep -E $type".*in" | wc -l)
+    test_count=$(ls $path_data | grep -E $type".*in" | wc -l)
 
     if [ "$test_count" -eq 0 ]; then
         return
@@ -17,10 +18,16 @@ function run_test
             file_name=$type"_"$i
         fi
         
+        file_name="$path_data"$file_name
+        
+        # pwd
         if [ "$type" = "pos" ]; then
-            result=$(./pos_case.sh ../data/"$file_name"_in.txt ../data/"$file_name"_out.txt)
+            result=$(./pos_case.sh "$file_name"_in.txt "$file_name"_out.txt)
+            # cat "$file_name"_in.txt "$file_name"_out.txt
+            # echo $result
         elif [ "$type" = "neg" ]; then
-            result=$(./neg_case.sh ../data/"$file_name"_in.txt)
+            # cat "$file_name"_in.txt
+            result=$(./neg_case.sh "$file_name"_in.txt)
         fi
 
         # echo $result $type
@@ -37,6 +44,15 @@ function run_test
         fi
     done
 }
+
+
+start_directory=$(pwd)
+while [ -z $(pwd | grep -E "lab(_[0-9][0-9]){2,3}$" ) ]; do
+    # pwd
+    cd ..
+done
+cd func_tests/scripts
+
 
 
 if [ "$1" = "-v" ]; then
@@ -58,3 +74,6 @@ if [ $count_failed_test -eq 0 ]; then
 else
     exit $count_failed_test
 fi
+
+
+cd $start_directory

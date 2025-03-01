@@ -6,12 +6,12 @@ while [ -z $(pwd | grep -E "lab(_[0-9][0-9]){2,3}$" ) ]; do
     cd ..
 done
 
-for type in o exe gcno gcda gcov txt
+for type in o gcno gcda gcov txt out exe
 do
     rm -f *.$type
 done
 
-rm func_tests/scripts/*.txt
+rm -f func_tests/scripts/*.txt
 
 cd $start_directory
 

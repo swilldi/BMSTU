@@ -1,10 +1,7 @@
 #!/bin/bash
 
-input=$1
-correct_output=$2
-
-../../app.exe < $input > result_app.txt
-if [ $(./comparator.sh ./result_app.txt $correct_output) -eq 0 ]; then
+../../app.exe < $1 > result_app.txt
+if [ "$(./comparator.sh ./result_app.txt $2)" -eq 0 ]; then
     echo 0
 else
     echo 1

@@ -2,7 +2,7 @@
 
 function get_numbers
 {
-    cat $1 | grep -Eo "[-]?[0-9]+(.[0-9]+)?"
+    cat $1 | grep -Eo "[-]?[1-9][0-9]*(\.[0-9]*[1-9]+(e-?[0-9]+)?)?"
 }
 
 content_1=$(get_numbers $1)

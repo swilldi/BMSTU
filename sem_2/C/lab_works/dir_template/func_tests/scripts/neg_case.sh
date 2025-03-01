@@ -1,10 +1,8 @@
 #!/bin/bash
 
-input=$1
-
-result=$(../../app.exe < input)
-if [ result == 0 ]; then
-    exit 0
+./../../app.exe < $1 > result_app.txt
+if [ "$?" -ne 0 ]; then
+    echo 0
 else
-    exit 1
+    echo 1
 fi
