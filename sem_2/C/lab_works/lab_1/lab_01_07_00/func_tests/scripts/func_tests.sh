@@ -1,21 +1,77 @@
 #!/bin/bash
 
+function run_test
+{
+    path_data="./../data/"
+    type=$1
+    test_count=$(ls $path_data | grep -E $type".*in" | wc -l)
 
-gcc ../../main.c -lm -o ../../app.exe
-
-count_tests=$(($(ls ../data | wc -l) / 2))
-count_ok=0
-for n in $(seq $count_tests); do
-    output=$(echo $(../../app.exe < ../data/pos_0"$n"_in.txt) | grep -Eo "[0-9]+(\.[0-9]+)?")
-    good_result=$(cat ../data/pos_0"$n"_out.txt)
-    if [[ $output == $good_result ]]; then
-        echo test $n: OK
-        count_ok=$((count_ok + 1))
-    else
-        echo result: $output";" good_result: $good_result
-        echo test $n: Error
-        exit $count_ok
+    if [ "$test_count" -eq 0 ]; then
+        return
     fi
-    
-done
 
+    for i in $(seq $test_count)
+    do
+        if [ "$i" -lt 10 ]; then
+            file_name=$type"_0"$i
+        else
+            file_name=$type"_"$i
+        fi
+        
+        file_name="$path_data"$file_name
+        
+        # pwd
+        if [ "$type" = "pos" ]; then
+            result=$(./pos_case.sh "$file_name"_in.txt "$file_name"_out.txt)
+        elif [ "$type" = "neg" ]; then
+            # cat "$file_name"_in.txt
+            result=$(./neg_case.sh "$file_name"_in.txt)
+        fi
+
+        # echo $result $type
+        # echo 1
+        if [ "$result" -eq 0 ]; then
+            if $verb; then
+                echo "$file_name": Success
+            fi
+        else
+            if $verb; then        
+                echo "$file_name": Fail            
+            fi
+            count_failed_test=$((count_failed_test+1))
+        fi
+    done
+}
+
+
+start_directory=$(pwd)
+while [ -z $(pwd | grep -E "lab(_[0-9][0-9]){2,3}$" ) ]; do
+    # pwd
+    cd ..
+done
+cd func_tests/scripts
+
+
+
+if [ "$1" = "-v" ]; then
+    verb=true
+else
+    verb=false
+fi
+
+count_failed_test=0
+
+# обработка позитивных тестов
+run_test pos
+# обработка негативных тестов
+run_test neg
+
+
+if [ $count_failed_test -eq 0 ]; then
+    exit 0
+else
+    exit $count_failed_test
+fi
+
+
+cd $start_directory

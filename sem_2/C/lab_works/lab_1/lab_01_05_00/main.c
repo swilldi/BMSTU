@@ -8,6 +8,7 @@ a^n
 */
 
 #include <stdio.h>
+#define as 1
 
 int my_pow(int a, int n)
 {
@@ -26,7 +27,7 @@ int main(void)
 
     // ввод числа и степени
     printf("Entry num and degree: ");
-    int input_result = scanf("%d%d", &a, &n);
+    int input_result = scanf("%d %d", &a, &n);
     
     // обратока ввода
     if (input_result != 2 || n < 0)
