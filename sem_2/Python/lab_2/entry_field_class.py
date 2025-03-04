@@ -6,7 +6,9 @@ class EntryField:
         self.label = label
 
         tk.Label(text=label).grid(row=position[0], column=position[1])
-        tk.Entry(textvariable=self.__value).grid(row=position[0] + 1, column=position[1])
+        tk.Entry(textvariable=self.__value).grid(
+            row=position[0] + 1, column=position[1], sticky="n"
+        )
 
     def get(self):
         return self.__value.get()

@@ -28,6 +28,9 @@ class RootFinder:
     def find_roots(self):
         pass
 
+    def get_graph(self):
+        pass
+
 a = RootFinder(lambda x: 2 * x + 1, (0, 10), 0.1, 10, 0.001)
 a.print_segments()
 
