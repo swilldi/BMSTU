@@ -1,8 +1,31 @@
 from window_class import Window
 from entry_field_class import EntryField
+from table_class import Table
+from main import RootFinder
 import tkinter as tk
+import math
 from tkinter import ttk
 from PIL import Image, ImageTk
+
+def find_root():
+    finder = RootFinder(
+        # entry_fields["func"].get(),
+        # (lambda x: x**3 - x),
+        (lambda x: math.sin(x)),
+        (float(entry_fields["start"].get()), float(entry_fields["end"].get())),
+        float(entry_fields["step"].get()),
+        int(entry_fields["n_max"].get()),
+        float(entry_fields["eps"].get())
+    )
+
+    # ищем корни
+    finded_roots = finder.find_roots()
+
+    # добавляем корни в таблицу
+    table.content_update(finded_roots)
+
+
+
 
 window_size = (1200, 500)
 column_count = 5
@@ -22,30 +45,26 @@ entry_fields = {
     "eps": EntryField("Точность", (2, 4)),
 }
 
-# Изображение графика
-img_pil = Image.open("graph.png")
-img = ImageTk.PhotoImage(img_pil.resize((500, 340)))
-tk.Label(window.window, image=img).grid(row=4, column=0, rowspan=2, columnspan=3)
+# # Изображение графика
+# img_pil = Image.open("graph.png")
+# img = ImageTk.PhotoImage(img_pil.resize((500, 340)))
+# tk.Label(window.window, image=img).grid(row=4, column=0, rowspan=2, columnspan=3)
 
 
 # Таблица корней
 table_columns = ("number", "a_b", "x", "y", "iter_count", "error_code")
-table = ttk.Treeview(columns=table_columns, show="headings")
-table.grid(row=4, column=3, rowspan=2, columnspan=2)
+table_position = {"row": 4, "column": 3, "rowspan": 2, "columnspan": 2}
+heading_names = (
+    ("number","№"), ("a_b","x_i;x_(i+1)"), ("x", "x"), ("y", "f(x)"),
+    ("iter_count", "Кол-во итераций"), ("error_code", "Код ошибки")
+)
+columns_width = (30, 100, 100, 100, 100, 100)
 
-table.heading("number", text="№", )
-table.heading("a_b", text="x_i;x_(i+1)")
-table.heading("x", text="x")
-table.heading("y", text="f(x)")
-table.heading("iter_count", text="Кол-во итераций")
-table.heading("error_code", text="Код ошибки")
+table = Table(table_columns, table_position)
+table.heading_update(heading_names)
+table.columns_update(columns_width)
 
-table.column("#1", stretch=tk.NO, width=30)
-table.column("#2", stretch=tk.NO, width=100)
-table.column("#3", stretch=tk.NO, width=100)
-table.column("#4", stretch=tk.NO, width=100)
-table.column("#5", stretch=tk.NO, width=100)
-table.column("#6", stretch=tk.NO, width=100)
-
+find_root_button = tk.Button(text="Найти корни", command=find_root)
+find_root_button.grid(row=0, column=column_count-1)
 
 window.window.mainloop()

@@ -15,5 +15,9 @@ class Table:
             self.table.column(f"#{i+1}", stretch=tkinter.NO, width=value)
 
     def content_update(self, data):
+        self.table.delete(*self.table.get_children())
+        index = 1
         for row in data:
+            row = [index] + row
+            index += 1
             self.table.insert("", tkinter.END, values=row)
