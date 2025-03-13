@@ -216,6 +216,7 @@ class GraphMaker:
         plt.ylim(-50, 50)
         plt.grid()
 
+
         plt.legend(
             title='Легенда',
             loc='lower left',
