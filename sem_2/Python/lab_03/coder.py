@@ -8,11 +8,10 @@ class Coder:
 
     def __init__(self, pixels: list[ImageFile] = [], message: str = ""):
         self.pixels = pixels
-        self.message = message
 
-    def encode(self):
+    def encode(self, message):
         # первые три пикселя сохраняют длину сообщения
-        length = len(self.message)
+        length = len(message)
         shift = 7
         for i in range(self.PIXEL_LEN):
             old_pixel = self.pixels[i]
@@ -32,7 +31,7 @@ class Coder:
 
         # кодирование сообщения
         start = self.PIXEL_LEN
-        for symbol in self.message:
+        for symbol in message:
             code = ord(symbol)
             shift = 7
             for p_ind in range(start, start + self.PIXEL_LEN):
@@ -53,6 +52,7 @@ class Coder:
 
     def decode(self):
         # получение длины сообщения из первых 3-х символов
+        message = ""
         length = 0
         shift = 7
         for i in range(self.PIXEL_LEN):
@@ -79,5 +79,6 @@ class Coder:
                         break
                     else:
                         shift -= 1
-            self.message += chr(code)
+            message += chr(code)
             start += self.PIXEL_LEN
+        return message
