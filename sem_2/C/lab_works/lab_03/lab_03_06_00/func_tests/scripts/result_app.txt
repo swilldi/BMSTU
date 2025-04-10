@@ -1,0 +1,1 @@
+Entry amount of rows: Entry amount of colunms: Error: Impossable solve
