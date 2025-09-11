@@ -78,7 +78,7 @@ int str_is_float(char *str)
 
 int str_to_large_num(char *str, large_num_t *large_num)
 {
-    large_num->len = 0;
+    large_num->mantissa.len = 0;
     large_num->exponent = 0;
 
     char *start = str, *end = str, *exp_start = str;
@@ -123,7 +123,7 @@ int str_to_large_num(char *str, large_num_t *large_num)
         large_num->sign = false;
     
     // запись длины числа
-    large_num->len = end - start - dot + 1;
+    large_num->mantissa.len = end - start - dot + 1;
 
     // запись мантисы
     size_t i = end - start - dot;
@@ -131,7 +131,7 @@ int str_to_large_num(char *str, large_num_t *large_num)
     {
         if (isdigit(*(start + n)))
         {
-            large_num->mantissa[i] = *(start + n) - '0';
+            large_num->mantissa.digits[i] = *(start + n) - '0';
             i--;
         }
         if (*(start + n) == '.')
@@ -142,7 +142,7 @@ int str_to_large_num(char *str, large_num_t *large_num)
     if (exp_start != str)
         large_num->exponent += atol(exp_start + 1);
     if (!dot)
-        large_num->exponent += large_num->len;
+        large_num->exponent += large_num->mantissa.len;
 
     return OK;
 }
@@ -169,27 +169,37 @@ char* remove_spaces(char *str)
     return str;
 }
 
-void print_num(const large_num_t *num)
+void print_large_num(const large_num_t *num)
 {
     if (num->sign)
         printf("-");
     printf("0.");
-    for (size_t i = 1; i <= num->len; i++)
+    for (size_t i = 1; i <= num->mantissa.len; i++)
     {
-        printf("%d", num->mantissa[num->len - i]);
+        printf("%d", num->mantissa.digits[num->mantissa.len - i]);
     }
     printf("E%d\n", num->exponent);
 }
 
-void print_num_info(const large_num_t *num)
+void print_large_num_info(const large_num_t *num)
 {
-    printf("len: %lu\n", num->len);
+    printf("len: %lu\n", num->mantissa.len);
     
     printf("mantissa: ");
     if (num->sign)
         printf("-");
-    for (size_t i = 1; i <= num->len; i++)
-        printf("%d|", num->mantissa[num->len - i]);
+    for (size_t i = 1; i <= num->mantissa.len; i++)
+        printf("%d|", num->mantissa.digits[num->mantissa.len - i]);
     
     printf("\nexponent: %d\n", num->exponent);
+}
+
+void print_ulong_num_info(const ulong_num_t *num)
+{
+    printf("len: %lu\n", num->len);
+    
+    printf("mantissa: ");
+    for (size_t i = 1; i <= num->len; i++)
+        printf("%d|", num->digits[num->len - i]);
+    printf("\n");
 }
