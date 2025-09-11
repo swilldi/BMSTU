@@ -5,7 +5,7 @@
 #include <stdint.h>
 #include <stdlib.h>
 
-#define DIGITS_COUNT_MAX 7
+#define DIGITS_COUNT_MAX 10
 
 typedef struct
 {

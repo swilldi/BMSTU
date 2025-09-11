@@ -9,11 +9,12 @@ int get_t(ulong_num_t *part_dividend, ulong_num_t *divider)
 {
     int a, b;
     
-    if (part_dividend->len > divider->len)
-        a = 10 * part_dividend->digits[1] + part_dividend->digits[0];
+    size_t l = part_dividend->len;
+    if (l > divider->len)
+        a = 10 * part_dividend->digits[l - 1] + part_dividend->digits[l - 2];
     else
-        a = part_dividend->digits[0];
-    b = divider->digits[0];
+        a = part_dividend->digits[l - 1];
+    b = divider->digits[divider->len - 1];
 
     return a / b;
 }
@@ -30,14 +31,14 @@ void ulong_num_add_zeros(ulong_num_t *num, size_t count_zero)
 void ulong_num_align(large_num_t *large_a, ulong_num_t *b)
 {
     ulong_num_t *a = &large_a->mantissa;
-    size_t diff = b->len - a->len;
+    int diff = b->len - a->len;
     if (diff > 0)
     {
         ulong_num_add_zeros(a, diff);
         large_a->exponent -= diff;
     }
 
-    if (cmp_ulong_num(a, b) < 0)
+    if (cmp_ulong_num(a, b) > 0)
     {
         ulong_num_add_zeros(a, 1);
         large_a->exponent -= 1;
@@ -87,6 +88,8 @@ void ulong_num_subtract(ulong_num_t *minuend, ulong_num_t *subtrahend, ulong_num
 
         res->digits[i] = sub;
     }
+    while (res->len > 1 && res->digits[res->len - 1] == 0)
+            res->len--;
 }
 
 void get_partial_dividend(large_num_t *dividend, ulong_num_t *divider, ulong_num_t *partial_dividend)
@@ -124,13 +127,25 @@ void get_partial_dividend(large_num_t *dividend, ulong_num_t *divider, ulong_num
 
 int cmp_ulong_num(const ulong_num_t *l, const ulong_num_t *r)
 {
+    if (l->len > r->len)
+        return 1;
+    else if (l->len < r->len)
+        return -1;
+    
     size_t max_len = l->len >= r->len ? l->len : r->len;
     int lv, rv;
     // сравнение по значением разраядов, если длины равны
     for (size_t i = 1; i <= max_len; i++)
     {
-        lv = i <= l->len ? l->digits[l->len - i] : 0;
-        rv = i <= r->len ? r->digits[r->len - i] : 0;
+        if (i <= l->len)
+            lv = l->digits[l->len - i];
+        else
+            lv = 0;
+        
+        if (i <= r->len)
+            rv = r->digits[r->len - i];
+        else
+            rv = 0;
 
         if (lv > rv)
             return 1;
@@ -187,6 +202,9 @@ void update_exponent(large_num_t *num)
 
 void large_num_divide(large_num_t *dividend, large_num_t *divider, large_num_t *res)
 {
+    res->exponent = 0;
+    res->mantissa.len = 0;
+    
     ulong_num_t part_dividend, vichitaemoe;
     ulong_num_align(dividend, &divider->mantissa);
     get_partial_dividend(dividend, &divider->mantissa, &part_dividend);
@@ -197,7 +215,7 @@ void large_num_divide(large_num_t *dividend, large_num_t *divider, large_num_t *
         t = get_t(&part_dividend, &divider->mantissa);
 
         ulong_num_multiply_digit(&divider->mantissa, t, &vichitaemoe);
-        if (cmp_ulong_num(&part_dividend, &vichitaemoe) < 0)
+        while (cmp_ulong_num(&part_dividend, &vichitaemoe) < 0)
         {
             t -= 1;
             ulong_num_multiply_digit(&divider->mantissa, t, &vichitaemoe);
@@ -208,10 +226,12 @@ void large_num_divide(large_num_t *dividend, large_num_t *divider, large_num_t *
         if (is_zero(&part_dividend) && i_next_digit >= dividend->mantissa.len)
             break;
 
-        do
+        update_part_dividend(dividend, &part_dividend, &i_next_digit);
+        while (cmp_ulong_num(&part_dividend, &divider->mantissa) < 0 && res->mantissa.len < DIGITS_COUNT_MAX + 1)
         {
             update_part_dividend(dividend, &part_dividend, &i_next_digit);
-        } while (cmp_ulong_num(&part_dividend, &divider->mantissa) < 0);
+            add_digit_to_res(&res->mantissa, 0);
+        }
 
     } while (res->mantissa.len < DIGITS_COUNT_MAX + 1);
 
@@ -233,7 +253,7 @@ bool is_zero(ulong_num_t *num)
 
 void update_part_dividend(large_num_t *dividend, ulong_num_t *part_dividend, size_t *i_next_digit)
 {
-    if (*i_next_digit >= dividend->mantissa.len)
+    if (*i_next_digit + 1 >= dividend->mantissa.len)
     {
         
         dividend->exponent -= 1;
@@ -241,7 +261,7 @@ void update_part_dividend(large_num_t *dividend, ulong_num_t *part_dividend, siz
     }
     else
     {
-        add_digit(part_dividend, dividend->mantissa.digits[*i_next_digit]);
+        add_digit(part_dividend, dividend->mantissa.digits[dividend->mantissa.len - *i_next_digit - 1]);
         *i_next_digit += 1;
     }
 }
