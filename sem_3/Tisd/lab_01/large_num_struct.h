@@ -5,7 +5,9 @@
 #include <stdint.h>
 #include <stdlib.h>
 
-#define DIGITS_COUNT_MAX 10
+#define DIGITS_COUNT_MAX 3
+#define EXPONENTA_COUNT_MAX 2
+#define STR_INPUT_LEN  (1 + DIGITS_COUNT_MAX + 2 + EXPONENTA_COUNT_MAX)
 
 typedef struct
 {
@@ -21,3 +23,4 @@ typedef struct
 } large_num_t;
 
 #endif
+

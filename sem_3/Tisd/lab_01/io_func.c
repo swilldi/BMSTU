@@ -2,171 +2,224 @@
 #include "large_num_struct.h"
 #include <ctype.h>
 #include <string.h>
+#include "io_func.h"
 
-#define EMPTY_STR 10
-#define INVALID_NUMBER 11
-#define OVERFLOW_NUMBER 13
-#define OVERFLOW_EXPONENT 13
+#define INPUT_ERROR 11
+#define EMPTY_STR 12
+#define OVERFLOW_STR 13
+#define INVALID_TYPE 14
+
+#define INVALID_NUMBER 21
+#define OVERFLOW_NUMBER 23
+#define OVERFLOW_EXPONENT 23
 #define OK 0
+
+#define BUFFER_SIZE 128
+
+int input_large_num(large_num_t *num, NUMBER_TYPE t)
+{
+    char buffer[BUFFER_SIZE], clear_str[STR_INPUT_LEN + 1];
+    int rc;
+    
+    rc = input_str(buffer, STR_INPUT_LEN);
+    remove_spaces(buffer, clear_str);
+    switch (t)
+    {
+        case INT:
+            return str_is_int(clear_str);
+        case FLOAT:
+            return str_is_float(clear_str);
+        default:
+            return INVALID_TYPE;
+    }
+}
+
+int input_str(char *str, size_t max_len)
+{
+    if (fgets(str, max_len, stdin) == NULL)
+        return INPUT_ERROR;
+    printf("\n%lu\n", strlen(str));
+    if (strlen(str) >= max_len)
+        return OVERFLOW_STR;
+    
+    return OK;
+}
 
 int str_is_float(char *str)
 {
-    bool dot_was = false;   
+    int digit_count = 0;
+    bool has_digits = false;
 
-    // до числа только нули или пробельные символы
-    while (*str == '0' || isspace(*str))
+    // Шаг 1: Пропускаем необязательный знак [+-]
+    if (*str == '+' || *str == '-') {
         str++;
-    
-    // проверка знака и возможной точки сразу после него
-    if (strchr("+-", *str) && isdigit(*(str + 1)))
-        str++;
-    else if (*str == '.' && isdigit(*(str + 1)))
-    {
-        str++;
-        dot_was = true;
     }
-    else if (strchr("+-", *str) && *(str + 1) == '.' && isdigit(*(str + 2)))
-    {
-        str += 2;
-        dot_was = true;
-    }
-    else if (!isdigit(*str))
-        return INVALID_NUMBER;
 
-    // проверка числа
-    while (!*str)
-    {
-        if (isdigit(*str));
-        else if (*str == '.')
-        {
-            if (dot_was)
-                return INVALID_NUMBER;
-            else
-                dot_was = true;
-        }
-        else if (strchr("Ee", *str) != NULL)
-        {
+    // Шаг 2: Проверка целой части мантиссы
+    while (isdigit(*str)) {
+        str++;
+        digit_count++;
+        has_digits = true;
+    }
+
+    // Шаг 3: Проверка дробной части мантиссы
+    if (*str == '.') {
+        str++;
+        while (isdigit(*str)) {
             str++;
-            break;
+            digit_count++;
+            has_digits = true;
         }
-        else
-            return INVALID_NUMBER;
+    }
 
+    // Проверяем, есть ли хотя бы одна цифра в мантиссе
+    if (!has_digits) {
+        return INVALID_NUMBER;
+    }
+
+    // Проверяем общее количество цифр в мантиссе
+    if (digit_count > DIGITS_COUNT_MAX) {
+        return INVALID_NUMBER;
+    }
+
+    // Шаг 4: Проверка экспоненты [Ee]
+    if (*str == 'e' || *str == 'E') {
         str++;
+        int exp_digit_count = 0;
+
+        // Пропускаем необязательный знак [+-]
+        if (*str == '+' || *str == '-') {
+            str++;
+        }
+        
+        // Проверяем, есть ли хотя бы одна цифра в экспоненте
+        if (!isdigit(*str)) {
+            return INVALID_NUMBER;
+        }
+
+        // Проверка значения экспоненты
+        while (isdigit(*str)) {
+            str++;
+            exp_digit_count++;
+        }
+
+        // Проверяем количество цифр в экспоненте
+        if (exp_digit_count > EXPONENTA_COUNT_MAX) {
+            return INVALID_NUMBER;
+        }
     }
     
-    // если достигли конца строки, то возвращаем значение
-    if (*str)
+    // Если мы достигли конца строки и нет других символов
+    if (*str == '\0') {
         return OK;
+    }
 
-    // проверка знака
-    if (strchr("+-", *str) && isdigit(*(str + 1)))
-        str++;
-    else if (!isdigit(*str))
-        return INVALID_NUMBER;
+    // Если остались какие-то символы, это ошибка
+    return INVALID_NUMBER;
+}
 
-    // проверка значения экспоненты
-    while (!*str)
-    {
-        if (!isdigit(*str))
-            return INVALID_NUMBER;
+int str_is_int(char *str)
+{
+    int digit_count = 0;
+    bool has_digits = false;
+
+    if (*str == '+' || *str == '-') {
         str++;
     }
 
-    return OK;
+    while (isdigit(*str)) {
+        str++;
+        digit_count++;
+        has_digits = true;
+    }
+
+    if (!has_digits) {
+        return INVALID_NUMBER;
+    }
+    
+    if (digit_count > DIGITS_COUNT_MAX) {
+        return INVALID_NUMBER;
+    }
+
+    if (*str == '\0') {
+        return OK;
+    }
+
+    return INVALID_NUMBER;
 }
 
 int str_to_large_num(char *str, large_num_t *large_num)
 {
     large_num->mantissa.len = 0;
     large_num->exponent = 0;
-
-    char *start = str, *end = str, *exp_start = str;
-    // char *start = str, *end = str;
-    bool dot = false;
     
-    // границы мантисы
-    while (strchr("-+0", *start))
-        start++;
-    if (*start == '.')
+    char *start_n = str, *end_n = str, *dot = NULL, *start_exp;
+    while (*end_n && strchr("Ee", *end_n) == NULL)
     {
-        start++;
-        while(*start == '0')
-        {
-            start++;
-            large_num->exponent--;
-        }
+        if (strchr("-+0.", *start_n))
+            start_n++;
+        if (*end_n == '.')
+            dot = end_n;
+        
+        end_n++;
     }
-    // начало экспоненты
-    end = start;
-    while (*end && strchr("Ee", *end) == NULL)
-        {
-            if (*end == '.')
-            {
-                dot = true;
-            }
-                
-            end++;
-        }
+    end_n--;
+    start_exp = end_n;
+    while (*end_n == '0')
+    {
+        if (end_n == dot)
+            end_n--;
+        if (end_n < dot || dot == NULL)
+            large_num->exponent++;
+        
+        end_n--;
+        
+    }
     
-    if (*end)
-        exp_start = end;
-    
-    end--;
-    while (*end == '0' && end != start)
-        end--;
-
-    // знак числа
-    if (*str == '-')
-        large_num->sign = true;
+    if (dot != NULL && start_n < dot && dot < end_n)
+        large_num->mantissa.len = end_n - start_n;
     else
-        large_num->sign = false;
+        large_num->mantissa.len = end_n - start_n + 1;
     
-    // запись длины числа
-    large_num->mantissa.len = end - start - dot + 1;
-
-    // запись мантисы
-    size_t i = end - start - dot;
-    for (size_t n = 0; n <= (size_t)(end - start) ; n++)
-    {
-        if (isdigit(*(start + n)))
-        {
-            large_num->mantissa.digits[i] = *(start + n) - '0';
-            i--;
-        }
-        if (*(start + n) == '.')
-            large_num->exponent += n;
-    }
-
-    // printf("\n%ld\n", atol(exp_start + 1));
-    if (exp_start != str)
-        large_num->exponent += atol(exp_start + 1);
-    if (!dot)
+    if (dot == NULL)
         large_num->exponent += large_num->mantissa.len;
+    else if (start_n < dot)
+        large_num->exponent += dot - start_n;
+    else if (start_n > dot)
+        large_num->exponent -= start_n - dot - 1;
+    
+    size_t i = large_num->mantissa.len - 1;
+    while (start_n <= end_n)
+    {
+        if (*start_n == '.')
+        {
+            start_n++;
+            continue;
+        }
+        
+        large_num->mantissa.digits[i] = *start_n - '0';
+        start_n++;
+        i--;
+    }
+    
 
     return OK;
 }
 
-char* remove_spaces(char *str)
-{
-    char *end;
-
-    // удаление пробелов в начале
-    while (isspace((*str)))
+void remove_spaces(char *str, char *res)
+{ 
+    while (isspace(*str)) {
         str++;
-
-    if (*str == '\0')
-        return str;
-
-    // удаление пробелов с конца
-    end = str + strlen(str) - 1;
-    while (str <= end && isspace(*end))
-    {
-        *end = '\0';
-        end--;
     }
 
-    return str;
+    char *end = str + strlen(str) - 1;
+    while (end > str && isspace(*end)) {
+        end--;
+    }
+    
+    size_t len = end - str + 1;
+    strncpy(res, str, len);
+    res[len] = '\0';
 }
 
 void print_large_num(const large_num_t *num)

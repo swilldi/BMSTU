@@ -28,20 +28,18 @@ void ulong_num_add_zeros(ulong_num_t *num, size_t count_zero)
     num->len += count_zero;
 }
 
-void ulong_num_align(large_num_t *large_a, ulong_num_t *b)
+void ulong_num_align(large_num_t *large_a, ulong_num_t *b, large_num_t *res)
 {
     ulong_num_t *a = &large_a->mantissa;
     int diff = b->len - a->len;
     if (diff > 0)
     {
         ulong_num_add_zeros(a, diff);
-        large_a->exponent -= diff;
     }
 
-    if (cmp_ulong_num(a, b) > 0)
+    if (cmp_ulong_num(a, b) < 0)
     {
         ulong_num_add_zeros(a, 1);
-        large_a->exponent -= 1;
     }
 }
 
@@ -92,7 +90,7 @@ void ulong_num_subtract(ulong_num_t *minuend, ulong_num_t *subtrahend, ulong_num
             res->len--;
 }
 
-void get_partial_dividend(large_num_t *dividend, ulong_num_t *divider, ulong_num_t *partial_dividend)
+void get_partial_dividend(large_num_t *dividend, ulong_num_t *divider, large_num_t *res, ulong_num_t *partial_dividend)
 {
     size_t l = divider->len;
     partial_dividend->len = l;
@@ -103,7 +101,6 @@ void get_partial_dividend(large_num_t *dividend, ulong_num_t *divider, ulong_num
         else
         {
             partial_dividend->digits[l - i] = 0;
-            dividend->exponent -= 1;
         }
     }
 
@@ -119,7 +116,6 @@ void get_partial_dividend(large_num_t *dividend, ulong_num_t *divider, ulong_num
         else
         {
             partial_dividend->digits[0] = 0;
-            dividend->exponent -= 1;
         }
         partial_dividend->len++;
     }
@@ -177,38 +173,25 @@ void round_large_num(large_num_t *num)
         if (carry)
             num->exponent++;
 
-        // update_exponent(num);
+//         update_exponent(num);
     }
-}
-
-// обновление значения экспоненты
-void update_exponent(large_num_t *num)
-{
-    // поиск первой не нулевой цифры
-    size_t i = 0, zero_count = 0;
-    for (; num->mantissa.digits[i] == 0 && i < num->mantissa.len; i++, zero_count++);
-
-    // ну число 0, пока хз может ли быть такое
-    // if (i == num->len - 1);
-    
-    // перенос оставшихся чисел в начало мантиссы
-    for (; i < num->mantissa.len; i++)
-    {
-        num->mantissa.digits[i - zero_count] = num->mantissa.digits[i];
-    }
-    
-    num->mantissa.len -= zero_count;
 }
 
 void large_num_divide(large_num_t *dividend, large_num_t *divider, large_num_t *res)
 {
-    res->exponent = 0;
     res->mantissa.len = 0;
+    res->sign = dividend->sign ^ divider->sign;
+    
+    res->exponent = dividend->exponent - divider->exponent;
     
     ulong_num_t part_dividend, vichitaemoe;
-    ulong_num_align(dividend, &divider->mantissa);
-    get_partial_dividend(dividend, &divider->mantissa, &part_dividend);
-    size_t i_next_digit = part_dividend.len;
+    size_t i_next_digit = 0;
+    part_dividend.len = 0;
+    while(cmp_ulong_num(&part_dividend, &divider->mantissa) < 0 && i_next_digit < dividend->mantissa.len + DIGITS_COUNT_MAX) {
+            update_part_dividend(dividend, &part_dividend, &i_next_digit);
+            if (part_dividend.len > divider->mantissa.len) break;
+    }
+    
     size_t t;
     do 
     {
@@ -235,9 +218,10 @@ void large_num_divide(large_num_t *dividend, large_num_t *divider, large_num_t *
 
     } while (res->mantissa.len < DIGITS_COUNT_MAX + 1);
 
-    if (res->mantissa.len <= DIGITS_COUNT_MAX + 1)
+    if (res->mantissa.len >= DIGITS_COUNT_MAX + 1)
         round_large_num(res);
-    formate_res(&res->mantissa);
+    else
+        formate_res(&res->mantissa);
 }
 
 bool is_zero(ulong_num_t *num)
@@ -253,10 +237,8 @@ bool is_zero(ulong_num_t *num)
 
 void update_part_dividend(large_num_t *dividend, ulong_num_t *part_dividend, size_t *i_next_digit)
 {
-    if (*i_next_digit + 1 >= dividend->mantissa.len)
+    if (*i_next_digit >= dividend->mantissa.len)
     {
-        
-        dividend->exponent -= 1;
         add_digit(part_dividend, 0);
     }
     else
@@ -284,7 +266,7 @@ void add_digit_to_res(ulong_num_t *mantissa, int new_digit)
 // заполняем с конца, поэтому надо сдвинуть всё к началу
 void formate_res(ulong_num_t *mantissa)
 {
-    for (size_t i = DIGITS_COUNT_MAX - mantissa->len; i <= DIGITS_COUNT_MAX; i++)
-        mantissa[i - DIGITS_COUNT_MAX + mantissa->len] = mantissa[i];
+    for (size_t i = 0; i < mantissa->len; i++)
+        mantissa->digits[i] = mantissa->digits[DIGITS_COUNT_MAX - mantissa->len + 1 + i];
 }
 
