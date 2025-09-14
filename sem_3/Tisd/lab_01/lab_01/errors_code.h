@@ -1,0 +1,19 @@
+#ifndef ERRORS_CODE_H__
+#define ERRORS_CODE_H__
+
+#define OK 0
+
+#define INPUT_ERROR 11
+#define EMPTY_STR 12
+#define OVERFLOW_STR 13
+#define INVALID_TYPE 14
+
+#define INVALID_NUMBER 21
+#define OVERFLOW_NUMBER 23
+#define OVERFLOW_EXPONENT 24
+
+#define MACHINE_INF 31
+#define MACHINE_ZERO 32
+#define DIVISION_BY_ZERO 33
+
+#endif

@@ -1,0 +1,422 @@
+\chapter{Задание}
+\hypertarget{md_wiki}{}\label{md_wiki}\index{Задание@{Задание}}
+\label{md_wiki_autotoc_md0}%
+\Hypertarget{md_wiki_autotoc_md0}%
+
+
+Задан файл, содержащий строки текста, состоящие из слов, отделенных друг от друга произвольным количеством пробелов (алфавит латинский). В каждой строке найти слова с наибольшим и наименьшим количеством гласных букв (a, e, i, o, u, y) и поменять их местами. Результат записать в новый файл.\hypertarget{md_wiki_autotoc_md1}{}\doxysection{\texorpdfstring{Допущения}{Допущения}}\label{md_wiki_autotoc_md1}
+
+\begin{DoxyEnumerate}
+\item Символы из таблицы ASCII
+\item Регистр не учитывается
+\item Слово может располагаться только на одной строке
+\item Максимальная длина одного слова 30 символов
+\item Максимальная длина строки 100 символов
+\item Максимальное количество слов в строке 10
+\item Подается текстовий файл
+\item Если в строке нет гласных букв, то строка записывается в исходном виде
+\item Если в строке содержится несколько слов с минимальным или максимальным количеством гласных, то выбираются первые встреченные в строке.
+\item Если количество гласных во всех словах одинаково, то строка записывается в исходном виде
+\item Пустые строки пропускаются
+\item Слова разделяются пробелами
+\item Под словом подразумевается любая последовательность символов из таблицы ASCII
+\end{DoxyEnumerate}\hypertarget{md_wiki_autotoc_md2}{}\doxysection{\texorpdfstring{Тесты}{Тесты}}\label{md_wiki_autotoc_md2}
+\hypertarget{md_wiki_autotoc_md3}{}\doxysubsection{\texorpdfstring{Негативные тесты}{Негативные тесты}}\label{md_wiki_autotoc_md3}
+\tabulinesep=1mm
+\begin{longtabu}spread 0pt [c]{*{3}{|X[-1]}|}
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Содержимое файла   }&\cellcolor{\tableheadbgcolor}\textbf{ Результаты программы – сообщение об ошибке   }&\cellcolor{\tableheadbgcolor}\textbf{ Комментарий    }\\\cline{1-3}
+\endfirsthead
+\hline
+\endfoot
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Содержимое файла   }&\cellcolor{\tableheadbgcolor}\textbf{ Результаты программы – сообщение об ошибке   }&\cellcolor{\tableheadbgcolor}\textbf{ Комментарий    }\\\cline{1-3}
+\endhead
+\PBS\centering $<$Пусто$>$   &Файл пустой   &Файл пустой    \\\cline{1-3}
+\PBS\centering hello line two~\newline
+0123456789012345678901234567890123   &Длина слова превышает 30 символов   &Длина слова превышает 30 символов    \\\cline{1-3}
+\PBS\centering $<$Файл не существует$>$   &Файл не существует   &Файл не существует    \\\cline{1-3}
+\PBS\centering aaaaaaa aaaaaaaa aaaaaaa~\newline
+aaaaaaaaaaaaaa aa aaaaa~\newline
+aaaaaaaaaaaaaaaaa aaaaaa~\newline
+aaaaaaaaaaaa aaaaaaaaaaaaa   &Длина строки слишком большая   &Длина строки больше 100    \\\cline{1-3}
+\PBS\centering a a a a a a a a a a a   &Количество слов в строке больше 10   &Количество слов в строке больше 10   \\\cline{1-3}
+\end{longtabu}
+\hypertarget{md_wiki_autotoc_md4}{}\doxysubsection{\texorpdfstring{Позитивные тесты}{Позитивные тесты}}\label{md_wiki_autotoc_md4}
+\tabulinesep=1mm
+\begin{longtabu}spread 0pt [c]{*{3}{|X[-1]}|}
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Содержимое файла   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Результаты программы   }&\cellcolor{\tableheadbgcolor}\textbf{ Комментарий    }\\\cline{1-3}
+\endfirsthead
+\hline
+\endfoot
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Содержимое файла   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Результаты программы   }&\cellcolor{\tableheadbgcolor}\textbf{ Комментарий    }\\\cline{1-3}
+\endhead
+\PBS\centering {\bfseries{hi}} appl {\bfseries{hello}} now three   &\PBS\centering {\bfseries{hello}} appl {\bfseries{hi}} now three   &слова с 1-\/й гласной и с 2-\/я гласными    \\\cline{1-3}
+\PBS\centering bool bite boom boat angle   &\PBS\centering bool bite boom boat angle   &все слова содержат 2 гласные, поэтому замены не будет    \\\cline{1-3}
+\PBS\centering {\bfseries{load}} lie aqua {\bfseries{looooop}}~\newline
+threee one kot kolob   &\PBS\centering {\bfseries{looooop}} lie aqua {\bfseries{load}}~\newline
+kot one threee kolob   &Две строки, в обеих происходит перестановка    \\\cline{1-3}
+\PBS\centering {\bfseries{otp}} one two three {\bfseries{opotopo}}   &\PBS\centering {\bfseries{opotopo}} one two three {\bfseries{otp}}   &меняются слова по краям строки    \\\cline{1-3}
+\PBS\centering aao {\bfseries{aeiouy}} {\bfseries{a}} ayui oiu uuuu   &\PBS\centering aao {\bfseries{a}} {\bfseries{aeiouy}} ayui oiu uuuu   &слова только из глассных    \\\cline{1-3}
+\PBS\centering nnnnn mmmm d ssssssss wwwww   &\PBS\centering nnnnn mmmm d ssssssss wwwww   &слова только из согласных    \\\cline{1-3}
+\PBS\centering poool {\bfseries{POUui}} {\bfseries{nb\+Aa}} pooa looop   &\PBS\centering poool {\bfseries{nb\+Aa}} {\bfseries{POUui}} pooa looop   &Разный регист    \\\cline{1-3}
+\PBS\centering {\bfseries{kom}}   &\PBS\centering {\bfseries{kom}}   &одно слово в строке    \\\cline{1-3}
+\PBS\centering {\bfseries{kom}} {\bfseries{kool}}   &\PBS\centering {\bfseries{kool}} {\bfseries{kom}}   &два слова в строке, разное кол-\/во гласных    \\\cline{1-3}
+\PBS\centering {\bfseries{mob}} {\bfseries{kol}}   &\PBS\centering {\bfseries{mob}} {\bfseries{kol}}   &два слова в строке, одинаковое кол-\/во гласных    \\\cline{1-3}
+\PBS\centering tol tol tol   &\PBS\centering tol tol tol   &одинаковые слова во все строке    \\\cline{1-3}
+\PBS\centering auo {\bfseries{tkop}} monul {\bfseries{qwertyuiopasdfghjklzxcvbnmqwer}} 12aa35 ffad na   &\PBS\centering auo {\bfseries{qwertyuiopasdfghjklzxcvbnmqwer}} monul {\bfseries{tkop}} 12aa35 ffad na   &слово длиной 30   \\\cline{1-3}
+\end{longtabu}
+\hypertarget{md_wiki_autotoc_md5}{}\doxysection{\texorpdfstring{Спецификация}{Спецификация}}\label{md_wiki_autotoc_md5}
+\hypertarget{md_wiki_autotoc_md6}{}\doxysubsection{\texorpdfstring{Модуль A1}{Модуль A1}}\label{md_wiki_autotoc_md6}
+\tabulinesep=1mm
+\begin{longtabu}spread 0pt [c]{*{2}{|X[-1]}|}
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Имя   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ read\+\_\+line    }\\\cline{1-2}
+\endfirsthead
+\hline
+\endfoot
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Имя   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ read\+\_\+line    }\\\cline{1-2}
+\endhead
+Функция   &Чтение строки из файла    \\\cline{1-2}
+Список параметров   &Строка, файл    \\\cline{1-2}
+Входные данные   &Файл    \\\cline{1-2}
+Выходные данные   &Сторка    \\\cline{1-2}
+Внешние эффекты   &Нет    \\\cline{1-2}
+Допущения   &Файл существует и не пустой   \\\cline{1-2}
+\end{longtabu}
+\hypertarget{md_wiki_autotoc_md7}{}\doxysubsubsection{\texorpdfstring{Тестовые данные}{Тестовые данные}}\label{md_wiki_autotoc_md7}
+\tabulinesep=1mm
+\begin{longtabu}spread 0pt [c]{*{3}{|X[-1]}|}
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Содержание файла   }&\cellcolor{\tableheadbgcolor}\textbf{ Результаты программы~\newline
+Строка / Ошибка, код возврата   }&\cellcolor{\tableheadbgcolor}\textbf{ Комментарий    }\\\cline{1-3}
+\endfirsthead
+\hline
+\endfoot
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Содержание файла   }&\cellcolor{\tableheadbgcolor}\textbf{ Результаты программы~\newline
+Строка / Ошибка, код возврата   }&\cellcolor{\tableheadbgcolor}\textbf{ Комментарий    }\\\cline{1-3}
+\endhead
+\PBS\centering hello line two~\newline
+0123456789012345678901234567890123   &Длина слова превышает 30 символов / 30   &Длина слова превышает 30 символов    \\\cline{1-3}
+\PBS\centering $<$Файл не существует$>$   &Файл не существует / 11   &Файл не существует    \\\cline{1-3}
+\PBS\centering aaaaaaa aaaaaaaa aaaaaaa~\newline
+aaaaaaaaaaaaaa aa aaaaa~\newline
+aaaaaaaaaaaaaaaaa aaaaaa~\newline
+aaaaaaaaaaaa aaaaaaaaaaaaa   &Длина строки слишком большая / 20   &Длина строки больше 100    \\\cline{1-3}
+\PBS\centering a a a a a a a a a a a   &Количество слов в строке больше 10 / 21   &Количество слов в строке больше 10    \\\cline{1-3}
+\PBS\centering 012345678901234012345678901234 012345678901234012345678901234 012345678901234012345678901234 1234567   &012345678901234012345678901234 012345678901234012345678901234 012345678901234012345678901234 1234567   &Длина строки 100    \\\cline{1-3}
+\PBS\centering 1   &1   &Длина строки 1    \\\cline{1-3}
+\PBS\centering asd zxc uiov gbfbfg   &asd zxc uiov gbfbfg   &1 \texorpdfstring{$<$}{<} Длина строки \texorpdfstring{$<$}{<} 100   \\\cline{1-3}
+\end{longtabu}
+\hypertarget{md_wiki_autotoc_md8}{}\doxysubsubsection{\texorpdfstring{ Псевдокод}{ Псевдокод}}\label{md_wiki_autotoc_md8}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{read\_line}
+\DoxyCodeLine{Вход:}
+\DoxyCodeLine{\ \ \ \ f\ –\ файл}
+\DoxyCodeLine{Выход:}
+\DoxyCodeLine{\ \ \ \ str\ – строка}
+\DoxyCodeLine{}
+\DoxyCodeLine{Начало}
+\DoxyCodeLine{\ \ \ \ count\ =\ 0}
+\DoxyCodeLine{\ \ \ \ ch\ –\ символ}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ пока\ НЕ\ конец\ файла}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ Делать}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ Cчитать\ символ\ из\ файла\ в\ ch}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ str[count]\ =\ ch}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ count\ +=\ 1}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ пока\ ch\ !=\ '\(\backslash\)n'}
+\DoxyCodeLine{\ \ \ \ конец\ пока}
+\DoxyCodeLine{Конец}
+
+\end{DoxyCode}
+\hypertarget{md_wiki_autotoc_md9}{}\doxysubsection{\texorpdfstring{Модуль A2}{Модуль A2}}\label{md_wiki_autotoc_md9}
+\tabulinesep=1mm
+\begin{longtabu}spread 0pt [c]{*{2}{|X[-1]}|}
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Имя   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ str\+\_\+to\+\_\+words    }\\\cline{1-2}
+\endfirsthead
+\hline
+\endfoot
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Имя   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ str\+\_\+to\+\_\+words    }\\\cline{1-2}
+\endhead
+Функция   &Разбиение строки на массив слов    \\\cline{1-2}
+Список параметров   &Строка, массив строк, количество слов    \\\cline{1-2}
+Входные данные   &Строка    \\\cline{1-2}
+Выходные данные   &Массив строк, количество слов    \\\cline{1-2}
+Внешние эффекты   &Нет    \\\cline{1-2}
+Допущения   &Не пустая строка   \\\cline{1-2}
+\end{longtabu}
+\hypertarget{md_wiki_autotoc_md10}{}\doxysubsubsection{\texorpdfstring{Тестовые данные}{Тестовые данные}}\label{md_wiki_autotoc_md10}
+\tabulinesep=1mm
+\begin{longtabu}spread 0pt [c]{*{3}{|X[-1]}|}
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Входные данные   }&\cellcolor{\tableheadbgcolor}\textbf{ Результаты программы~\newline
+Строки массива/Ошибка, код возврата   }&\cellcolor{\tableheadbgcolor}\textbf{ Комментарий    }\\\cline{1-3}
+\endfirsthead
+\hline
+\endfoot
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Входные данные   }&\cellcolor{\tableheadbgcolor}\textbf{ Результаты программы~\newline
+Строки массива/Ошибка, код возврата   }&\cellcolor{\tableheadbgcolor}\textbf{ Комментарий    }\\\cline{1-3}
+\endhead
+\PBS\centering hello / 1   &hello / 0   &Одно слово    \\\cline{1-3}
+\PBS\centering hello ok good / 3   &hello ok good / 0   &несколько слов    \\\cline{1-3}
+\PBS\centering ok ly ja ro me bi bo qr ar vr / 10   &ok ly ja ro me bi bo qr ar vr / 0   &10 слов    \\\cline{1-3}
+\PBS\centering 1 2 3 4 5 6 7 8 9 10 11 / 11   &Error\+: количество слов \texorpdfstring{$>$}{>} 10 / 21   &\texorpdfstring{$>$}{>} 10 слов    \\\cline{1-3}
+\PBS\centering a loop mook / 3   &a loop mook / 0   &слово длиной 1    \\\cline{1-3}
+\PBS\centering loop mook cook duup / 4   &loop mook cook duup / 0   &1 \texorpdfstring{$<$}{<} слово длиной \texorpdfstring{$<$}{<} 30    \\\cline{1-3}
+\PBS\centering qazxswedcvfrtgbnhyujmkloipqazx mnogo bukv bilo / 3   &qazxswedcvfrtgbnhyujmkloipqazx mnogo bukv bilo / 0   &слово длиной 30    \\\cline{1-3}
+\PBS\centering qazxswedcvfrtgbnhyujmkloipqazxmnogobukvbilo / 1   &Error\+: Длина одного слова \texorpdfstring{$>$}{>} 30 / 30   &слово длиной \texorpdfstring{$>$}{>} 30   \\\cline{1-3}
+\end{longtabu}
+\hypertarget{md_wiki_autotoc_md11}{}\doxysubsubsection{\texorpdfstring{ Псевдокод}{ Псевдокод}}\label{md_wiki_autotoc_md11}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{str\_to\_words}
+\DoxyCodeLine{Вход:}
+\DoxyCodeLine{\ \ \ \ str\ –\ строка}
+\DoxyCodeLine{Выход:}
+\DoxyCodeLine{\ \ \ \ массив\ слов}
+\DoxyCodeLine{\ \ \ \ счётчик\ слов}
+\DoxyCodeLine{}
+\DoxyCodeLine{Начало}
+\DoxyCodeLine{\ \ \ \ count\ =\ 0}
+\DoxyCodeLine{\ \ \ \ words\ – массив\ слов}
+\DoxyCodeLine{\ \ \ \ word\ – массив\ символов}
+\DoxyCodeLine{\ \ \ \ ch\ –\ символ}
+\DoxyCodeLine{\ \ \ \ i\ =\ 0\ –\ индекс\ символа}
+\DoxyCodeLine{\ \ \ \ j\ =\ 0\ –\ индекс\ символа}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ //\ пропуск\ пробелов\ перед\ первым\ словом}
+\DoxyCodeLine{\ \ \ \ Пока\ str[i]\ ==\ '\ '}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ i\ +=\ 1}
+\DoxyCodeLine{\ \ \ \ Конец\ пока}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ Пока\ НЕ\ конец\ строки}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ //\ получение\ первого\ слова}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ Делать}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ word[j]\ =\ str[i]}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ j\ +=\ 1}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ i\ +=\ 1}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ Пока\ str[i]\ !=\ '\ '}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ //\ запись\ слова\ в\ массив}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ word[j]\ =\ '\(\backslash\)0'}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ words[count]\ =\ word}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ j\ =\ 0}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ count\ +=\ 1}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ //\ пропуск\ пробелов\ до\ следующего\ слова}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ Пока\ str[i]\ ==\ '\ '}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ i\ +=\ 1}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ Если\ i\ >=\ длина(str)}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ прервать\ цикл}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ Конец\ если}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ Конец\ пока\ }
+\DoxyCodeLine{\ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\ \ \ \ Конец\ пока}
+\DoxyCodeLine{Конец}
+
+\end{DoxyCode}
+\hypertarget{md_wiki_autotoc_md12}{}\doxysubsection{\texorpdfstring{Модуль A3}{Модуль A3}}\label{md_wiki_autotoc_md12}
+\tabulinesep=1mm
+\begin{longtabu}spread 0pt [c]{*{2}{|X[-1]}|}
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Имя   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ find\+\_\+max\+\_\+min\+\_\+vowels    }\\\cline{1-2}
+\endfirsthead
+\hline
+\endfoot
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Имя   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ find\+\_\+max\+\_\+min\+\_\+vowels    }\\\cline{1-2}
+\endhead
+Функция   &Нахождение слов с максимальным и минимальным количеством гласных    \\\cline{1-2}
+Список параметров   &Массив строк, количество слов, индекс слова с наибольшим количеством гласных, индекс слова с наименьшим количеством гласных    \\\cline{1-2}
+Входные данные   &Массив строк, количество слов    \\\cline{1-2}
+Выходные данные   &Индекс слова с наибольшим количеством гласных, индекс слова с наименьшим количеством гласных    \\\cline{1-2}
+Внешние эффекты   &Нет    \\\cline{1-2}
+Допущения   &При наличии слов с одинаковым количеством гласных выбирается первое~\newline
+Размер массива строк корректный   \\\cline{1-2}
+\end{longtabu}
+\hypertarget{md_wiki_autotoc_md13}{}\doxysubsubsection{\texorpdfstring{Тестовые данные}{Тестовые данные}}\label{md_wiki_autotoc_md13}
+\tabulinesep=1mm
+\begin{longtabu}spread 0pt [c]{*{3}{|X[-1]}|}
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Входные данные   }&\cellcolor{\tableheadbgcolor}\textbf{ Результаты программы~\newline
+min\+\_\+count, max\+\_\+count   }&\cellcolor{\tableheadbgcolor}\textbf{ Комментарий    }\\\cline{1-3}
+\endfirsthead
+\hline
+\endfoot
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Входные данные   }&\cellcolor{\tableheadbgcolor}\textbf{ Результаты программы~\newline
+min\+\_\+count, max\+\_\+count   }&\cellcolor{\tableheadbgcolor}\textbf{ Комментарий    }\\\cline{1-3}
+\endhead
+\PBS\centering okolo oooo plak / 3   &2 1   &Слово полностью из гласных    \\\cline{1-3}
+\PBS\centering pol lupa kkk pooool / 4   &2 3   &В слове нет гласных    \\\cline{1-3}
+\PBS\centering aka koop moon toon / 4   &0 0   &Во всех словах одинаковое количество гласных    \\\cline{1-3}
+\PBS\centering lomok / 1   &0 0   &одно слово    \\\cline{1-3}
+\PBS\centering aslk pkkapa loon zzoooon / 4   &0 3   &Несколько слов с несколькими гласными    \\\cline{1-3}
+\PBS\centering ppol root rrraa raaa laaa maaa / 6   &0 3   &несколько слов с максимальным количеством гласных    \\\cline{1-3}
+\PBS\centering lop mon jok reeaw / 4   &0 3   &несколько слов с минимальным количеством гласных   \\\cline{1-3}
+\end{longtabu}
+\hypertarget{md_wiki_autotoc_md14}{}\doxysubsubsection{\texorpdfstring{ Псевдокод}{ Псевдокод}}\label{md_wiki_autotoc_md14}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{find\_max\_min\_vowels}
+\DoxyCodeLine{Вход:}
+\DoxyCodeLine{\ \ \ \ words\ –\ Массив\ строк}
+\DoxyCodeLine{\ \ \ \ n\ –\ количество\ слов}
+\DoxyCodeLine{Выход:}
+\DoxyCodeLine{\ \ \ \ индекс\ слова\ с\ наибольшим\ количеством\ гласных\ =\ i\_max}
+\DoxyCodeLine{\ \ \ \ индекс\ слова\ с\ наименьшим\ количеством\ гласных\ =\ i\_min}
+\DoxyCodeLine{}
+\DoxyCodeLine{}
+\DoxyCodeLine{Начало}
+\DoxyCodeLine{\ \ \ \ min\ =\ max\ =\ количество\ гласных\ в\ words[0]}
+\DoxyCodeLine{\ \ \ \ i\_min\ =\ i\_max\ =\ 0}
+\DoxyCodeLine{\ \ \ \ i\ =\ 1\ –\ индекс\ слова}
+\DoxyCodeLine{\ \ \ \ }
+\DoxyCodeLine{\ \ \ \ Пока\ i\ <\ n}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ count\_vowel\ =\ количесво\ гласных\ в\ words[i]}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\ \ \ \ \ \ \ \ если\ count\_vowel\ >\ max}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ max\ =\ count\_vowel}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ i\_max\ =\ i}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ конец\ если}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ если\ count\_vowel\ <\ min}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ min\ =\ count\_vowel}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ i\_min\ =\ i}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ конец\ если}
+\DoxyCodeLine{\ \ \ \ Конец\ пока}
+\DoxyCodeLine{Конец}
+
+\end{DoxyCode}
+\hypertarget{md_wiki_autotoc_md15}{}\doxysubsection{\texorpdfstring{Модуль A32}{Модуль A32}}\label{md_wiki_autotoc_md15}
+\tabulinesep=1mm
+\begin{longtabu}spread 0pt [c]{*{2}{|X[-1]}|}
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Имя   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ count\+\_\+vowels    }\\\cline{1-2}
+\endfirsthead
+\hline
+\endfoot
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Имя   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ count\+\_\+vowels    }\\\cline{1-2}
+\endhead
+Функция   &Подсчет количество гласных букв в слове    \\\cline{1-2}
+Список параметров   &Строка    \\\cline{1-2}
+Входные данные   &Строка    \\\cline{1-2}
+Выходные данные   &Количество гласных слов    \\\cline{1-2}
+Внешние эффекты   &Нет    \\\cline{1-2}
+Допущения   &Строка не пустая   \\\cline{1-2}
+\end{longtabu}
+\hypertarget{md_wiki_autotoc_md16}{}\doxysubsubsection{\texorpdfstring{Тестовые данные}{Тестовые данные}}\label{md_wiki_autotoc_md16}
+\tabulinesep=1mm
+\begin{longtabu}spread 0pt [c]{*{3}{|X[-1]}|}
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Входные данные   }&\cellcolor{\tableheadbgcolor}\textbf{ Результаты программы~\newline
+count   }&\cellcolor{\tableheadbgcolor}\textbf{ Комментарий    }\\\cline{1-3}
+\endfirsthead
+\hline
+\endfoot
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Входные данные   }&\cellcolor{\tableheadbgcolor}\textbf{ Результаты программы~\newline
+count   }&\cellcolor{\tableheadbgcolor}\textbf{ Комментарий    }\\\cline{1-3}
+\endhead
+\PBS\centering @@   &0   &Нет гласных    \\\cline{1-3}
+\PBS\centering aaaa   &4   &Только гласные    \\\cline{1-3}
+\PBS\centering @(ooo)@   &3   &Несколько гласных    \\\cline{1-3}
+\PBS\centering a   &1   &Длина 1    \\\cline{1-3}
+\PBS\centering apsod   &2   &1 \texorpdfstring{$<$}{<} Длина \texorpdfstring{$<$}{<} 10    \\\cline{1-3}
+\PBS\centering zxcasdqwer   &2   &Длина 10    \\\cline{1-3}
+\PBS\centering 123bnm695   &0   &цифры   \\\cline{1-3}
+\end{longtabu}
+\hypertarget{md_wiki_autotoc_md17}{}\doxysubsubsection{\texorpdfstring{ Псевдокод}{ Псевдокод}}\label{md_wiki_autotoc_md17}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{count\_vowels}
+\DoxyCodeLine{Вход:}
+\DoxyCodeLine{\ \ \ \ str\ –\ строка}
+\DoxyCodeLine{Выход:}
+\DoxyCodeLine{\ \ \ \ количество\ гласных}
+\DoxyCodeLine{}
+\DoxyCodeLine{Начало}
+\DoxyCodeLine{\ \ \ \ count\ =\ 0\ – счётчик\ гласных\ букв}
+\DoxyCodeLine{\ \ \ \ i\ =\ 0\ –\ индекс\ символа}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ Пока\ НЕ\ конец\ строки}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ Если\ str[i]\ гласная\ буква}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ count\ +=\ 1}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ Конец\ если}
+\DoxyCodeLine{\ \ \ \ Конец\ пока}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ вернуть\ count}
+\DoxyCodeLine{Конец}
+
+\end{DoxyCode}
+\hypertarget{md_wiki_autotoc_md18}{}\doxysubsection{\texorpdfstring{Модуль A4}{Модуль A4}}\label{md_wiki_autotoc_md18}
+\tabulinesep=1mm
+\begin{longtabu}spread 0pt [c]{*{2}{|X[-1]}|}
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Имя   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ write\+\_\+arr    }\\\cline{1-2}
+\endfirsthead
+\hline
+\endfoot
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Имя   }&\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ write\+\_\+arr    }\\\cline{1-2}
+\endhead
+Функция   &Запись элементов массива в файл через пробел    \\\cline{1-2}
+Список параметров   &Строка, массив слов, количество слов, символ между слов    \\\cline{1-2}
+Входные данные   &Массив слов, количество слов    \\\cline{1-2}
+Выходные данные   &Строка    \\\cline{1-2}
+Внешние эффекты   &Запись данных в файл    \\\cline{1-2}
+Допущения   &Сумма длин слов и всех соединителей слов не превышает 100 символов~\newline
+В массиве хотя бы одно слово   \\\cline{1-2}
+\end{longtabu}
+\hypertarget{md_wiki_autotoc_md19}{}\doxysubsubsection{\texorpdfstring{Тестовые данные}{Тестовые данные}}\label{md_wiki_autotoc_md19}
+\tabulinesep=1mm
+\begin{longtabu}spread 0pt [c]{*{3}{|X[-1]}|}
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Входные данные   }&\cellcolor{\tableheadbgcolor}\textbf{ Результаты программы~\newline
+Содержимое файла   }&\cellcolor{\tableheadbgcolor}\textbf{ Комментарий    }\\\cline{1-3}
+\endfirsthead
+\hline
+\endfoot
+\hline
+\PBS\centering \cellcolor{\tableheadbgcolor}\textbf{ Входные данные   }&\cellcolor{\tableheadbgcolor}\textbf{ Результаты программы~\newline
+Содержимое файла   }&\cellcolor{\tableheadbgcolor}\textbf{ Комментарий    }\\\cline{1-3}
+\endhead
+\PBS\centering 012345678901234012345678901234 012345678901234012345678901234 012345678901234012345678901234 1234567 / 4   &012345678901234012345678901234 012345678901234012345678901234 012345678901234012345678901234 1234567   &Длина строки 100    \\\cline{1-3}
+\PBS\centering 1 / 1   &1   &Длина строки 1    \\\cline{1-3}
+\PBS\centering odno\+Slovo / 1   &odno\+Slovo   &Количество слов 1    \\\cline{1-3}
+\PBS\centering mnogo slov ih tochno desiat i ne bolshe tochno tochno / 10   &mnogo-\/slov-\/ih-\/tochno-\/desiat-\/i-\/ne bolshe-\/tochno-\/tochno   &Количество слов 10    \\\cline{1-3}
+\PBS\centering asd zxc uiov gbfbfg / 4   &asd zxc uiov gbfbfg   &1 \texorpdfstring{$<$}{<} Длина строки \texorpdfstring{$<$}{<} 255    \\\cline{1-3}
+\PBS\centering 1 2 3 4 5 6 7 8 7 / 9   &1 2 3 4 5 6 7 8 7   &1 \texorpdfstring{$<$}{<} количество слов \texorpdfstring{$<$}{<} 10   \\\cline{1-3}
+\end{longtabu}
+\hypertarget{md_wiki_autotoc_md20}{}\doxysubsubsection{\texorpdfstring{ Псевдокод}{ Псевдокод}}\label{md_wiki_autotoc_md20}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{words\_to\_str}
+\DoxyCodeLine{Вход:}
+\DoxyCodeLine{\ \ \ \ words\ –\ Массив\ слов}
+\DoxyCodeLine{\ \ \ \ n\ – Количество\ слов\ }
+\DoxyCodeLine{\ \ \ \ joiner\ –\ Символ\ между\ слов\ –\ соединитель}
+\DoxyCodeLine{Выход:}
+\DoxyCodeLine{\ \ \ \ str\ –\ Строка}
+\DoxyCodeLine{}
+\DoxyCodeLine{Начало}
+\DoxyCodeLine{\ \ \ \ }
+\DoxyCodeLine{\ \ \ \ В\ конец\ строки\ добавить\ первое\ слова\ из\ массива}
+\DoxyCodeLine{\ \ \ \ пока\ индекс\ меньше\ количества\ слов}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ В\ конец\ строки\ добавить\ соединитель}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ В\ конец\ строки\ добавить\ слова\ из\ массива\ под\ данным\ индексом}
+\DoxyCodeLine{\ \ \ \ конец\ пока}
+\DoxyCodeLine{Конец}
+
+\end{DoxyCode}
+ 

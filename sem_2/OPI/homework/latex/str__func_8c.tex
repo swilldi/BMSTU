@@ -1,0 +1,105 @@
+\doxysection{src/str\+\_\+func.c File Reference}
+\hypertarget{str__func_8c}{}\label{str__func_8c}\index{src/str\_func.c@{src/str\_func.c}}
+{\ttfamily \#include "{}str\+\_\+func.\+h"{}}\newline
+{\ttfamily \#include "{}exit\+\_\+codes.\+h"{}}\newline
+{\ttfamily \#include "{}str\+\_\+info.\+h"{}}\newline
+{\ttfamily \#include $<$assert.\+h$>$}\newline
+{\ttfamily \#include $<$string.\+h$>$}\newline
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+int \mbox{\hyperlink{str__func_8c_a0249e0cdba106645987a9187cbf3230a}{count\+\_\+vowels}} (char \texorpdfstring{$\ast$}{*}str)
+\begin{DoxyCompactList}\small\item\em Разбиение строки на массив слов \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{str__func_8c_a026081e83e4e9b275814ead28253f50f}{str\+\_\+to\+\_\+words}} (char \texorpdfstring{$\ast$}{*}str, char words\mbox{[}$\,$\mbox{]}\mbox{[}\mbox{\hyperlink{str__info_8h_a440aadc538a75ca510439c46c27546ba}{WORD\+\_\+\+LEN}}\mbox{]}, size\+\_\+t \texorpdfstring{$\ast$}{*}count\+\_\+word)
+\begin{DoxyCompactList}\small\item\em Разбиение строки на массив слов \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{str__func_8c_aa4900bb8e588343b0bca0197630f991d}{find\+\_\+max\+\_\+min\+\_\+vowels}} (char words\mbox{[}$\,$\mbox{]}\mbox{[}\mbox{\hyperlink{str__info_8h_a440aadc538a75ca510439c46c27546ba}{WORD\+\_\+\+LEN}}\mbox{]}, size\+\_\+t count\+\_\+words, size\+\_\+t \texorpdfstring{$\ast$}{*}i\+\_\+min, size\+\_\+t \texorpdfstring{$\ast$}{*}i\+\_\+max)
+\begin{DoxyCompactList}\small\item\em Нахождение слов с максимальным и минимальным количеством гласных \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{str__func_8c_a0dd930db8b9bf7edf9ff447e173702f6}{swap\+\_\+words}} (char words\mbox{[}$\,$\mbox{]}\mbox{[}\mbox{\hyperlink{str__info_8h_a440aadc538a75ca510439c46c27546ba}{WORD\+\_\+\+LEN}}\mbox{]}, size\+\_\+t i\+\_\+1, size\+\_\+t i\+\_\+2)
+\begin{DoxyCompactList}\small\item\em Меняет места элементы массива \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function Documentation}
+\Hypertarget{str__func_8c_a0249e0cdba106645987a9187cbf3230a}\index{str\_func.c@{str\_func.c}!count\_vowels@{count\_vowels}}
+\index{count\_vowels@{count\_vowels}!str\_func.c@{str\_func.c}}
+\doxysubsubsection{\texorpdfstring{count\_vowels()}{count\_vowels()}}
+{\footnotesize\ttfamily \label{str__func_8c_a0249e0cdba106645987a9187cbf3230a} 
+int count\+\_\+vowels (\begin{DoxyParamCaption}\item[{char \texorpdfstring{$\ast$}{*}}]{str}{}\end{DoxyParamCaption})}
+
+
+
+Разбиение строки на массив слов 
+
+
+\begin{DoxyParams}{Parameters}
+{\em char} & \mbox{[}in\mbox{]} строка со словами \\
+\hline
+{\em words} & \mbox{[}out\mbox{]} массив слов \\
+\hline
+{\em count\+\_\+word} & \mbox{[}out\mbox{]} размер массива слов \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+количество гласных букв в слове 
+\end{DoxyReturn}
+\Hypertarget{str__func_8c_aa4900bb8e588343b0bca0197630f991d}\index{str\_func.c@{str\_func.c}!find\_max\_min\_vowels@{find\_max\_min\_vowels}}
+\index{find\_max\_min\_vowels@{find\_max\_min\_vowels}!str\_func.c@{str\_func.c}}
+\doxysubsubsection{\texorpdfstring{find\_max\_min\_vowels()}{find\_max\_min\_vowels()}}
+{\footnotesize\ttfamily \label{str__func_8c_aa4900bb8e588343b0bca0197630f991d} 
+void find\+\_\+max\+\_\+min\+\_\+vowels (\begin{DoxyParamCaption}\item[{char}]{words}{\mbox{[}$\,$\mbox{]}\mbox{[}\+WORD\+\_\+\+LEN\mbox{]}, }\item[{size\+\_\+t}]{count\+\_\+words}{, }\item[{size\+\_\+t \texorpdfstring{$\ast$}{*}}]{i\+\_\+min}{, }\item[{size\+\_\+t \texorpdfstring{$\ast$}{*}}]{i\+\_\+max}{}\end{DoxyParamCaption})}
+
+
+
+Нахождение слов с максимальным и минимальным количеством гласных 
+
+
+\begin{DoxyParams}{Parameters}
+{\em words} & \mbox{[}in\mbox{]} массив слов \\
+\hline
+{\em count\+\_\+words} & \mbox{[}in\mbox{]} размер массива \\
+\hline
+{\em i\+\_\+min} & \mbox{[}out\mbox{]} индекс слова с минимальным количеством гласных \\
+\hline
+{\em i\+\_\+max} & \mbox{[}out\mbox{]} индекс слова с максимальным количеством гласных \\
+\hline
+\end{DoxyParams}
+\Hypertarget{str__func_8c_a026081e83e4e9b275814ead28253f50f}\index{str\_func.c@{str\_func.c}!str\_to\_words@{str\_to\_words}}
+\index{str\_to\_words@{str\_to\_words}!str\_func.c@{str\_func.c}}
+\doxysubsubsection{\texorpdfstring{str\_to\_words()}{str\_to\_words()}}
+{\footnotesize\ttfamily \label{str__func_8c_a026081e83e4e9b275814ead28253f50f} 
+int str\+\_\+to\+\_\+words (\begin{DoxyParamCaption}\item[{char \texorpdfstring{$\ast$}{*}}]{str}{, }\item[{char}]{words}{\mbox{[}$\,$\mbox{]}\mbox{[}\+WORD\+\_\+\+LEN\mbox{]}, }\item[{size\+\_\+t \texorpdfstring{$\ast$}{*}}]{count\+\_\+word}{}\end{DoxyParamCaption})}
+
+
+
+Разбиение строки на массив слов 
+
+
+\begin{DoxyParams}{Parameters}
+{\em char} & \mbox{[}in\mbox{]} строка со словами \\
+\hline
+{\em words} & \mbox{[}out\mbox{]} массив слов \\
+\hline
+{\em count\+\_\+word} & \mbox{[}out\mbox{]} размер массива слов \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+результат выполнения (0 или код ошибки) 
+\end{DoxyReturn}
+\Hypertarget{str__func_8c_a0dd930db8b9bf7edf9ff447e173702f6}\index{str\_func.c@{str\_func.c}!swap\_words@{swap\_words}}
+\index{swap\_words@{swap\_words}!str\_func.c@{str\_func.c}}
+\doxysubsubsection{\texorpdfstring{swap\_words()}{swap\_words()}}
+{\footnotesize\ttfamily \label{str__func_8c_a0dd930db8b9bf7edf9ff447e173702f6} 
+void swap\+\_\+words (\begin{DoxyParamCaption}\item[{char}]{words}{\mbox{[}$\,$\mbox{]}\mbox{[}\+WORD\+\_\+\+LEN\mbox{]}, }\item[{size\+\_\+t}]{i\+\_\+1}{, }\item[{size\+\_\+t}]{i\+\_\+2}{}\end{DoxyParamCaption})}
+
+
+
+Меняет места элементы массива 
+
+
+\begin{DoxyParams}{Parameters}
+{\em words} & \mbox{[}in\mbox{]} массив слов \\
+\hline
+{\em i\+\_\+1} & \mbox{[}in\mbox{]} индекс элемента 1 \\
+\hline
+{\em i\+\_\+2} & \mbox{[}in\mbox{]} индекс элемента 2 \\
+\hline
+\end{DoxyParams}
