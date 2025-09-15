@@ -6,7 +6,7 @@
 
 void print_user_info(void)
 {
-    printf("Max count of digits in mantissa: %d\nMax count of digits in exponent: %d\n", DIGITS_COUNT_MAX, EXPONENTA_COUNT_MAX);
+    // printf("Max count of digits in mantissa: %d\nMax count of digits in exponent: %d\n", DIGITS_COUNT_MAX, EXPONENTA_COUNT_MAX);
 }
 
 void print_error_message(int rc)

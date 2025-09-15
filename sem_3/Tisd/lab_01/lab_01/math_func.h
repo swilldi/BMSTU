@@ -10,9 +10,10 @@ void get_partial_dividend(large_num_t *dividend, ulong_num_t *divider, ulong_num
 int cmp_ulong_num(const ulong_num_t *l, const ulong_num_t *r);
 void round_large_num(large_num_t *num);
 int large_num_divide(large_num_t *dividend, large_num_t *divider, large_num_t *res);
+bool is_one(ulong_num_t *num);
 bool is_zero(ulong_num_t *num);
 
-void update_part_dividend(large_num_t *dividend, ulong_num_t *part_dividend, size_t *i_next_digit);
+void update_part_dividend(large_num_t *dividend, ulong_num_t *part_dividend, size_t *i_next_digit, bool *drob);
 
 void add_digit(ulong_num_t *num, int new_digit);
 

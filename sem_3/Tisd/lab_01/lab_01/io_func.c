@@ -139,9 +139,11 @@ void str_to_large_num(char *str, large_num_t *large_num)
         end_n++;
     }
     start_exp = *end_n ? end_n + 1: end_n;
+    if (!*start_n)
+        start_n--;
     end_n--;
     // обрезание нулей в конце числа
-    while (*end_n == '0')
+    while (*end_n == '0' && end_n > start_n)
     {
         if (end_n == dot)
             end_n--;

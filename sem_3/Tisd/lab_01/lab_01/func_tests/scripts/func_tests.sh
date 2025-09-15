@@ -5,7 +5,6 @@ function run_test
     # path_data="./../data/"
     type=$1
     tests=$(find ./func_tests/data/ -regex ".*$type.*in.txt" | sort)
-
     if [ -z "$tests" ]; then
         return
     fi
@@ -13,16 +12,14 @@ function run_test
     for in_data in $tests
     do  
         out_data=${in_data/in/out}
-        args_file=${in_data/in/args}
-        
         # pwd
         if [ "$type" = "pos" ]; then
-            ./func_tests/scripts/pos_case.sh "$in_data" "$out_data" "$args_file"
+            ./func_tests/scripts/pos_case.sh "$in_data" "$out_data"
             # cat "$file_name"_in.txt "$file_name"_out.txt
             # echo $result
         elif [ "$type" = "neg" ]; then
             # cat "$file_name"_in.txt
-            ./func_tests/scripts/neg_case.sh "$in_data" "$args_file"
+            ./func_tests/scripts/neg_case.sh "$in_data"
         fi
         rc="$?"
 
@@ -67,7 +64,7 @@ function table_bottom
 }
 
 start_directory=$(pwd)
-while ! (pwd | grep -qE "lab(_[0-9][0-9]){2,3}$"); do
+while ! (pwd | grep -qE "lab(_[0-9][0-9]){1,3}$"); do
     # pwd
     cd .. || exit
 done
