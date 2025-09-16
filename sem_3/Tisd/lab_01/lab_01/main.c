@@ -3,10 +3,31 @@
 #include "large_num_struct.h"
 #include "io_func.h"
 #include "errors_code.h"
+#include <stdio.h>
 
-void print_user_info(void)
+/*
+|--------|
+aaaaaaaaaa
+*/
+
+// вроде так линейка
+void ruler(void)
 {
-    // printf("Max count of digits in mantissa: %d\nMax count of digits in exponent: %d\n", DIGITS_COUNT_MAX, EXPONENTA_COUNT_MAX);
+    for (size_t i = 0; i < 16; i++)
+        printf("-");
+    printf("|");
+    for (size_t i = 2; i <= DIGITS_COUNT_MAX; i++)
+        if (i % 10 == 0)
+            printf("|");
+        else
+            printf("-");
+    printf("\n");
+}
+
+void number_info(void)
+{
+    printf("Max count of digits in mantissa: %d\nMax count of digits in exponent: %d\n", 
+            DIGITS_COUNT_MAX, EXPONENTA_COUNT_MAX);
 }
 
 void print_error_message(int rc)
@@ -54,36 +75,37 @@ void print_error_message(int rc)
 }
 
 
+
 int main(void)
 {
-    large_num_t a, b, res;
-    int rc;
-   
-    print_user_info();
+   large_num_t a, b, res;
+   int rc;
 
-    printf("Entry dividend: ");
-    rc = input_large_num(&a, INT);
-    if (rc)
-    {
-        print_error_message(rc);
-        return rc;
-    }
-    
-    printf("Entry divider: ");
-    rc = input_large_num(&b, FLOAT);
-    if (rc)
-    {
-        print_error_message(rc);
-        return rc;
-    }
-    
-    rc = large_num_divide(&a, &b, &res);
-    if (rc)
-    {
-        print_error_message(rc);
-        return rc;
-    }
-    
-    print_large_num(&res);
+   ruler();
+   printf("Entry dividend: ");
+   rc = input_large_num(&a, INT);
+   if (rc)
+   {
+       print_error_message(rc);
+       return rc;
+   }
+   
+   ruler();
+   printf("Entry  divider: ");
+   rc = input_large_num(&b, FLOAT);
+   if (rc)
+   {
+       print_error_message(rc);
+       return rc;
+   }
+   
+   rc = large_num_divide(&a, &b, &res);
+   if (rc)
+   {
+       print_error_message(rc);
+       return rc;
+   }
+   
+   print_large_num(&res);
 }
 
