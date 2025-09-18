@@ -6,6 +6,7 @@
 
 #include "stdio.h"
 
+// получение множителя
 int get_t(ulong_num_t *part_dividend, ulong_num_t *divider)
 {
     int a, b;
@@ -20,31 +21,46 @@ int get_t(ulong_num_t *part_dividend, ulong_num_t *divider)
     return a / b;
 }
 
-void ulong_num_add_zeros(ulong_num_t *num, size_t count_zero)
+// добавление в неполный делитеть следующего числа
+void update_part_dividend(large_num_t *dividend, ulong_num_t *part_dividend, size_t *i_next_digit, bool *drob)
+{
+    if (*i_next_digit >= dividend->mantissa.len)
+    {
+        add_digit(part_dividend, 0);
+        *drob = true;
+    }
+    else
+    {
+        add_digit(part_dividend, dividend->mantissa.digits[dividend->mantissa.len - *i_next_digit - 1]);
+        *i_next_digit += 1;
+    }
+    
+    size_t i = part_dividend->len - 1;
+    while (part_dividend->digits[i] == 0 && i > 0)
+    {
+        part_dividend->len--;
+        i--;
+    }
+}
+
+// добавление числа в мантиссу
+void add_digit(ulong_num_t *num, uint8_t new_digit)
 {
     for (size_t i = num->len; i > 0; i--)
-        num->digits[i - 1 + count_zero] = num->digits[i - 1];
-    for (size_t i = 0; i < count_zero; i++)
-        num->digits[i] = 0;
-    num->len += count_zero;
+        num->digits[i] = num->digits[i - 1];
+    num->digits[0] = new_digit;
+    num->len += 1;
 }
 
-void ulong_num_align(large_num_t *large_a, ulong_num_t *b)
+// добавление нового числа в мантиссу результата
+void add_digit_to_res(ulong_num_t *mantissa, uint8_t new_digit)
 {
-    ulong_num_t *a = &large_a->mantissa;
-    int diff = b->len - a->len;
-    if (diff > 0)
-    {
-        ulong_num_add_zeros(a, diff);
-    }
-
-    if (cmp_ulong_num(a, b) < 0)
-    {
-        ulong_num_add_zeros(a, 1);
-    }
+    size_t i = DIGITS_COUNT_MAX - mantissa->len;
+    mantissa->digits[i] = new_digit;
+    mantissa->len += 1;
 }
 
-// умножение числа, на цифру
+// умножение мантиссы, на цифру
 void ulong_num_multiply_digit(ulong_num_t *multiplicand, int multiplier, ulong_num_t *res)
 {
     res->len = multiplicand->len;
@@ -64,6 +80,7 @@ void ulong_num_multiply_digit(ulong_num_t *multiplicand, int multiplier, ulong_n
     }
 }
 
+// вычитание меньшей мантиссы из большей
 void ulong_num_subtract(ulong_num_t *minuend, ulong_num_t *subtrahend, ulong_num_t *res)
 {
     bool borrow = false;
@@ -91,38 +108,8 @@ void ulong_num_subtract(ulong_num_t *minuend, ulong_num_t *subtrahend, ulong_num
             res->len--;
 }
 
-void get_partial_dividend(large_num_t *dividend, ulong_num_t *divider, ulong_num_t *partial_dividend)
-{
-    size_t l = divider->len;
-    partial_dividend->len = l;
-    for (size_t i = 1; i <= l; i++)
-    {
-        if (i <= dividend->mantissa.len)
-            partial_dividend->digits[l - i] = dividend->mantissa.digits[dividend->mantissa.len - i];
-        else
-        {
-            partial_dividend->digits[l - i] = 0;
-        }
-    }
-
-    if (cmp_ulong_num(partial_dividend, divider) < 0)
-    {
-        for (size_t i = l; i > 0; i--)
-        {
-            partial_dividend->digits[i] = partial_dividend->digits[i - 1];
-        }
-        
-        if (l < dividend->mantissa.len)
-            partial_dividend->digits[0] = dividend->mantissa.digits[dividend->mantissa.len - l - 1];
-        else
-        {
-            partial_dividend->digits[0] = 0;
-        }
-        partial_dividend->len++;
-    }
-}
-
-int cmp_ulong_num(const ulong_num_t *l, const ulong_num_t *r)
+// сравнение мантисс
+int ulong_num_cmp(const ulong_num_t *l, const ulong_num_t *r)
 {
     if (l->len > r->len)
         return 1;
@@ -155,7 +142,7 @@ int cmp_ulong_num(const ulong_num_t *l, const ulong_num_t *r)
 }
 
 // округление числа
-void round_large_num(large_num_t *num)
+void large_num_round(large_num_t *num)
 {
 
     num->mantissa.len = DIGITS_COUNT_MAX;
@@ -171,100 +158,24 @@ void round_large_num(large_num_t *num)
         }
 
         num->mantissa.digits[DIGITS_COUNT_MAX] = carry;
-//        if (carry)
-//            num->exponent++;
-
-//         update_exponent(num);
     }
+    
+    size_t zero = 0;
+    size_t l = DIGITS_COUNT_MAX - num->mantissa.len;
+    for (size_t i = DIGITS_COUNT_MAX; i > l; i--)
+    {
+        if (num->mantissa.digits[i - 1] == 0)
+            zero++;
+        else
+            zero=0;
+        
+        num->mantissa.digits[i] = num->mantissa.digits[i - 1];
+    }
+    num->mantissa.len -= zero;
+        
 }
 
-int large_num_divide(large_num_t *dividend, large_num_t *divider, large_num_t *res)
-{
-    if (is_zero(&divider->mantissa))
-        return DIVISION_BY_ZERO;
-    
-    if (is_zero(&dividend->mantissa))
-    {
-        res->exponent = 0;
-        res->sign = false;
-        res->mantissa.digits[0] = 0;
-        res->mantissa.len = 1;
-        return OK;
-    }
-    
-    res->mantissa.len = 0;
-    res->sign = dividend->sign ^ divider->sign;
-    
-    
-    res->exponent = dividend->exponent - dividend->mantissa.len - divider->exponent + divider->mantissa.len;
-//    res->exponent = 0;
-    bool drob = false;
-    
-//    if (is_one(&divider->mantissa))
-//        res->exponent++;
-    
-
-    
-    ulong_num_t part_dividend, vichitaemoe;
-    size_t i_next_digit = 0;
-    part_dividend.len = 0;
-    while(cmp_ulong_num(&part_dividend, &divider->mantissa) < 0 && i_next_digit < dividend->mantissa.len + DIGITS_COUNT_MAX) {
-        if (drob)
-            res->exponent--;
-        update_part_dividend(dividend, &part_dividend, &i_next_digit, &drob);
-    }
-    
-    size_t t;
-    do 
-    {
-        t = get_t(&part_dividend, &divider->mantissa);
-
-        ulong_num_multiply_digit(&divider->mantissa, t, &vichitaemoe);
-        while (cmp_ulong_num(&part_dividend, &vichitaemoe) < 0)
-        {
-            t -= 1;
-            ulong_num_multiply_digit(&divider->mantissa, t, &vichitaemoe);
-        }
-        ulong_num_subtract(&part_dividend, &vichitaemoe, &part_dividend);
-        add_digit_to_res(&res->mantissa, t);
-        if (!drob)
-            res->exponent++;
-        
-
-        if (is_zero(&part_dividend) && i_next_digit >= dividend->mantissa.len)
-            break;
-
-        update_part_dividend(dividend, &part_dividend, &i_next_digit, &drob);
-
-        
-        while (cmp_ulong_num(&part_dividend, &divider->mantissa) < 0 && res->mantissa.len < DIGITS_COUNT_MAX + 1)
-        {
-            update_part_dividend(dividend, &part_dividend, &i_next_digit, &drob);
-            add_digit_to_res(&res->mantissa, 0);
-        }
-
-    } while (res->mantissa.len < DIGITS_COUNT_MAX + 1);
-
-    if (res->mantissa.len >= DIGITS_COUNT_MAX + 1)
-        round_large_num(res);
-    else
-        formate_res(&res->mantissa);
-    
-    if (is_zero(&dividend->mantissa))
-        res->exponent = 0;
-//    else if (divider->mantissa.len == 1)
-//        res->exponent++;
-    
-//    if (i_next_digit > dividend->mantissa.len)
-//        res->exponent += i_next_digit - dividend->mantissa.len;
-    if (res->exponent > MAX_EXP)
-        return MACHINE_INF;
-    if (res->exponent < MIN_EXP)
-        return MACHINE_ZERO;
-    
-    return OK;
-}
-
+// проверка, что число является нулем
 bool is_zero(ulong_num_t *num)
 {
     for (size_t i = 0; i < num->len; i++)
@@ -276,51 +187,90 @@ bool is_zero(ulong_num_t *num)
     return true;
 }
 
-bool is_one(ulong_num_t *num)
-{
-    return num->len == 1 && num->digits[0] == 1;
-}
-
-void update_part_dividend(large_num_t *dividend, ulong_num_t *part_dividend, size_t *i_next_digit, bool *drob)
-{
-    if (*i_next_digit >= dividend->mantissa.len)
-    {
-        add_digit(part_dividend, 0);
-        *drob = true;
-    }
-    else
-    {
-        add_digit(part_dividend, dividend->mantissa.digits[dividend->mantissa.len - *i_next_digit - 1]);
-        *i_next_digit += 1;
-    }
-    
-    size_t i = part_dividend->len - 1;
-    while (part_dividend->digits[i] == 0)
-    {
-        part_dividend->len--;
-        i--;
-    }
-}
-
-void add_digit(ulong_num_t *num, int new_digit)
-{
-    for (size_t i = num->len; i > 0; i--)
-        num->digits[i] = num->digits[i - 1];
-    num->digits[0] = new_digit;
-    num->len += 1;
-}
-
-void add_digit_to_res(ulong_num_t *mantissa, int new_digit)
-{
-    size_t i = DIGITS_COUNT_MAX - mantissa->len;
-    mantissa->digits[i] = new_digit;
-    mantissa->len += 1;
-}
-
-// заполняем с конца, поэтому надо сдвинуть всё к началу
+// Преобразование мантиссы результата к формату: чем меньше индекс, тем меньше разряд цифры
 void formate_res(ulong_num_t *mantissa)
 {
     for (size_t i = 0; i < mantissa->len; i++)
         mantissa->digits[i] = mantissa->digits[DIGITS_COUNT_MAX - mantissa->len + i + 1];
 }
 
+
+// деление длинных чисел
+int large_num_divide(large_num_t *dividend, large_num_t *divider, large_num_t *res)
+{
+    // деление на ноль
+    if (is_zero(&divider->mantissa))
+        return DIVISION_BY_ZERO;
+    
+    // деление нуля
+    if (is_zero(&dividend->mantissa))
+    {
+        res->exponent = 0;
+        res->sign = false;
+        res->mantissa.digits[0] = 0;
+        res->mantissa.len = 1;
+        return OK;
+    }
+
+    res->mantissa.len = 0;
+    res->sign = dividend->sign ^ divider->sign;
+    res->exponent = dividend->exponent - dividend->mantissa.len - divider->exponent + divider->mantissa.len;
+    bool drob = false;
+    
+    ulong_num_t part_dividend, vichitaemoe;
+    size_t i_next_digit = 0;
+    part_dividend.len = 0;
+    
+    // получение неполного делимого
+    while(ulong_num_cmp(&part_dividend, &divider->mantissa) < 0 && i_next_digit < dividend->mantissa.len + DIGITS_COUNT_MAX) {
+        if (drob)
+            res->exponent--;
+        update_part_dividend(dividend, &part_dividend, &i_next_digit, &drob);
+    }
+    
+    // деление чисел
+    uint8_t t;
+    do
+    {
+        t = get_t(&part_dividend, &divider->mantissa);
+        ulong_num_multiply_digit(&divider->mantissa, t, &vichitaemoe);
+        while (ulong_num_cmp(&part_dividend, &vichitaemoe) < 0)
+        {
+            t -= 1;
+            ulong_num_multiply_digit(&divider->mantissa, t, &vichitaemoe);
+        }
+        ulong_num_subtract(&part_dividend, &vichitaemoe, &part_dividend);
+        add_digit_to_res(&res->mantissa, t);
+        
+        if (!drob)
+            res->exponent++;
+
+        if (is_zero(&part_dividend) && i_next_digit >= dividend->mantissa.len)
+            break;
+
+        // обновление неполного делителя
+        update_part_dividend(dividend, &part_dividend, &i_next_digit, &drob);
+        while (ulong_num_cmp(&part_dividend, &divider->mantissa) < 0 && res->mantissa.len < DIGITS_COUNT_MAX + 1)
+        {
+            update_part_dividend(dividend, &part_dividend, &i_next_digit, &drob);
+            add_digit_to_res(&res->mantissa, 0);
+        }
+
+    } while (res->mantissa.len < DIGITS_COUNT_MAX + 1);
+
+    // округление числа если, длина мантиссы больше максимальной
+    if (res->mantissa.len >= DIGITS_COUNT_MAX + 1)
+        large_num_round(res);
+
+    
+    // форматирование мантиссы результата
+    formate_res(&res->mantissa);
+    
+    // В результате деление слишком большое или маленькое число
+    if (res->exponent > MAX_EXP)
+        return MACHINE_INF;
+    if (res->exponent < MIN_EXP)
+        return MACHINE_ZERO;
+    
+    return OK;
+}

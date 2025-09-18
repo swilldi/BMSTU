@@ -27,3 +27,6 @@ void print_large_num_info(const large_num_t *num);
 
 void print_ulong_num_info(const ulong_num_t *num);
 
+void print_error_message(int rc);
+
+void ruler(void);

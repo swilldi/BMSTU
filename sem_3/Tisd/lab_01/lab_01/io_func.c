@@ -5,11 +5,9 @@
 #include "io_func.h"
 #include "errors_code.h"
 
-
-#define OK 0
-
 #define BUFFER_SIZE 128
 
+// ввод длинного числа
 int input_large_num(large_num_t *num, NUMBER_TYPE t)
 {
     char buffer[BUFFER_SIZE], clear_str[STR_INPUT_LEN + 1];
@@ -30,6 +28,7 @@ int input_large_num(large_num_t *num, NUMBER_TYPE t)
     return OK;
 }
 
+// ввод строки
 int input_str(char *str, size_t max_len)
 {
     if (fgets(str, max_len, stdin) == NULL)
@@ -40,6 +39,7 @@ int input_str(char *str, size_t max_len)
     return OK;
 }
 
+// проверка строки на валидность
 int str_is_valid(char *str, NUMBER_TYPE type)
 {
     int digit_count = 0;
@@ -230,5 +230,64 @@ void print_ulong_num_info(const ulong_num_t *num)
     printf("mantissa: ");
     for (size_t i = 1; i <= num->len; i++)
         printf("%d|", num->digits[num->len - i]);
+    printf("\n");
+}
+
+// вывод сообщения об ошибке, по коду ошибки
+void print_error_message(int rc)
+{
+    char msg[128];
+    
+    switch (rc)
+    {
+        case INPUT_ERROR:
+            sprintf(msg, "input error");
+            break;
+        case EMPTY_STR:
+            sprintf(msg, "empty string");
+            break;
+        case OVERFLOW_STR:
+            sprintf(msg, "string is too large (more 127 symbols)");
+            break;
+        case INVALID_TYPE:
+            sprintf(msg, "invalid type of number");
+            break;
+        case INVALID_NUMBER:
+            sprintf(msg, "number is invalid");
+            break;
+        case OVERFLOW_NUMBER:
+            sprintf(msg, "mantissa is too large");
+            break;
+        case OVERFLOW_EXPONENT:
+            sprintf(msg, "exponent is too large");
+            break;
+        case MACHINE_INF:
+            sprintf(msg, "result is machine infinite");
+            break;
+        case MACHINE_ZERO:
+            sprintf(msg, "result is machine zero");
+            break;
+        case DIVISION_BY_ZERO:
+            sprintf(msg, "division by zero");
+            break;
+        default:
+            sprintf(msg, "unknown error (code: %d)", rc);
+            break;
+    }
+    
+    printf("%s\n", msg);
+}
+
+// вроде так линейка
+void ruler(void)
+{
+    for (size_t i = 0; i < 16; i++)
+        printf("-");
+    printf("|");
+    for (size_t i = 2; i <= DIGITS_COUNT_MAX; i++)
+        if (i % 10 == 0)
+            printf("|");
+        else
+            printf("-");
     printf("\n");
 }
