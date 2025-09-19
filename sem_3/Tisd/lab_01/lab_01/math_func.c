@@ -258,19 +258,18 @@ int large_num_divide(large_num_t *dividend, large_num_t *divider, large_num_t *r
 
     } while (res->mantissa.len < DIGITS_COUNT_MAX + 1);
 
-    // округление числа если, длина мантиссы больше максимальной
-    if (res->mantissa.len >= DIGITS_COUNT_MAX + 1)
-        large_num_round(res);
-
-    
-    // форматирование мантиссы результата
-    formate_res(&res->mantissa);
-    
     // В результате деление слишком большое или маленькое число
     if (res->exponent > MAX_EXP)
         return MACHINE_INF;
     if (res->exponent < MIN_EXP)
         return MACHINE_ZERO;
+    
+    // округление числа если, длина мантиссы больше максимальной
+    if (res->mantissa.len >= DIGITS_COUNT_MAX + 1)
+        large_num_round(res);
+    
+    // форматирование мантиссы результата
+    formate_res(&res->mantissa);
     
     return OK;
 }

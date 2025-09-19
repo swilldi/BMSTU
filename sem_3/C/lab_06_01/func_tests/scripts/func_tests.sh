@@ -26,7 +26,7 @@ function run_test
         fi
         rc="$?"
 
-        # echo $rc
+        # echo 1
         test_name=$(echo "$in_data" | grep -Eo "(pos)?(neg)?_[0-9]{2}")
         if [ "$rc" -eq "0" ]; then
             if $verb; then
