@@ -1,4 +1,0 @@
-*.txt
-!*/data/*.txt
-*.exe
-*.o
