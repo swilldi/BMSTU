@@ -1,10 +1,10 @@
 #!/bin/bash
 
-start_directory=$(pwd)
-while ! (pwd | grep -qE "lab(_[0-9][0-9]){2,3}$"); do
-    # pwd
-    cd .. || exit
-done
+# start_directory=$(pwd)
+# while ! (pwd | grep -qE "lab(_[0-9][0-9]){2,3}$"); do
+#     # pwd
+#     cd .. || exit
+# done
 
 for type in o gcno gcda gcov txt out exe bin
 do
