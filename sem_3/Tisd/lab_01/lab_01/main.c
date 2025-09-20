@@ -6,12 +6,12 @@
 #include <stdio.h>
 
 
-
-
 void number_info(void)
 {
+    printf("Divide int to float\n");
     printf("Max count of digits in mantissa: %d\nMax count of digits in exponent: %d\n", 
             DIGITS_COUNT_MAX, EXPONENTA_COUNT_MAX);
+    printf("frormat input:\nInt: N, len N <= 40\nFloat: N.M[eE]+-K, len N + M <= 40, len K <= 5\n");
 }
 
 int main(void)
@@ -19,7 +19,7 @@ int main(void)
    large_num_t a, b, res;
    int rc;
     
-    number_info();
+   number_info();
 
    ruler();
    printf("Entry dividend: ");

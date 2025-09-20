@@ -83,7 +83,10 @@ int str_is_valid(char *str, NUMBER_TYPE type)
     }
 
     // Шаг 4: Проверка экспоненты [Ee]
-    if (*str == 'e' || *str == 'E') {
+    if ((*str == 'e' || *str == 'E') && type == INT) {
+        return INVALID_NUMBER;
+    }
+    else if (*str == 'e' || *str == 'E') {
         str++;
         int exp_digit_count = 0;
 
