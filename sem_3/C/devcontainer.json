@@ -1,0 +1,16 @@
+{
+    "name": "AlpineDevEnv",
+    "build": {
+        "dockerfile": "~/BMSTU/devcontainer/Dockerfile",
+        "context": ".."
+    },
+    "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-vscode.cpptools-extension-pack",
+        "usernamehw.errorlens"
+      ]
+    }
+  },
+  "remoteUser": "dev"
+}

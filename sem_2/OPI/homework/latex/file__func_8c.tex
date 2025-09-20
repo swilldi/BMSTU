@@ -1,0 +1,99 @@
+\doxysection{src/file\+\_\+func.c File Reference}
+\hypertarget{file__func_8c}{}\label{file__func_8c}\index{src/file\_func.c@{src/file\_func.c}}
+{\ttfamily \#include "{}file\+\_\+func.\+h"{}}\newline
+{\ttfamily \#include "{}exit\+\_\+codes.\+h"{}}\newline
+{\ttfamily \#include "{}stdio.\+h"{}}\newline
+{\ttfamily \#include "{}str\+\_\+info.\+h"{}}\newline
+{\ttfamily \#include $<$assert.\+h$>$}\newline
+{\ttfamily \#include $<$string.\+h$>$}\newline
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+int \mbox{\hyperlink{file__func_8c_a4bb27a3a27428adc8e5f0fe0ab74b04f}{is\+\_\+empty\+\_\+file}} (FILE \texorpdfstring{$\ast$}{*}file)
+\begin{DoxyCompactList}\small\item\em проверяет пустой ли файл \end{DoxyCompactList}\item 
+int \mbox{\hyperlink{file__func_8c_a724c5910f5772da31196c919ecf87aab}{read\+\_\+line}} (char str\mbox{[}$\,$\mbox{]}, FILE \texorpdfstring{$\ast$}{*}file)
+\begin{DoxyCompactList}\small\item\em Читает одну строку из файла \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{file__func_8c_a49186e35095eaae9c0f85afb222543bb}{write\+\_\+arr}} (char words\mbox{[}$\,$\mbox{]}\mbox{[}\mbox{\hyperlink{str__info_8h_a440aadc538a75ca510439c46c27546ba}{WORD\+\_\+\+LEN}}\mbox{]}, size\+\_\+t count, FILE \texorpdfstring{$\ast$}{*}file)
+\begin{DoxyCompactList}\small\item\em Запимывает в файл элементы массива через пробел \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function Documentation}
+\Hypertarget{file__func_8c_a4bb27a3a27428adc8e5f0fe0ab74b04f}\index{file\_func.c@{file\_func.c}!is\_empty\_file@{is\_empty\_file}}
+\index{is\_empty\_file@{is\_empty\_file}!file\_func.c@{file\_func.c}}
+\doxysubsubsection{\texorpdfstring{is\_empty\_file()}{is\_empty\_file()}}
+{\footnotesize\ttfamily \label{file__func_8c_a4bb27a3a27428adc8e5f0fe0ab74b04f} 
+int is\+\_\+empty\+\_\+file (\begin{DoxyParamCaption}\item[{FILE \texorpdfstring{$\ast$}{*}}]{file}{}\end{DoxyParamCaption})}
+
+
+
+проверяет пустой ли файл 
+
+
+\begin{DoxyParams}{Parameters}
+{\em file} & \mbox{[}in\mbox{]} файловая переменная \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Результат проверки 
+\end{DoxyReturn}
+
+\begin{DoxyRetVals}{Return values}
+{\em 1} & Файл пустой \\
+\hline
+{\em 0} & Файл НЕ пустой \\
+\hline
+\end{DoxyRetVals}
+\Hypertarget{file__func_8c_a724c5910f5772da31196c919ecf87aab}\index{file\_func.c@{file\_func.c}!read\_line@{read\_line}}
+\index{read\_line@{read\_line}!file\_func.c@{file\_func.c}}
+\doxysubsubsection{\texorpdfstring{read\_line()}{read\_line()}}
+{\footnotesize\ttfamily \label{file__func_8c_a724c5910f5772da31196c919ecf87aab} 
+int read\+\_\+line (\begin{DoxyParamCaption}\item[{char}]{str}{\mbox{[}$\,$\mbox{]}, }\item[{FILE \texorpdfstring{$\ast$}{*}}]{file}{}\end{DoxyParamCaption})}
+
+
+
+Читает одну строку из файла 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\texttt{ out}}  & {\em str} & Буфер для записи строки (размер \texorpdfstring{$>$}{>}= STR\+\_\+\+LEN + 2) \\
+\hline
+\mbox{\texttt{ in}}  & {\em file} & Файловая переменная\\
+\hline
+\end{DoxyParams}
+\begin{DoxyNote}{Note}
+Удаляет символ перевода строки \textquotesingle{}~\newline
+\textquotesingle{} в конце
+\end{DoxyNote}
+\begin{DoxyReturn}{Returns}
+Код завершения 
+\end{DoxyReturn}
+
+\begin{DoxyRetVals}{Return values}
+{\em OK} & Успешное чтение \\
+\hline
+{\em READ\+\_\+\+ERROR} & Ошибка чтения \\
+\hline
+{\em STR\+\_\+\+OVERFLOW} & Превышена максимальная длина строки \\
+\hline
+{\em EMPTY\+\_\+\+STR} & Считана пустая строка \\
+\hline
+\end{DoxyRetVals}
+\Hypertarget{file__func_8c_a49186e35095eaae9c0f85afb222543bb}\index{file\_func.c@{file\_func.c}!write\_arr@{write\_arr}}
+\index{write\_arr@{write\_arr}!file\_func.c@{file\_func.c}}
+\doxysubsubsection{\texorpdfstring{write\_arr()}{write\_arr()}}
+{\footnotesize\ttfamily \label{file__func_8c_a49186e35095eaae9c0f85afb222543bb} 
+void write\+\_\+arr (\begin{DoxyParamCaption}\item[{char}]{words}{\mbox{[}$\,$\mbox{]}\mbox{[}\+WORD\+\_\+\+LEN\mbox{]}, }\item[{size\+\_\+t}]{count}{, }\item[{FILE \texorpdfstring{$\ast$}{*}}]{file}{}\end{DoxyParamCaption})}
+
+
+
+Запимывает в файл элементы массива через пробел 
+
+
+\begin{DoxyParams}{Parameters}
+{\em words} & \mbox{[}in\mbox{]} Массив слов \\
+\hline
+{\em count} & \mbox{[}in\mbox{]} Размер массива \\
+\hline
+{\em file} & \mbox{[}in\mbox{]} Файловая переменная \\
+\hline
+\end{DoxyParams}

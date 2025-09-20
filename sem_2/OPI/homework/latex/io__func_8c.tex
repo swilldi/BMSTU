@@ -1,0 +1,40 @@
+\doxysection{src/io\+\_\+func.c File Reference}
+\hypertarget{io__func_8c}{}\label{io__func_8c}\index{src/io\_func.c@{src/io\_func.c}}
+{\ttfamily \#include "{}io\+\_\+func.\+h"{}}\newline
+{\ttfamily \#include "{}exit\+\_\+codes.\+h"{}}\newline
+{\ttfamily \#include "{}stdio.\+h"{}}\newline
+{\ttfamily \#include "{}str\+\_\+info.\+h"{}}\newline
+{\ttfamily \#include $<$string.\+h$>$}\newline
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+int \mbox{\hyperlink{io__func_8c_a4dc8819663e02b854d97daf1c31955c2}{input\+\_\+str}} (char str\mbox{[}$\,$\mbox{]})
+\begin{DoxyCompactList}\small\item\em Ввод строки из стандартного потока ввода \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Function Documentation}
+\Hypertarget{io__func_8c_a4dc8819663e02b854d97daf1c31955c2}\index{io\_func.c@{io\_func.c}!input\_str@{input\_str}}
+\index{input\_str@{input\_str}!io\_func.c@{io\_func.c}}
+\doxysubsubsection{\texorpdfstring{input\_str()}{input\_str()}}
+{\footnotesize\ttfamily \label{io__func_8c_a4dc8819663e02b854d97daf1c31955c2} 
+int input\+\_\+str (\begin{DoxyParamCaption}\item[{char}]{str}{\mbox{[}$\,$\mbox{]}}\end{DoxyParamCaption})}
+
+
+
+Ввод строки из стандартного потока ввода 
+
+
+\begin{DoxyParams}{Parameters}
+{\em str} & \mbox{[}out\mbox{]} Буффер для строки \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Код возврата 
+\end{DoxyReturn}
+
+\begin{DoxyRetVals}{Return values}
+{\em READ\+\_\+\+ERROR} & ошибка чтения stdin \\
+\hline
+{\em STR\+\_\+\+OVERFLOW} & введенная строка превышает 100 символов \\
+\hline
+\end{DoxyRetVals}
