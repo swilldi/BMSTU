@@ -5,6 +5,9 @@ OBJS := $(patsubst ./src/%.c, ./out/%.o, $(wildcard ./src/*.c))
 
 .PHONY: clean release debug asan ubsan msan func func_tests
 
+test:
+	echo $(SRCS)
+
 ### СБОРКИ ПРОГРАММЫ
 # сборка основной программы
 app.exe: $(OBJS)
@@ -68,9 +71,9 @@ func_msan: msan
 NODEPS := clean test
 
 ./out/%.d: ./src/%.c
-	$(CC) -MM $< > $@
+	$(CC) $(CFLAGS) -MM $< > $@
 
-SRCS := $(wildcard ./out/*.d)
+SRCS := $(patsubst ./src/%.c, ./out/%.d, $(wildcard ./src/*.c))
 ifeq (0, $(words $(findstring $(MAKECMDGOALS), $(NODEPS))))
 	include $(SRCS)
 endif
