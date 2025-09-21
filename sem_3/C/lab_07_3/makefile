@@ -1,14 +1,14 @@
 CC := gcc
-CFALGS := -Wall -Werror -Wextra -Wpedantic -std=c99 -Wfloat-equal -Wfloat-conversion -Wvla
+CFLAGS := -Wall -Werror -Wextra -Wpedantic -std=c99 -Wfloat-equal -Wfloat-conversion -Wvla -Iinc
 LDFLAGS := -lm
-OBJS := $(patsubst %.c, %.o, $(wildcard *.c))
+OBJS := $(patsubst ./src/%.c, ./out/%.o, $(wildcard ./src/*.c))
 
 .PHONY: clean release debug asan ubsan msan func func_tests
 
 ### СБОРКИ ПРОГРАММЫ
 # сборка основной программы
 app.exe: $(OBJS)
-	$(CC) $^ -o $@
+	$(CC) $^ $(LDFLAGS) -o $@
 
 # релизная сборка
 release: CFLAGS += -g0
@@ -61,23 +61,25 @@ func_msan: msan
 
 
 # Объектные файлы
-%.o: %.c
-	$(CC) $(CFALGS) -c $<
+./out/%.o: ./src/%.c
+	$(CC) $(CFLAGS) -c $< -o $@
 
 # Dependens файлы, с зависимостями
-NODEPS := clean
+NODEPS := clean test
 
-%.d: %.c
+./out/%.d: ./src/%.c
 	$(CC) -MM $< > $@
 
-SRCS := $(wildcard *.c)
+SRCS := $(wildcard ./out/*.d)
 ifeq (0, $(words $(findstring $(MAKECMDGOALS), $(NODEPS))))
-	include $(patsubst %.c, %.d, $(SRCS))
+	include $(SRCS)
 endif
 
 # очиста генерируемых файлов
 clean:
-	rm -f *.o *.exe *.d *.txt *.bin *.gcno *.gcda *.gcov
+# 	rm -fr *.o *.exe *.d *.txt *.bin *.gcno *.gcda *.gcov
+	rm -rf out
+	mkdir -p out
 	
 
 # TODO
