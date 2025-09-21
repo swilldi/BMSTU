@@ -2,10 +2,10 @@
 
 start=$(pwd)
 
-cd /Users/dmitriy/BMSTU/sem_3/C/lab_06_01/func_tests/data
+cd ./func_tests/data
 
 # Файлы для позитивных тестов
-for i in $(seq 1 15); do
+for i in $(seq 1 13); do
     if [ $i -ge 10 ]; then
         num=$i
     else
@@ -15,11 +15,13 @@ for i in $(seq 1 15); do
     title="pos_"$num"_"
     touch $title"in.txt"
     touch $title"out.txt"
-    touch $title"args.txt"
+    echo "$title""in_file.txt ""$title""out_file.txt" > $title"args.txt"
+    touch $title"in_file.txt"
+    touch $title"out_file.txt"
 done
 
 # Файлы для негативных тестов
-for i in $(seq 1 5); do
+for i in $(seq 1 6); do
     if [ $i -ge 10 ]; then
         num=$i
     else
@@ -28,8 +30,8 @@ for i in $(seq 1 5); do
     
     title="neg_"$num"_"
     touch $title"in.txt"
-    touch $title"out.txt"
-    touch $title"args.txt"
+    echo "$title""in_file.txt ""$title""out_file.txt" > $title"args.txt"
+    # touch $title"out_file.txt"
 done
 
 cd $start

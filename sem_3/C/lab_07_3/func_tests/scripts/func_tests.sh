@@ -67,7 +67,7 @@ function table_bottom
 }
 
 start_directory=$(pwd)
-while ! (pwd | grep -qE "lab(_[0-9][0-9]){2,3}$"); do
+while ! (pwd | grep -qE "lab(_[0-9]?[1-9]){1,3}$"); do
     # pwd
     cd .. || exit
 done
