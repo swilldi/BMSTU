@@ -1,16 +1,25 @@
 CC := gcc
 CFLAGS := -Wall -Werror -Wextra -Wpedantic -std=c99 -Wfloat-equal -Wfloat-conversion -Wvla -Iinc
 LDFLAGS := -lm
-OBJS := $(patsubst ./src/%.c, ./out/%.o, $(wildcard ./src/*.c))
 
-.PHONY: clean release debug asan ubsan msan func func_tests
+SRCS := $(wildcard ./src/*.c)
+OBJS := $(patsubst ./src/%.c, ./out/%.o, $(SRCS))
+UNIT_OBJS := $(patsubst ./unit_tests/%.c, ./out/%.o, $(wildcard ./unit_tests/*.c)) $(filter-out ./out/main.o, $(OBJS))
 
-test:
-	echo $(SRCS)
+DEPS := $(patsubst ./%.o, ./%.d, $(OBJS)) $(patsubst ./%.o, ./%.d, $(UNIT_OBJS))
+NODEPS := clean
+
+.PHONY: clean release debug asan ubsan msan func func_tests unit_tests.exe
 
 ### СБОРКИ ПРОГРАММЫ
 # сборка основной программы
 app.exe: $(OBJS)
+	@echo $^
+	@echo $(DEPS)
+	$(CC) $^ $(LDFLAGS) -o $@
+# сборка модульных тестов
+unit_tests.exe: $(UNIT_OBJS)
+	echo $^
 	$(CC) $^ $(LDFLAGS) -o $@
 
 # релизная сборка
@@ -65,29 +74,24 @@ func_msan: msan
 
 # Объектные файлы
 ./out/%.o: ./src/%.c
-	$(CC) $(CFLAGS) -c $< -o $@
+	$(CC) $(CFLAGS) -MMD -MP -c $< -o $@
+./out/%.o: ./unit_tests/%.c
+	$(CC) $(CFLAGS)  -MMD -MP -c $< -o $@
 
-# Dependens файлы, с зависимостями
-NODEPS := clean test
-
-./out/%.d: ./src/%.c
-	$(CC) $(CFLAGS) -MM $< > $@
-
-SRCS := $(patsubst ./src/%.c, ./out/%.d, $(wildcard ./src/*.c))
 ifeq (0, $(words $(findstring $(MAKECMDGOALS), $(NODEPS))))
-	include $(SRCS)
+	-include $(DEPS)
 endif
 
 # очиста генерируемых файлов
 clean:
 # 	rm -fr *.o *.exe *.d *.txt *.bin *.gcno *.gcda *.gcov
 	rm -rf out
+	rm -f *.exe
 	mkdir -p out
 	
 
 # TODO
-# # сборка модульных тестов
-# unit_tests.exe
+
 
 # # запуск модульных тестов
 # unit
