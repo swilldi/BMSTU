@@ -16,12 +16,9 @@ NODEPS := clean
 ### СБОРКИ ПРОГРАММЫ
 # сборка основной программы
 app.exe: $(OBJS)
-	@echo $^
-	@echo $(DEPS)
 	$(CC) $^ $(LDFLAGS) -o $@
 # сборка модульных тестов
 unit_tests.exe: $(UNIT_OBJS)
-	echo $^
 	$(CC) $^ $(LDFLAGS) -o $@
 
 # релизная сборка

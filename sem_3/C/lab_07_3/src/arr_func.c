@@ -20,7 +20,7 @@ int key(const int *pb_src, const int *pe_src, int **pb_dst, int **pe_dst)
     // копирование элементов в новый массив
     for (int *pc_src = (int *)pb_src, *pc_dst = *pb_dst; pc_src < p_last_neg; pc_src++, pc_dst++)
         *pc_dst = *pc_src;
-    
+
     return OK;
 }
 
@@ -39,4 +39,3 @@ bool arr_is_empty(int *pd, int *pe)
 {
     return pd != pe;
 }
-

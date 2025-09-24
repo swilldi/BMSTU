@@ -1,7 +1,6 @@
 #include "sort.h"
 
-
-int sort(void* pbeg, size_t count, size_t size, comparator_t cmp)
+int sort(void *pbeg, size_t count, size_t size, comparator_t cmp)
 {
     void *tmp = malloc(size);
     if (tmp == NULL)
@@ -16,7 +15,7 @@ int sort(void* pbeg, size_t count, size_t size, comparator_t cmp)
                 swap(pprev, pprev + size, size, tmp);
         }
         ptop -= size;
-        
+
         if (ptop <= pbottom)
             break;
 

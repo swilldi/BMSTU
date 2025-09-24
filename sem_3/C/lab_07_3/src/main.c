@@ -1,10 +1,10 @@
+#include "arr_func.h"
+#include "exit_code.h"
+#include "file_func.h"
+#include "sort.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "sort.h"
-#include "file_func.h"
-#include "arr_func.h"
-#include "exit_code.h"
 
 void print_err_msg(int rc)
 {
@@ -32,7 +32,7 @@ void print_err_msg(int rc)
             break;
         case EMPTY_ARR:
             msg = "После фильтрации массив пустой";
-            break; 
+            break;
         default:
             msg = "Неизвестная ошибка";
             break;
@@ -52,7 +52,7 @@ int main(int argc, char **argv)
         return TOO_FEW_ARGS;
     else if (argc > 4)
         return TOO_MUCH_ARGS;
-    
+
     bool key_is_valid = false;
     if (argc == 4)
     {
@@ -63,7 +63,6 @@ int main(int argc, char **argv)
         print_err_msg(INVALID_ARGS);
         return INVALID_ARGS;
     }
-        
 
     // открывам файл и считаем кол-во чисел
     int rc;
@@ -73,8 +72,7 @@ int main(int argc, char **argv)
         print_err_msg(OPEN_FILE_ERROR);
         return OPEN_FILE_ERROR;
     }
-        
-    
+
     size_t count;
     rc = count_nums(f, &count);
     if (rc != OK)
@@ -82,13 +80,13 @@ int main(int argc, char **argv)
         print_err_msg(rc);
         return rc;
     }
-        
+
     if (count == 0)
     {
         print_err_msg(EMPTY_ARR);
         return EMPTY_ARR;
     }
-    
+
     // выделяем память
     int *arr_b = NULL;
     arr_b = malloc(sizeof(int) * count);
@@ -131,5 +129,3 @@ int main(int argc, char **argv)
     free(arr_b);
     arr_b = NULL;
 }
-
-
