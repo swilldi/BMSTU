@@ -18,6 +18,7 @@ NODEPS := clean
 app.exe: $(OBJS)
 	$(CC) $^ $(LDFLAGS) -o $@
 # сборка модульных тестов
+unit_tests.exe: LDFLAGS += -lcheck 
 unit_tests.exe: $(UNIT_OBJS)
 	$(CC) $^ $(LDFLAGS) -o $@
 
