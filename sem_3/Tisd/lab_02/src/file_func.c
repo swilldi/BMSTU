@@ -126,4 +126,8 @@ int read_item(FILE *f, car_t *car)
     return rc;
 }
 
+int read_items(FILE *f, car_t *cat_table)
+{
+    
+}
 
