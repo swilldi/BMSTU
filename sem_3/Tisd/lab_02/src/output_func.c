@@ -1,9 +1,4 @@
-#include <stdio.h>
-#include <string.h>
-
-#include "io_func.h"
-#include "structs.h"
-
+#include "output_func.h"
 
 void country_to_str(char *str, countries country)
 {
@@ -50,7 +45,7 @@ void print_car(car_t *car)
     char str_country[32];
     country_to_str(str_country, car->country);
 
-    printf("| %7s | %7s |", car->brend, str_country);
+    printf("| %9s | %7s |", car->brend, str_country);
     
     if (car->country != RUSSIA)
         printf(" %7s |", car->servies ? "Yes" : "No");
@@ -75,4 +70,55 @@ void print_car(car_t *car)
             car->info.u.repairing
         );
     }
+}
+
+void print_cars(car_t *car_table, size_t len)
+{
+    print_header();
+    for (size_t i = 0; i < len; i++)
+        print_car(&car_table[i]);
+    printf(SEPARATOR_LINE);
+}
+
+void print_key_table_value(key_value_t *key)
+{
+    printf("| %11lu | %14.2lf |\n", key->index, key->value.num_f);
+}
+
+void print_keys_table(key_value_t *key_table, size_t len)
+{
+    print_header_key_table();
+    for (size_t i = 0; i < len; i++)
+        print_key_table_value(&key_table[i]);
+    printf(SEPARATOR_LINE_KEY);
+}
+
+void print_cars_table_by_key_table(car_t *car_table, key_value_t *key_table, size_t len)
+{
+    size_t ind;
+
+    print_header();
+    for (size_t i = 0; i < len; i++)
+    {
+        ind = key_table[i].index;
+        print_car(&car_table[ind]);
+    }
+    printf(SEPARATOR_LINE);
+}
+
+void print_header(void)
+{   printf(
+        SEPARATOR_LINE
+        "|   Brend   | Country | Servies |      Prise     |   Color  | Condition | Warranty | Year | Milage | Owners | Repairing |\n"
+        SEPARATOR_LINE
+    );
+}
+
+void print_header_key_table(void)
+{
+    printf(
+        SEPARATOR_LINE_KEY
+        "|    index    |      Prise     |\n"
+        SEPARATOR_LINE_KEY
+    );
 }

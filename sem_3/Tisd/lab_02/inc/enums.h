@@ -31,12 +31,6 @@ typedef enum
     USA
 } countries;
 
-#define COUNTRIES_MAX USA
-#define PRISE_MAX 999999999.99
-#define WARRANTY_MAX 100
-#define YEAR_MAX 4000
-#define MILAGE_MAX 1000000
-#define OWNERS_MAX 100
-#define REPAIRING_MAX 100
+
 
 #endif

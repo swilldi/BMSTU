@@ -11,10 +11,11 @@
 #define NUM_NOT_IN_RANGE 6
 #define INVALID_BOOL_FIELD 7
 #define INVALID_VALUE_IN_FIELD 8
-// #define
-// #define
-// #define
-// #define
+#define NOT_FOUND_FIELD 9
+#define INPUT_ERROR 10
+#define INVALID_RANGE_COMMAND 11
+#define EMPTY_FILE 12
+#define INVALID_VALUE_IN_FILTER 13
 // #define
 // #define
 // #define

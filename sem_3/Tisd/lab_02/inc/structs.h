@@ -9,6 +9,18 @@
 
 #define STR_LEN 32
 
+#define BREND_LEN 9
+#define SERVISE_MAX 2
+#define COLOR_LEN 8
+#define COUNTRIES_MAX USA
+#define PRISE_MAX 999999999.99
+#define IS_NEW_MAX 2
+#define WARRANTY_MAX 100
+#define YEAR_MAX 4000
+#define MILAGE_MAX 1000000
+#define OWNERS_MAX 100
+#define REPAIRING_MAX 100
+
 // Информация о не новом автомобиле
 typedef struct
 {
@@ -42,12 +54,9 @@ typedef struct
 
 typedef struct 
 {
-    char *brend;        // марка 
-    countries country;  // страна поизводителя
-    bool servies;       // есть ли обслуживание
+    char brend[STR_LEN];        // марка 
     double min_prise; // цена
     double max_prise; // цена
-    char *color;        // цвет
     bool is_new;        // состояние новая или нет
     union 
     {

@@ -66,5 +66,12 @@ float cmp_car_prise(const void *a, const void *b)
 {
     car_t *p_car_a = (car_t *)a;
     car_t *p_car_b = (car_t *)b;
-    return fabs(p_car_a->prise - p_car_b->prise) > EPS;
+    return p_car_a->prise - p_car_b->prise;
+}
+
+float cmp_car_prise_by_key(const void *a, const void *b)
+{
+    key_value_t *p_key_value_a = (key_value_t *)a;
+    key_value_t *p_key_value_b = (key_value_t *)b;
+    return p_key_value_a->value.num_f - p_key_value_b->value.num_f;
 }

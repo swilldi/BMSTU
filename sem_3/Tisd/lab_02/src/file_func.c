@@ -2,6 +2,9 @@
 #include "exit_code.h"
 #include "stdio.h"
 #include "structs.h"
+#include "file_func.h"
+
+
 
 int read_str(FILE *f, char *str, size_t max_len)
 {
@@ -99,11 +102,11 @@ int set_car_value(car_t *car, car_fields field, char *value)
     return OK;
 }
 
-int read_item(FILE *f, car_t *car)
+int read_car(FILE *f, car_t *car)
 {
-    char buff[128], *value = NULL;
+    char buff[BUFF_LEN], *value = NULL;
     int rc;
-    rc = read_str(f, buff, 128 - 2);
+    rc = read_str(f, buff, BUFF_LEN - 2);
     if (rc != OK)
         return rc;
 
@@ -126,8 +129,72 @@ int read_item(FILE *f, car_t *car)
     return rc;
 }
 
-int read_items(FILE *f, car_t *cat_table)
+
+size_t count_items(FILE *f)
 {
-    
+    fseek(f, 0, SEEK_SET);
+
+    size_t len = 0;
+    char buff[BUFF_LEN];
+    while (fgets(buff, BUFF_LEN, f) != NULL)
+        len++;
+
+    fseek(f, 0, SEEK_SET);
+    return len;
 }
 
+int read_cars(FILE *f, car_t **car_table, size_t *len)
+{
+    int rc;
+    *len = count_items(f);
+
+    // выделение памяти
+    if (*car_table == NULL)
+        *car_table = malloc(*len * sizeof(car_t));
+        
+    if (*car_table == NULL)
+        return DINAMIC_MEMORRY_ERROR;
+
+    for (size_t i = 0; i < *len; i++)
+    {
+        rc = read_car(f, &(*car_table)[i]);
+        if (rc != OK)
+            break;
+    }
+
+    if (rc != OK)
+    {
+        free(*car_table);
+        *car_table = NULL;
+    }
+
+    return rc;
+}
+
+bool is_empty(FILE *f)
+{
+    size_t start, end;
+    
+    fseek(f, 0, SEEK_SET);
+    start = ftell(f);
+    fseek(f, 0, SEEK_END);
+    end = ftell(f);
+
+    fseek(f, 0, SEEK_SET);
+    return start == end;
+
+}
+
+int open_file(FILE **f, char *path)
+{
+    fclose(*f);
+    
+    *f = fopen(path, "r");
+    if (*f == NULL)
+        return ERROR_OPEN_FILE;
+    
+    if (is_empty(*f))
+        return EMPTY_FILE;
+
+    return OK;
+}
