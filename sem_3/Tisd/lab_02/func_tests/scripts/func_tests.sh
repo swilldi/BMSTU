@@ -17,14 +17,15 @@ function run_test
         
         # pwd
         if [ "$type" = "pos" ]; then
-            ./func_tests/scripts/pos_case.sh "$in_data" "$out_data" "$args_file"
+            ./func_tests/scripts/pos_case.sh "$in_data" "$out_data"
             # cat "$file_name"_in.txt "$file_name"_out.txt
             # echo $result
         elif [ "$type" = "neg" ]; then
             # cat "$file_name"_in.txt
-            ./func_tests/scripts/neg_case.sh "$in_data" "$args_file"
+            ./func_tests/scripts/neg_case.sh "$in_data"
         fi
         rc="$?"
+        # echo $rc
 
         # echo 1
         test_name=$(echo "$in_data" | grep -Eo "(pos)?(neg)?_[0-9]{2}")

@@ -2,159 +2,79 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include "file_func.h"
-#include "table_func.h"
-#include "sort.h"
 #include <string.h>
+
 #include "input_func.h"
 #include "output_func.h"
 #include "test.h"
-
-
-#define COMMAND_MAX 8
-
-typedef enum 
-{
-    EXIT,
-    ADD_NEW_FIELD,
-    REMOVE_FIELD,
-    SEARCH,
-    TABLE_KEY,
-    TABLE_CAR,
-    TABLE_CAR_BY_KEY,
-    CMP_TABLE_METHOD,
-    CMP_SORT
-} command_t;
-
-void print_command_list(void)
-{
-    printf(
-        "1. Добавить запись в конец таблицы\n"
-        "2. Удалить запись из таблицы\n"
-        "3. Выполнить поиск в диапазоне цен\n"
-        "4. Вывод отсортированной таблицы ключей (исходная таблица не изменяется)\n"
-        "5. Вывод отсортированной таблицы (сортируется сама таблица)\n"
-        "6. Вывод отсортированной таблицы (по отсортированной таблице ключей)\n"
-        "7. Сравнить эффективность обработки исходной таблицы и таблицы ключей\n"
-        "8. Сравнить алгоритм сортировки \"Пузырек\" и \"Шейкер\"\n"
-        "0. Выйти\n"
-    );
-}
-
-
-
-
-
-
-
-
-
-int input_command(command_t *command)
-{
-    printf("Entry command: ");
-    if (scanf("%d", command) != 1)
-        return INPUT_ERROR;
-    if (*command > COMMAND_MAX || *command < 0)
-        return INVALID_RANGE_COMMAND;
-    
-    return OK;
-}
-
-
-void print_error_msg(int code)
-{
-    switch (code)
-    {
-        case FILE_NOT_SELECTED:
-            printf("file not selected\n");
-            return;
-        case FILE_IS_EMPTY:
-            printf("file is empty\n");
-            return;
-        case ERROR_OPEN_FILE:
-            printf("error with open file\n");
-            return;
-        case DINAMIC_MEMORRY_ERROR:
-            printf("error with dinamic memory\n");
-            return;
-        case NUM_NOT_IN_RANGE:
-            printf("number not in range\n");
-            return;
-        case INVALID_BOOL_FIELD:
-            printf("invalid bool field in file\n");
-            return;
-        case INVALID_VALUE_IN_FIELD:
-            printf("invalid value field in file\n");
-            return;
-        case NOT_FOUND_FIELD:
-            printf("not found field\n");
-            return;
-        case INPUT_ERROR:
-            printf("input error\n");
-            return;
-        case INVALID_RANGE_COMMAND:
-            printf("invalid number of command\n");
-            return;
-    }
-}
-
-
-
-
+#include "sort.h"
+#include "file_func.h"
+#include "table_func.h"
 
 // сортировка по цене
 int main(void)
 {
+    FILE *f = NULL;
     command_t cmd = 1;
+    bool running = true;
     int rc = 0;
     char buff[BUFF_LEN];
-    size_t len, max_len;
-    double price;
-    FILE *f = NULL;
-
+    
     car_t *car_table = NULL;
-    key_value_t *key_table = NULL;
-
-    bool running = true;
     car_t *car_filtered_table = NULL;
-    size_t len_filtered = 0;            
+    key_value_t *key_table = NULL;
+    size_t len, max_len, len_filtered = 0;
+    
     car_filter filter;
     car_t new_car;
+    double price;
 
-    
-
+    #ifndef FUNC_OUT
     print_command_list();
-
-    printf("Введите путь к файлу: ");
-    rc = input_str(buff, BUFF_LEN - 2);
-    if (rc != OK)
-    {
-        print_error_msg(rc);
-        return rc;
-    }
-
-    rc = open_file(&f, buff);
-    if (rc != OK)
-    {
-        print_error_msg(rc);
-        return rc;
-    }
-
-    rc = read_cars(f, &car_table, &len);
-    if (rc != OK)
-    {
-        print_error_msg(rc);
-        return rc;
-    }
-    max_len = len;
+    #endif
 
     while (running)
-    {
+    {    
+        if (cmd != EXIT)
+        {
+            #ifndef FUNC_OUT
+            printf("Введите номер команды: ");
+            #endif
+
+            rc = input_command(&cmd);
+        }
+            
         if (rc != OK)
             cmd = EXIT;
-            
-        if (cmd != EXIT)
-            rc = input_command(&cmd);
+        
+        if (cmd != EXIT && cmd < CMP_TABLE_METHOD && f == NULL)
+        {
+            #ifndef FUNC_OUT
+            printf("Введите путь к файлу: ");
+            #endif
+
+            rc = input_str(buff, BUFF_LEN - 2);
+            if (rc != OK)
+            {
+                print_error_msg(rc);
+                return rc;
+            }
+
+            rc = open_file(&f, buff);
+            if (rc != OK)
+            {
+                print_error_msg(rc);
+                return rc;
+            }
+
+            rc = read_cars(f, &car_table, &len);
+            if (rc != OK)
+            {
+                print_error_msg(rc);
+                return rc;
+            }
+            max_len = len;
+        }
             
         
         switch (cmd)
@@ -174,11 +94,17 @@ int main(void)
                 break;
             }
 
-            printf("New car added\n");
+            #ifndef FUNC_OUT
+            printf("Машина добавлена\n");
+            #endif
+
             break;
         case REMOVE_FIELD:
 
+            #ifndef FUNC_OUT
             printf("Entry price: ");
+            #endif
+
             rc = input_double(&price, PRISE_MAX);
             if (rc != OK)
             {
@@ -192,8 +118,15 @@ int main(void)
                 break;
             }
 
-            printf("Car deleted\n");
+            #ifndef FUNC_OUT
+            printf("Машина удалена\n");
+            #endif
+
             break;
+        case NOT_SORT_TABLE:
+            print_cars(car_table, len);
+            break;
+
         case SEARCH:
             rc = input_filter(&filter);
             if (rc != OK)
@@ -209,6 +142,7 @@ int main(void)
                 break;
             }
 
+
             search_by_brand_prise(car_table, len, car_filtered_table, &len_filtered, &filter);
             print_cars(car_filtered_table, len_filtered);
 
@@ -216,7 +150,20 @@ int main(void)
             car_filtered_table = NULL;
             break;
         case TABLE_KEY:
+            if (key_table != NULL)
+            {
+                free(key_table);
+                key_table = NULL;
+            }
+
             rc = get_table_key(car_table, &key_table, len);
+            if (rc != OK)
+            {
+                cmd = EXIT;
+                break;
+            }
+
+            rc = shaker_sort(key_table, len, sizeof(key_value_t), cmp_car_prise_by_key);
             if (rc != OK)
             {
                 cmd = EXIT;
@@ -235,6 +182,12 @@ int main(void)
             print_cars(car_table, len);
             break;
         case TABLE_CAR_BY_KEY:
+        if (key_table != NULL)
+            {
+                free(key_table);
+                key_table = NULL;
+            }
+
             rc = get_table_key(car_table, &key_table, len);
             if (rc != OK)
             {
@@ -258,6 +211,7 @@ int main(void)
             if (rc != OK)
             {
                 cmd = EXIT;
+                break;
             }
 
             printf("BUMBLE\n");
@@ -265,6 +219,7 @@ int main(void)
             if (rc != OK)
             {
                 cmd = EXIT;
+                break;
             }
 
             break;
@@ -274,6 +229,7 @@ int main(void)
             if (rc != OK)
             {
                 cmd = EXIT;
+                break;
             }
 
             printf("KEY\n");
@@ -281,25 +237,41 @@ int main(void)
             if (rc != OK)
             {
                 cmd = EXIT;
+                break;
             }
 
             break;
 
         case EXIT:
-            printf("Closing programm\n");
             running = false;
-            
-            free(car_table);
-            car_table = NULL;
-            free(key_table);
-            key_table = NULL;
             break;
         }
     }
     
+    if (f != NULL)
+    {
+        fclose(f);
+        f = NULL;
+    }
+        
+    if (car_table != NULL)
+    {
+        free(car_table);
+        car_table = NULL;
+    } 
+    
+    if (key_table != NULL)
+    {
+        free(key_table);
+        key_table = NULL;
+    }
+
     if (rc != OK)
     {
+        #ifndef FUNC_OUT
         print_error_msg(rc);
+        #endif
+
         return rc;   
     }
 

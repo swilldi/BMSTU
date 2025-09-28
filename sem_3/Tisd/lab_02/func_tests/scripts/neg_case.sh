@@ -5,9 +5,8 @@ in_file=func_tests/data/pos_"$n"_in_file.txt
 # pwd
 # echo cp "$in_file" ./work_file.txt
 
-IFS=' ' read -ra args < "$2"
 
-if ! ./app.exe "${args[@]}" < "$1" > /dev/null; then
+if ! ./app.exe < "$1" > /dev/null; then
     exit 0
 else
     exit 1

@@ -66,67 +66,90 @@ int input_car(car_t *car)
     char buff[BUFF_LEN];
     int rc;
 
+    #ifndef FUNC_OUT
     printf("Entry brend: ");
+    #endif
+
     rc = input_str(buff, BREND_LEN);
     if (rc != OK)
         return rc;
     strcpy(car->brend, buff);
 
+    #ifndef FUNC_OUT
     printf("Entry countries: ");
+    #endif
     rc = input_int((int *)&car->country, COUNTRIES_MAX);
     if (rc != OK)
         return rc;
 
     if (car->country != RUSSIA)
     {
+        #ifndef FUNC_OUT
         printf("Entry servies: ");
+        #endif
         rc = input_int((int *)&car->servies, SERVISE_MAX);
         if (rc != OK)
             return rc;
     }
 
+    #ifndef FUNC_OUT
     printf("Entry prise: ");
+    #endif
     rc = input_double((double *)&car->prise, PRISE_MAX);
     if (rc != OK)
         return rc;
 
+    #ifndef FUNC_OUT
     printf("Entry color: ");
+    #endif
     rc = input_str(buff, COLOR_LEN);
     if (rc != OK)
         return rc;
     strcpy(car->color, buff);
 
+    #ifndef FUNC_OUT
     printf("Entry condithion: ");
+    #endif
     rc = input_int((int *)&car->is_new, IS_NEW_MAX);
     if (rc != OK)
         return rc;
 
     if (car->is_new)
     {
+        #ifndef FUNC_OUT
         printf("Entry warranty: ");
+        #endif
         rc = input_int((int *)&car->info.n.warranty, WARRANTY_MAX);
         if (rc != OK)
             return rc;
     }
     else 
     {
+        #ifndef FUNC_OUT
         printf("Entry year: ");
+        #endif
         rc = input_int((int *)&car->info.u.year, YEAR_MAX);
         if (rc != OK)
             return rc;
         
 
+        #ifndef FUNC_OUT
         printf("Entry milage: ");
+        #endif
         rc = input_int((int *)&car->info.u.mileage, MILAGE_MAX);
         if (rc != OK)
             return rc;
 
+        #ifndef FUNC_OUT
         printf("Entry owners: ");
+        #endif
         rc = input_int((int *)&car->info.u.owners, OWNERS_MAX);
         if (rc != OK)
             return rc;
 
+        #ifndef FUNC_OUT
         printf("Entry repairing: ");
+        #endif
         rc = input_int((int *)&car->info.u.repairing, REPAIRING_MAX);
         if (rc != OK)
             return rc;
@@ -140,18 +163,24 @@ int input_filter(car_filter *filter)
     char buff[BUFF_LEN];
     int rc;
 
+    #ifndef FUNC_OUT
     printf("Entry brend: ");
+    #endif
     rc = input_str(buff, BREND_LEN);
     if (rc != OK)
         return rc;
     strncpy(filter->brend, buff, BREND_LEN);
 
+    #ifndef FUNC_OUT
     printf("Entry min prise: ");
+    #endif
     rc = input_double((double *)&filter->min_prise, PRISE_MAX);
     if (rc != OK)
         return rc;
 
+    #ifndef FUNC_OUT
     printf("Entry max prise: ");
+    #endif
     rc = input_double((double *)&filter->max_prise, PRISE_MAX);
     if (rc != OK)
         return rc;
@@ -159,5 +188,19 @@ int input_filter(car_filter *filter)
     if (filter->max_prise < filter->min_prise)
         return INVALID_VALUE_IN_FILTER;
 
+    filter->is_new = 0;
+    filter->info.u.owners = 1;
+    filter->info.u.repairing = 0;
+    
+    return OK;
+}
+
+int input_command(command_t *command)
+{
+    if (scanf("%d", (int *)command) != 1)
+        return INPUT_ERROR;
+    if (*command > COMMAND_MAX || *command < 0)
+        return INVALID_RANGE_COMMAND;
+    
     return OK;
 }

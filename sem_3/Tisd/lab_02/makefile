@@ -50,6 +50,7 @@ gcov: app.exe
 
 ### ЗАПУСК ФУНКЦИОНАЛЬНЫХ ТЕСТОВ
 # Запуск без санитайзеров
+func: CFLAGS += -DFUNC_OUT
 func: release
 	-./func_tests/scripts/func_tests.sh
 
@@ -87,6 +88,7 @@ endif
 # очиста генерируемых файлов
 clean:
 # 	rm -fr *.o *.exe *.d *.txt *.bin *.gcno *.gcda *.gcov
+	rm -f ./func_tests/data/result.txt
 	rm -rf out
 	rm -f *.exe
 	mkdir -p out

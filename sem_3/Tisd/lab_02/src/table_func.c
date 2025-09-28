@@ -14,8 +14,6 @@ int add_car(car_t **table, size_t *cur_size, size_t *max_size, car_t *new_car_t)
         (*table) = realloc((*table), sizeof(car_t) * (*cur_size) * 2);
         if ((*table) == NULL)
         {
-            free((*table));
-            *table = NULL;
             return DINAMIC_MEMORRY_ERROR;
         }
             
@@ -29,7 +27,7 @@ int add_car(car_t **table, size_t *cur_size, size_t *max_size, car_t *new_car_t)
 }
 
 // удаление по введенной цене 
-int remove_car(car_t *table, size_t *cur_size, float prise)
+int remove_car(car_t *table, size_t *cur_size, double prise)
 {
     bool field_is_finded = false;
     for (size_t i = 0; i < *cur_size; i++)
@@ -68,7 +66,7 @@ int remove_car(car_t *table, size_t *cur_size, float prise)
 
 int get_table_key(car_t *table, key_value_t **key_table, size_t len)
 {
-    *key_table = malloc(len * sizeof(key_value_t));
+    *key_table = (key_value_t *)malloc(len * sizeof(key_value_t));
     if (*key_table == NULL)
         return DINAMIC_MEMORRY_ERROR;
 

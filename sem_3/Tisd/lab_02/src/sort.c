@@ -62,14 +62,14 @@ void swap(void *a, void *b, size_t size, void *tmp)
     memcpy(b, tmp, size);
 }
 
-float cmp_car_prise(const void *a, const void *b)
+double cmp_car_prise(const void *a, const void *b)
 {
     car_t *p_car_a = (car_t *)a;
     car_t *p_car_b = (car_t *)b;
     return p_car_a->prise - p_car_b->prise;
 }
 
-float cmp_car_prise_by_key(const void *a, const void *b)
+double cmp_car_prise_by_key(const void *a, const void *b)
 {
     key_value_t *p_key_value_a = (key_value_t *)a;
     key_value_t *p_key_value_b = (key_value_t *)b;

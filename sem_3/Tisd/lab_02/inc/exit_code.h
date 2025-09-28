@@ -16,6 +16,7 @@
 #define INVALID_RANGE_COMMAND 11
 #define EMPTY_FILE 12
 #define INVALID_VALUE_IN_FILTER 13
+#define OVERFLOW_STR 14
 // #define
 // #define
 // #define

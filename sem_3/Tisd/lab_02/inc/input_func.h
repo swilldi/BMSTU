@@ -2,6 +2,7 @@
 #define INPUT_FUNC_H__
 
 #include "structs.h"
+#include "enums.h"
 #include "file_func.h"
 
 typedef union 
@@ -18,5 +19,6 @@ int input_car(car_t *car);
 int input_filter(car_filter *filter);
 void print_header(void);
 void print_header_key_table(void);
+int input_command(command_t *command);
 
 #endif

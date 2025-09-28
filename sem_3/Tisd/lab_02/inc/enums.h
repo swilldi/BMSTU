@@ -31,6 +31,21 @@ typedef enum
     USA
 } countries;
 
+#define COMMAND_MAX 8
+
+typedef enum 
+{
+    EXIT,
+    ADD_NEW_FIELD,
+    REMOVE_FIELD,
+    SEARCH,
+    NOT_SORT_TABLE,
+    TABLE_KEY,
+    TABLE_CAR,
+    TABLE_CAR_BY_KEY,
+    CMP_TABLE_METHOD,
+    CMP_SORT
+} command_t;
 
 
 #endif

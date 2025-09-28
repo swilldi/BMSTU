@@ -60,7 +60,7 @@ int set_car_value(car_t *car, car_fields field, char *value)
             if (*value != '0' && *value != '1')
                 return INVALID_BOOL_FIELD;
         
-                car->is_new = (*value == '1');
+            car->is_new = (*value == '1');
             break;
         case WARRANTY:
             if (sscanf(value, "%ld", &buff) != 1)
@@ -114,7 +114,12 @@ int read_car(FILE *f, car_t *car)
     car_fields field = BREND;
     while (value != NULL)
     {
-        
+        if ((field == BREND && strlen(value) > BREND_LEN) || (field == COLOR && strlen(value) > COLOR_LEN))
+        {
+            rc = OVERFLOW_STR;
+            break;
+        }
+
         rc = set_car_value(car, field, value);
         if (rc != OK || field == WARRANTY || field == REPAIRING)
             break;
@@ -161,13 +166,7 @@ int read_cars(FILE *f, car_t **car_table, size_t *len)
         if (rc != OK)
             break;
     }
-
-    if (rc != OK)
-    {
-        free(*car_table);
-        *car_table = NULL;
-    }
-
+    
     return rc;
 }
 
@@ -187,7 +186,8 @@ bool is_empty(FILE *f)
 
 int open_file(FILE **f, char *path)
 {
-    fclose(*f);
+    if (*f != NULL)
+        fclose(*f);
     
     *f = fopen(path, "r");
     if (*f == NULL)

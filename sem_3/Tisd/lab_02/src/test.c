@@ -1,23 +1,29 @@
 #include "test.h"
+#define PATH_LEN
 
 int test(FILE *f, sort_type sort_method, double *res)
 {
     clock_t start, end;
     *res = 0;
-    car_t *table = NULL;
     size_t len;
     int rc;
 
     for (size_t i = 0; i < PRE_TEST_COUNT; i++)
     {
+        car_t *table = NULL;
         rc = read_cars(f, &table, &len);
         if (rc != OK)
             break;
         sort_method(table, len, sizeof(car_t), cmp_car_prise);
+        
+        if (table != NULL)
+            free(table);
     }
     
     for (size_t i = 0; i < TEST_COUNT; i++)
     {
+        car_t *table = NULL;
+
         rc = read_cars(f, &table, &len);
         if (rc != OK)
             break;
@@ -26,13 +32,13 @@ int test(FILE *f, sort_type sort_method, double *res)
         sort_method(table, len, sizeof(car_t), cmp_car_prise);
         end = clock();
 
+        if (table != NULL)
+            free(table);
+
         *res = (double)(end - start + *res) / 2;
     }
 
     *res /= CLOCKS_PER_SEC;
-
-    free(table);
-    table = NULL;
     return rc;
 }
 
@@ -40,24 +46,31 @@ int test_by_key(FILE *f, sort_type sort_method, double *res)
 {
     clock_t start, end;
     *res = 0;
-    car_t *table = NULL;
-    key_value_t *table_key = NULL;
     size_t len;
     int rc;
 
     for (size_t i = 0; i < PRE_TEST_COUNT; i++)
     {
+        car_t *table = NULL;
+        key_value_t *table_key = NULL;
+
         rc = read_cars(f, &table, &len);
         if (rc != OK)
             break;
         rc = get_table_key(table, &table_key, len);
         if (rc != OK)
             break;
-        sort_method(table_key, len, sizeof(car_t), cmp_car_prise_by_key);
+        sort_method(table_key, len, sizeof(key_value_t), cmp_car_prise_by_key);
+
+        free(table);
+        free(table_key);
     }
     
     for (size_t i = 0; i < TEST_COUNT; i++)
     {
+        car_t *table = NULL;
+        key_value_t *table_key = NULL;
+
         rc = read_cars(f, &table, &len);
         if (rc != OK)
             break;
@@ -66,16 +79,17 @@ int test_by_key(FILE *f, sort_type sort_method, double *res)
         rc = get_table_key(table, &table_key, len);
         if (rc != OK)
             break;
-        sort_method(table_key, len, sizeof(car_t), cmp_car_prise_by_key);
+        sort_method(table_key, len, sizeof(key_value_t), cmp_car_prise_by_key);
         end = clock();
+
+        free(table);
+        free(table_key);        
 
         *res = (double)(end - start + *res) / 2;
     }
 
     *res /= CLOCKS_PER_SEC;
 
-    free(table);
-    table = NULL;
     return rc;
 }
 
@@ -106,17 +120,16 @@ int get_count(int num)
 
 int test_table(sort_type sort)
 {
-    FILE *f = NULL;
     double res_table, res_key;
     int rc;
-    char *(paths[80]) = {
-        "/Users/dmitriy/BMSTU/sem_3/Tisd/lab_02/test_files/cars_dataset_20.txt",
-        "/Users/dmitriy/BMSTU/sem_3/Tisd/lab_02/test_files/cars_dataset_100.txt",
-        "/Users/dmitriy/BMSTU/sem_3/Tisd/lab_02/test_files/cars_dataset_500.txt",
-        "/Users/dmitriy/BMSTU/sem_3/Tisd/lab_02/test_files/cars_dataset_1000.txt",
-        "/Users/dmitriy/BMSTU/sem_3/Tisd/lab_02/test_files/cars_dataset_2000.txt",
-        "/Users/dmitriy/BMSTU/sem_3/Tisd/lab_02/test_files/cars_dataset_5000.txt"
-        // "/Users/dmitriy/BMSTU/sem_3/Tisd/lab_02/test_files/cars_dataset_10000.txt"
+    char *(paths[PATH_LEN]) = {
+        "./test_files/cars_dataset_20.txt",
+        "./test_files/cars_dataset_100.txt",
+        "./test_files/cars_dataset_500.txt",
+        "./test_files/cars_dataset_1000.txt",
+        "./test_files/cars_dataset_2000.txt",
+        "./test_files/cars_dataset_5000.txt"
+        // "./test_files/cars_dataset_10000.txt"
     };
 
     printf(
@@ -125,8 +138,10 @@ int test_table(sort_type sort)
         "--------+---------------+-------------+-----------------------\n"
     );
 
-    for (size_t i = 0; i < 7; i++)
+    for (size_t i = 0; i < sizeof(paths) / sizeof(*paths); i++)
     {
+        FILE *f = NULL;
+
         rc = open_file(&f, (char *)paths[i]);
         if (rc != OK)
             return rc;
@@ -134,10 +149,12 @@ int test_table(sort_type sort)
         rc = test(f, sort, &res_table);
         if (rc != OK)
             return rc;
+
         rc = test_by_key(f, sort, &res_key);
         if (rc != OK)
             return rc;
-
+        
+        fclose(f);
         double percent = (res_table - res_key) / res_table * 100;
         
         printf("| %5d | %13.5lf | %11.5lf | %19.2lf%% |\n", get_count(i), res_table, res_key, percent);
@@ -146,19 +163,19 @@ int test_table(sort_type sort)
     return OK;
 }
 
+
 int test_sort(test_type test_f)
 {
-    FILE *f = NULL;
     double res_shaker, res_bumble;
     int rc;
-    char *(paths[80]) = {
-        "/Users/dmitriy/BMSTU/sem_3/Tisd/lab_02/test_files/cars_dataset_20.txt",
-        "/Users/dmitriy/BMSTU/sem_3/Tisd/lab_02/test_files/cars_dataset_100.txt",
-        "/Users/dmitriy/BMSTU/sem_3/Tisd/lab_02/test_files/cars_dataset_500.txt",
-        "/Users/dmitriy/BMSTU/sem_3/Tisd/lab_02/test_files/cars_dataset_1000.txt",
-        "/Users/dmitriy/BMSTU/sem_3/Tisd/lab_02/test_files/cars_dataset_2000.txt",
-        "/Users/dmitriy/BMSTU/sem_3/Tisd/lab_02/test_files/cars_dataset_5000.txt"
-        // "/Users/dmitriy/BMSTU/sem_3/Tisd/lab_02/test_files/cars_dataset_10000.txt"
+    char *(paths[PATH_LEN]) = {
+        "./test_files/cars_dataset_20.txt",
+        "./test_files/cars_dataset_100.txt",
+        "./test_files/cars_dataset_500.txt",
+        "./test_files/cars_dataset_1000.txt",
+        "./test_files/cars_dataset_2000.txt",
+        "./test_files/cars_dataset_5000.txt"
+        // "./test_files/cars_dataset_10000.txt"
     };
 
     printf(
@@ -167,8 +184,10 @@ int test_sort(test_type test_f)
         "--------+---------------+-------------+-----------------------\n"
     );
 
-    for (size_t i = 0; i < 7; i++)
+    for (size_t i = 0; i < sizeof(paths) / sizeof(*paths); i++)
     {
+        FILE *f = NULL;
+        
         rc = open_file(&f, (char *)paths[i]);
         if (rc != OK)
             return rc;
@@ -180,7 +199,10 @@ int test_sort(test_type test_f)
         if (rc != OK)
             return rc;
 
+        fclose(f);
+
         double percent = (res_bumble - res_shaker) / res_bumble * 100;
+        
         
         printf("| %5d | %13.5lf | %11.5lf | %19.2lf%% |\n", get_count(i), res_shaker, res_bumble, percent);
     }

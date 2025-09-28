@@ -1,4 +1,5 @@
 #include "output_func.h"
+#include "exit_code.h"
 
 void country_to_str(char *str, countries country)
 {
@@ -40,12 +41,12 @@ void country_to_str(char *str, countries country)
     }
 }
 
-void print_car(car_t *car)
+void print_car(car_t *car, size_t ind)
 {
     char str_country[32];
     country_to_str(str_country, car->country);
 
-    printf("| %9s | %7s |", car->brend, str_country);
+    printf("| %5ld | %9s | %7s |", ind,  car->brend, str_country);
     
     if (car->country != RUSSIA)
         printf(" %7s |", car->servies ? "Yes" : "No");
@@ -76,7 +77,17 @@ void print_cars(car_t *car_table, size_t len)
 {
     print_header();
     for (size_t i = 0; i < len; i++)
-        print_car(&car_table[i]);
+        print_car(&car_table[i], i + 1);
+    
+    if (len == 0)
+    {
+        printf(
+            SEPARATOR_LINE_SPACE
+            "|                                                       ТАБЛИЦА ПУСТАЯ                                                          |\n"
+            SEPARATOR_LINE_SPACE
+        );
+    
+    }
     printf(SEPARATOR_LINE);
 }
 
@@ -101,7 +112,7 @@ void print_cars_table_by_key_table(car_t *car_table, key_value_t *key_table, siz
     for (size_t i = 0; i < len; i++)
     {
         ind = key_table[i].index;
-        print_car(&car_table[ind]);
+        print_car(&car_table[ind], i + 1);
     }
     printf(SEPARATOR_LINE);
 }
@@ -109,7 +120,7 @@ void print_cars_table_by_key_table(car_t *car_table, key_value_t *key_table, siz
 void print_header(void)
 {   printf(
         SEPARATOR_LINE
-        "|   Brend   | Country | Servies |      Prise     |   Color  | Condition | Warranty | Year | Milage | Owners | Repairing |\n"
+        "|  ind  |   Brend   | Country | Servies |      Prise     |   Color  | Condition | Warranty | Year | Milage | Owners | Repairing |\n"
         SEPARATOR_LINE
     );
 }
@@ -122,3 +133,60 @@ void print_header_key_table(void)
         SEPARATOR_LINE_KEY
     );
 }
+
+void print_command_list(void)
+{
+    printf(
+        "1. Добавить запись в конец таблицы\n"
+        "2. Удалить запись из таблицы\n"
+        "3. Выполнить поиск в диапазоне цен\n"
+        "4. Вывод таблицы\n"
+        "5. Вывод отсортированной таблицы ключей (исходная таблица не изменяется)\n"
+        "6. Вывод отсортированной таблицы (сортируется сама таблица)\n"
+        "7. Вывод отсортированной таблицы (по отсортированной таблице ключей)\n"
+        "8. Сравнить эффективность обработки исходной таблицы и таблицы ключей\n"
+        "9. Сравнить алгоритм сортировки \"Пузырек\" и \"Шейкер\"\n"
+        "0. Выйти\n"
+    );
+}
+
+void print_error_msg(int code)
+{
+    switch (code)
+    {
+        case FILE_NOT_SELECTED:
+            printf("file not selected\n");
+            return;
+        case FILE_IS_EMPTY:
+            printf("file is empty\n");
+            return;
+        case ERROR_OPEN_FILE:
+            printf("error with open file\n");
+            return;
+        case DINAMIC_MEMORRY_ERROR:
+            printf("error with dinamic memory\n");
+            return;
+        case NUM_NOT_IN_RANGE:
+            printf("number not in range\n");
+            return;
+        case INVALID_BOOL_FIELD:
+            printf("invalid bool field in file\n");
+            return;
+        case INVALID_VALUE_IN_FIELD:
+            printf("invalid value field in file\n");
+            return;
+        case NOT_FOUND_FIELD:
+            printf("not found field\n");
+            return;
+        case INPUT_ERROR:
+            printf("input error\n");
+            return;
+        case INVALID_RANGE_COMMAND:
+            printf("invalid number of command\n");
+            return;
+        case OVERFLOW_STR:
+            printf("String overflow\n");
+            break;
+    }
+}
+
