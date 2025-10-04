@@ -154,9 +154,6 @@ void print_error_msg(int code)
 {
     switch (code)
     {
-        case FILE_NOT_SELECTED:
-            printf("file not selected\n");
-            return;
         case FILE_IS_EMPTY:
             printf("file is empty\n");
             return;

@@ -1,1 +1,2 @@
+4
 ./func_tests/data/neg_09_in file.txt

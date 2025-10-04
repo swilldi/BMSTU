@@ -11,12 +11,13 @@ int add_car(car_t **table, size_t *cur_size, size_t *max_size, car_t *new_car_t)
     if (*cur_size == *max_size)
     {
         // вот это стоит уточнить, вроде бы где-то увеличивают в 2 раза, но будто бы это слишком
-        (*table) = realloc((*table), sizeof(car_t) * (*cur_size) * 2);
-        if ((*table) == NULL)
+        car_t *tmp_table = realloc((*table), sizeof(car_t) * (*cur_size) * 2);
+        if (tmp_table == NULL)
         {
             return DINAMIC_MEMORRY_ERROR;
         }
-            
+        
+        (*table) = tmp_table;
         (*max_size) *= 2;
     }
     
@@ -47,8 +48,7 @@ int remove_car(car_t *table, size_t *cur_size, double prise)
     {
         return NOT_FOUND_FIELD;
     }
-        
-    
+
 }
 
 // void get_filtered_table(car_t *table, size_t size, car_filter *filter, car_t *filtered_table, size_t *filtered_size)

@@ -194,7 +194,7 @@ int open_file(FILE **f, char *path)
         return ERROR_OPEN_FILE;
     
     if (is_empty(*f))
-        return EMPTY_FILE;
+        return FILE_IS_EMPTY;
 
     return OK;
 }

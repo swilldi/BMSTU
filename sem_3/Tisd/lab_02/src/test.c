@@ -1,5 +1,13 @@
 #include "test.h"
+#include "file_func.h"
 #define PATH_LEN
+
+#define ST_HEADER_METHOD "| count | by_table, сек | by_key, сек | by_key / by_table, %% | cars mem, b  | keys mem, b | keys / cars, %% |\n"
+#define ST_HEADER_SORT   "| count |  quick, сек   | shaker, сек |   quick / shaker, %%  | cars mem, b  | keys mem, b | keys / cars, %% |\n"
+#define ST_SEPARATOR     "--------+---------------+-------------+----------------------+--------------+-------------+-----------------\n"
+
+
+        
 
 int test(FILE *f, sort_type sort_method, double *res)
 {
@@ -128,19 +136,20 @@ int test_table(sort_type sort)
         "./test_files/cars_dataset_500.txt",
         "./test_files/cars_dataset_1000.txt",
         "./test_files/cars_dataset_2000.txt",
-        "./test_files/cars_dataset_5000.txt"
-        // "./test_files/cars_dataset_10000.txt"
+        "./test_files/cars_dataset_5000.txt",
+        "./test_files/cars_dataset_10000.txt"
     };
 
     printf(
-        "--------+---------------+-------------+-----------------------\n"
-        "| count | by_table, сек | by_key, сек | by_key / by_table, %% |\n"
-        "--------+---------------+-------------+-----------------------\n"
+        ST_SEPARATOR
+        ST_HEADER_METHOD
+        ST_SEPARATOR
     );
 
     for (size_t i = 0; i < sizeof(paths) / sizeof(*paths); i++)
     {
         FILE *f = NULL;
+        
 
         rc = open_file(&f, (char *)paths[i]);
         if (rc != OK)
@@ -154,19 +163,23 @@ int test_table(sort_type sort)
         if (rc != OK)
             return rc;
         
+        size_t count = count_items(f);
         fclose(f);
-        double percent = (res_table - res_key) / res_table * 100;
         
-        printf("| %5d | %13.5lf | %11.5lf | %19.2lf%% |\n", get_count(i), res_table, res_key, percent);
+        size_t cars_mem = sizeof(car_t) * count, keys_mem = sizeof(key_value_t) * count;
+        double percent_time = (res_table - res_key) / res_table * 100;
+        double percent_memory = (double)keys_mem / cars_mem * 100;
+        
+        printf("| %5lu | %13.5lf | %11.5lf | %19.2lf%% | %12lu | %11lu | %14.2lf |\n", count, res_table, res_key, percent_time, cars_mem, keys_mem, percent_memory);
     }
-    printf("--------+---------------+-------------+-----------------------\n");
+    printf(ST_SEPARATOR);
     return OK;
 }
 
 
 int test_sort(test_type test_f)
 {
-    double res_shaker, res_bumble;
+    double res_shaker, res_quick;
     int rc;
     char *(paths[PATH_LEN]) = {
         "./test_files/cars_dataset_20.txt",
@@ -174,14 +187,14 @@ int test_sort(test_type test_f)
         "./test_files/cars_dataset_500.txt",
         "./test_files/cars_dataset_1000.txt",
         "./test_files/cars_dataset_2000.txt",
-        "./test_files/cars_dataset_5000.txt"
-        // "./test_files/cars_dataset_10000.txt"
+        "./test_files/cars_dataset_5000.txt",
+        "./test_files/cars_dataset_10000.txt"
     };
 
     printf(
-        "--------+---------------+-------------+-----------------------\n"
-        "| count |  shaker, сек  | bumble, сек |  shaker / bumble, %%  |\n"
-        "--------+---------------+-------------+-----------------------\n"
+        ST_SEPARATOR
+        ST_HEADER_SORT
+        ST_SEPARATOR
     );
 
     for (size_t i = 0; i < sizeof(paths) / sizeof(*paths); i++)
@@ -195,17 +208,19 @@ int test_sort(test_type test_f)
         rc = test_f(f, shaker_sort, &res_shaker);
         if (rc != OK)
             return rc;
-        rc = test_f(f, bumble_sort, &res_bumble);
+        rc = test_f(f, quick_sort, &res_quick);
         if (rc != OK)
             return rc;
 
+        size_t count = count_items(f);
         fclose(f);
-
-        double percent = (res_bumble - res_shaker) / res_bumble * 100;
         
+        size_t cars_mem = sizeof(car_t) * count, keys_mem = sizeof(key_value_t) * count;
+        double percent_time = (res_shaker - res_quick) / res_shaker * 100;
+        double percent_memory = (double)keys_mem / cars_mem * 100;
         
-        printf("| %5d | %13.5lf | %11.5lf | %19.2lf%% |\n", get_count(i), res_shaker, res_bumble, percent);
+        printf("| %5lu | %13.5lf | %11.5lf | %19.2lf%% | %12lu | %11lu | %14.2lf |\n", count, res_quick, res_shaker, percent_time, cars_mem, keys_mem, percent_memory);
     }
-    printf("--------+---------------+-------------+-----------------------\n");
+    printf(ST_SEPARATOR);
     return OK;
 }

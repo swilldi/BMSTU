@@ -13,6 +13,7 @@ int read_cars(FILE *f, car_t **car_table, size_t *len);
 int set_car_value(car_t *car, car_fields field, char *value);
 bool is_empty(FILE *f);
 int open_file(FILE **f, char *path);
+size_t count_items(FILE *f);
 
 
 

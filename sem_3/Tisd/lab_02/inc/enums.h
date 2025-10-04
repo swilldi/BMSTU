@@ -31,7 +31,7 @@ typedef enum
     USA
 } countries;
 
-#define COMMAND_MAX 8
+#define COMMAND_MAX 9
 
 typedef enum 
 {

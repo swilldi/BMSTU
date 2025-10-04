@@ -1,4 +1,5 @@
 1
 ./func_tests/data/neg_16_in_file.txt
 bd
-32
+3
+325

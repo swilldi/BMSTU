@@ -215,7 +215,7 @@ int main(void)
             }
 
             printf("BUMBLE\n");
-            rc = test_table(bumble_sort);
+            rc = test_table(quick_sort);
             if (rc != OK)
             {
                 cmd = EXIT;
