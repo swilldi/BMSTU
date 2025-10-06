@@ -30,6 +30,7 @@ int main(void)
     double price;
 
     #ifndef FUNC_OUT
+    print_input_info();
     print_command_list();
     #endif
 

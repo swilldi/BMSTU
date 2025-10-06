@@ -6,9 +6,6 @@
 #define ST_HEADER_SORT   "| count |  quick, сек   | shaker, сек |   quick / shaker, %%  | cars mem, b  | keys mem, b | keys / cars, %% |\n"
 #define ST_SEPARATOR     "--------+---------------+-------------+----------------------+--------------+-------------+-----------------\n"
 
-
-        
-
 int test(FILE *f, sort_type sort_method, double *res)
 {
     clock_t start, end;
@@ -160,6 +157,56 @@ int test_table(sort_type sort)
             return rc;
 
         rc = test_by_key(f, sort, &res_key);
+        if (rc != OK)
+            return rc;
+        
+        size_t count = count_items(f);
+        fclose(f);
+        
+        size_t cars_mem = sizeof(car_t) * count, keys_mem = sizeof(key_value_t) * count;
+        double percent_time = (res_table - res_key) / res_table * 100;
+        double percent_memory = (double)keys_mem / cars_mem * 100;
+        
+        printf("| %5lu | %13.5lf | %11.5lf | %19.2lf%% | %12lu | %11lu | %14.2lf |\n", count, res_table, res_key, percent_time, cars_mem, keys_mem, percent_memory);
+    }
+    printf(ST_SEPARATOR);
+    return OK;
+}
+
+int test_table(void)
+{
+    double res_table, res_key;
+    int rc;
+    char *(paths[PATH_LEN]) = {
+        "./test_files/cars_dataset_20.txt",
+        "./test_files/cars_dataset_100.txt",
+        "./test_files/cars_dataset_500.txt",
+        "./test_files/cars_dataset_1000.txt",
+        "./test_files/cars_dataset_2000.txt",
+        "./test_files/cars_dataset_5000.txt",
+        "./test_files/cars_dataset_10000.txt"
+    };
+
+    printf(
+        ST_SEPARATOR
+        ST_HEADER_METHOD
+        ST_SEPARATOR
+    );
+
+    for (size_t i = 0; i < sizeof(paths) / sizeof(*paths); i++)
+    {
+        FILE *f = NULL;
+        
+
+        rc = open_file(&f, (char *)paths[i]);
+        if (rc != OK)
+            return rc;
+
+        rc = test(f, shaker_sort, &res_table);
+        if (rc != OK)
+            return rc;
+
+        rc = test_by_key(f, quick_sort, &res_key);
         if (rc != OK)
             return rc;
         

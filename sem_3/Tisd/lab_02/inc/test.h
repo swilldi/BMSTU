@@ -9,8 +9,8 @@
 #include "sort.h"
 #include "table_func.h"
 
-#define TEST_COUNT 5
-#define PRE_TEST_COUNT 5
+#define TEST_COUNT 10
+#define PRE_TEST_COUNT 10
 
 typedef int(*sort_type)(void*, size_t, size_t, comparator_t);
 typedef int(*test_type)(FILE *, sort_type, double *);

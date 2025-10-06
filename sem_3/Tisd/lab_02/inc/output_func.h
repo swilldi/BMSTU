@@ -22,5 +22,7 @@ void print_header_key_table(void);
 void print_command_list(void);
 void print_error_msg(int code);
 
+void print_input_info(void);
+
 
 #endif

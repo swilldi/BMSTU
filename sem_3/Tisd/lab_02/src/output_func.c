@@ -1,5 +1,6 @@
 #include "output_func.h"
 #include "exit_code.h"
+#include "structs.h"
 
 void country_to_str(char *str, countries country)
 {
@@ -187,3 +188,29 @@ void print_error_msg(int code)
     }
 }
 
+void print_input_info(void)
+{
+    printf(
+        "Правилва ввода\n"
+        "Цена: положительно число < %lf \n"
+        "Состояние: 0 – испольванное, 1 – новое\n"
+        "Гарантия: 0 – нет, 1 – есть\n"
+        "Год выпуска: целое положительное число, < %d \n"
+        "Пробег: целое положительное число, < %d \n"
+        "Кол-во владельцев: целое положительное число, < %d \n"
+        "Кол-во ремонтов: целое положительное число, < %d \n\n",
+        PRISE_MAX, YEAR_MAX, MILAGE_MAX, OWNERS_MAX, REPAIRING_MAX
+    );
+
+    printf("-------------------\n");
+    printf("|  Страна | Номер |\n");
+    printf("|-----------------|\n");
+    char str[100];
+    for (size_t i = 0; i <= COUNTRIES_MAX; i++)
+    {
+        country_to_str(str, i);
+        printf("| %7s | %5ld |\n", str, i);
+    }
+        
+    printf("-------------------\n\n");
+}

@@ -55,6 +55,7 @@ typedef struct
 typedef struct 
 {
     char brend[STR_LEN];        // марка 
+    bool servies;       // есть ли обслуживание
     double min_prise; // цена
     double max_prise; // цена
     bool is_new;        // состояние новая или нет

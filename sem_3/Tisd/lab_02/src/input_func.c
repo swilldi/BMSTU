@@ -67,7 +67,7 @@ int input_car(car_t *car)
     int rc;
 
     #ifndef FUNC_OUT
-    printf("Entry brend: ");
+    printf("Введите бренд: ");
     #endif
 
     rc = input_str(buff, BREND_LEN);
@@ -76,7 +76,7 @@ int input_car(car_t *car)
     strcpy(car->brend, buff);
 
     #ifndef FUNC_OUT
-    printf("Entry countries: ");
+    printf("Введите номер страны: ");
     #endif
     rc = input_int((int *)&car->country, COUNTRIES_MAX);
     if (rc != OK)
@@ -85,7 +85,7 @@ int input_car(car_t *car)
     if (car->country != RUSSIA)
     {
         #ifndef FUNC_OUT
-        printf("Entry servies: ");
+        printf("Наличие сортировки: ");
         #endif
         rc = input_int((int *)&car->servies, SERVISE_MAX);
         if (rc != OK)
@@ -93,14 +93,14 @@ int input_car(car_t *car)
     }
 
     #ifndef FUNC_OUT
-    printf("Entry prise: ");
+    printf("Введите цену: ");
     #endif
     rc = input_double((double *)&car->prise, PRISE_MAX);
     if (rc != OK)
         return rc;
 
     #ifndef FUNC_OUT
-    printf("Entry color: ");
+    printf("Введите цвет: ");
     #endif
     rc = input_str(buff, COLOR_LEN);
     if (rc != OK)
@@ -108,7 +108,7 @@ int input_car(car_t *car)
     strcpy(car->color, buff);
 
     #ifndef FUNC_OUT
-    printf("Entry condithion: ");
+    printf("Состояние: ");
     #endif
     rc = input_int((int *)&car->is_new, IS_NEW_MAX);
     if (rc != OK)
@@ -117,7 +117,7 @@ int input_car(car_t *car)
     if (car->is_new)
     {
         #ifndef FUNC_OUT
-        printf("Entry warranty: ");
+        printf("Введите гарантию: ");
         #endif
         rc = input_int((int *)&car->info.n.warranty, WARRANTY_MAX);
         if (rc != OK)
@@ -126,7 +126,7 @@ int input_car(car_t *car)
     else 
     {
         #ifndef FUNC_OUT
-        printf("Entry year: ");
+        printf("Введите год: ");
         #endif
         rc = input_int((int *)&car->info.u.year, YEAR_MAX);
         if (rc != OK)
@@ -134,21 +134,21 @@ int input_car(car_t *car)
         
 
         #ifndef FUNC_OUT
-        printf("Entry milage: ");
+        printf("Введите пробег: ");
         #endif
         rc = input_int((int *)&car->info.u.mileage, MILAGE_MAX);
         if (rc != OK)
             return rc;
 
         #ifndef FUNC_OUT
-        printf("Entry owners: ");
+        printf("Введите кол-во владельцев: ");
         #endif
         rc = input_int((int *)&car->info.u.owners, OWNERS_MAX);
         if (rc != OK)
             return rc;
 
         #ifndef FUNC_OUT
-        printf("Entry repairing: ");
+        printf("Введите ко-во ремонтов: ");
         #endif
         rc = input_int((int *)&car->info.u.repairing, REPAIRING_MAX);
         if (rc != OK)
@@ -164,7 +164,7 @@ int input_filter(car_filter *filter)
     int rc;
 
     #ifndef FUNC_OUT
-    printf("Entry brend: ");
+    printf("Введите бренд: ");
     #endif
     rc = input_str(buff, BREND_LEN);
     if (rc != OK)
@@ -172,14 +172,14 @@ int input_filter(car_filter *filter)
     strncpy(filter->brend, buff, BREND_LEN);
 
     #ifndef FUNC_OUT
-    printf("Entry min prise: ");
+    printf("Введите мин. цену: ");
     #endif
     rc = input_double((double *)&filter->min_prise, PRISE_MAX);
     if (rc != OK)
         return rc;
 
     #ifndef FUNC_OUT
-    printf("Entry max prise: ");
+    printf("Введите макс. цену: ");
     #endif
     rc = input_double((double *)&filter->max_prise, PRISE_MAX);
     if (rc != OK)
@@ -188,6 +188,7 @@ int input_filter(car_filter *filter)
     if (filter->max_prise < filter->min_prise)
         return INVALID_VALUE_IN_FILTER;
 
+    filter->servies = 1;
     filter->is_new = 0;
     filter->info.u.owners = 1;
     filter->info.u.repairing = 0;
