@@ -64,6 +64,8 @@ int remove_car(car_t *table, size_t *cur_size, double prise)
 //     }
 // }
 
+#include <stdio.h>
+
 int get_table_key(car_t *table, key_value_t **key_table, size_t len)
 {
     *key_table = (key_value_t *)malloc(len * sizeof(key_value_t));
@@ -83,8 +85,14 @@ bool match_filter(car_t *car, car_filter *filter)
 {
     if (strcmp(car->brend, filter->brend) != 0) 
         return false;
+
+    if (car->country == RUSSIA)
+        return false;
     
-    if (filter->min_prise > car->prise && car->prise > filter->max_prise)
+    if (car->servies != filter->servies)
+        return false;
+    
+    if (car->prise < filter->min_prise || car->prise > filter->max_prise)
         return false;
 
     if (car->is_new)
