@@ -1,1 +1,0 @@
-./func_tests/data/neg_06_in_file.txt ./func_tests/data/neg_06_out_file.txt
