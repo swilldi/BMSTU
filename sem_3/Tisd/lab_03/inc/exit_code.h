@@ -1,0 +1,18 @@
+#ifndef EXIT_CODE_H__
+#define EXIT_CODE_H__
+
+#define OK 0 
+
+#define INVALID_INPUT 10
+#define NEGATIVE_SIZE 11
+#define END_INPUT 12
+#define MATR_RANGE_ERR 13
+#define MATRIX_OVERFLOW 14
+#define CMD_RANGE_ERR 15
+#define STR_OVERFLOW 16
+#define OPEN_FILE_ERR 17 
+
+#define MEM_ERROR 21
+
+
+#endif

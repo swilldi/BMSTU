@@ -1,0 +1,6 @@
+3
+./func_tests/data/pos_12_in_file.txt
+BYD
+10
+1000000
+0

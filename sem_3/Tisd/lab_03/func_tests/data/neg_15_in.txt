@@ -1,0 +1,4 @@
+1
+./func_tests/data/neg_15_in_file.txt
+asd
+45
