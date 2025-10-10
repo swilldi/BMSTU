@@ -1,4 +1,1 @@
-1
-./func_tests/data/neg_12_in file.txt
-bb
-bb
+-2

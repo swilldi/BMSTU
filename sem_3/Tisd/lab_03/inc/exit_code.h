@@ -11,6 +11,7 @@
 #define CMD_RANGE_ERR 15
 #define STR_OVERFLOW 16
 #define OPEN_FILE_ERR 17 
+#define ZERO_SIZE 18
 
 #define MEM_ERROR 21
 

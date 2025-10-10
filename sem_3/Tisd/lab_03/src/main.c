@@ -126,11 +126,18 @@ int main(void)
             if (rc != OK)
                 break;
 
-            rc = matrix_to_csr(&m_csr, m_1, n, m);
+            rc = matrix_to_csc(&m_csc, m_2, p, q);
             if (rc != OK)
                 break;
             
-            print_csr_matrix(&m_csr);
+            rc = mult_csr_by_csc(&res, &m_csr, &m_csc); 
+            
+            // print_razr_debug(&m_csr);
+            // printf("\n");
+            // print_razr_debug(&m_csc);
+            // printf("\n");
+            // print_razr_debug(&res);
+            print_csr_matrix(&res);
             break;
     }    
 

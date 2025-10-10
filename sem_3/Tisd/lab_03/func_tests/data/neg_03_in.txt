@@ -1,2 +1,1 @@
-4
-./func_tests/data/neg_04_in file.txt
+1 0

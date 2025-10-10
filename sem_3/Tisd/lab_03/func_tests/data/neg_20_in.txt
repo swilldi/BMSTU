@@ -1,4 +1,0 @@
-3
-./func_tests/data/neg_20_in_file.txt
-asd
--100 

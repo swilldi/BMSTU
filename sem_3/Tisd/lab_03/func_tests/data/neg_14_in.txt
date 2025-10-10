@@ -1,7 +1,0 @@
-1
-/workspaces/BMSTU/sem_3/Tisd/lab_02/func_tests/data/neg_14_in_file.txt
-bf
-1
-1
-345
-lkfjdnfjldfkvn

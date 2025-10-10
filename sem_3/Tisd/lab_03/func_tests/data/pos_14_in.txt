@@ -1,6 +1,0 @@
-3
-./func_tests/data/pos_14_in_file.txt
-Ford
-0
-15000000
-0

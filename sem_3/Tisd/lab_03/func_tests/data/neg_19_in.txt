@@ -1,8 +1,0 @@
-1
-./func_tests/data/neg_19_in.txt
-fdg
-2
-1
-345
-fdg
-23325

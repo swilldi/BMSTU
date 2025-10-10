@@ -16,27 +16,6 @@ void print_matrix(matrix_data_t matrix, size_t n, size_t m)
     }
 }
 
-
-void print_csr_matrix(matrix_t *matrix)
-{
-    int shift = 0;
-    for (size_t i = 0; i < matrix->n; i++)
-    {
-        int *row = matrix->values + shift;
-        for (size_t j = 0; j < matrix->m; j++)
-        {
-            size_t ind = contain_num(row, row + matrix->dim[i], j);
-            
-            if (ind == (size_t)-1)
-                printf("%5d", 0);
-            else
-                printf("%5d", *(row + ind));            
-        }
-
-        shift += matrix->dim[i];
-    }
-}
-
 size_t contain_num(int *pb, int *pe, int value)
 {
     for (int *pc = pb; pc != pe; pc++)
@@ -84,7 +63,7 @@ void print_razr_debug(matrix_t *mtr)
 
 }
 
-void print_scr_matrix(matrix_t *mtr)
+void print_csr_matrix(matrix_t *mtr)
 {
     size_t ind = 0, len;
     for (size_t i = 0; i < mtr->n; i++)

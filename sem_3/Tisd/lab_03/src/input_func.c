@@ -67,6 +67,8 @@ int input_matrix_sizes(size_m *n, size_m *m, FILE *f)
     rc = input_size(n, f);
     if (rc != OK)
         return rc;
+    if (n == 0)
+        return ZERO_SIZE;
     
     #ifndef FUNC_OUT
     if (f == stdin)
@@ -76,6 +78,8 @@ int input_matrix_sizes(size_m *n, size_m *m, FILE *f)
     rc = input_size(m, f);
     if (rc != OK)
         return rc;
+    if (m == 0)
+        return ZERO_SIZE;
     
     return OK;
 }

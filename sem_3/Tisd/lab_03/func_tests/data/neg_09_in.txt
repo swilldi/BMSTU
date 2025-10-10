@@ -1,2 +1,2 @@
-4
-./func_tests/data/neg_09_in file.txt
+3
+/Users/dmitriy/BMSTU/sem_3/Tisd/lab_03/func_tests/data/neg_09_in_file.txt

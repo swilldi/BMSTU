@@ -1,2 +1,4 @@
-4
-./func_tests/data/neg_05_in file.txt
+1
+2 2
+1 2
+d 3

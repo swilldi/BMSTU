@@ -1,3 +1,8 @@
-6
-./func_tests/data/pos_06_in_file.txt
-0
+1 
+4 1
+1
+2
+3
+4
+1 4
+2 2 2 2

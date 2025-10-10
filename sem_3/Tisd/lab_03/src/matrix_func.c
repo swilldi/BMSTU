@@ -8,12 +8,12 @@
 
 int create_matrix_razr(matrix_t *mtr, size_m n, size_m m, type_m type)
 {
-    mtr->n = n,
-    mtr->m = m,
-    mtr->type = type,
-    mtr->max_values = START_NUMBER_VALUES,
-    mtr->values = NULL,
-    mtr->ind = NULL,
+    mtr->n = n;
+    mtr->m = m;
+    mtr->type = type;
+    mtr->max_values = START_NUMBER_VALUES;
+    mtr->values = NULL;
+    mtr->ind = NULL;
     mtr->dim = NULL;
 
     // выделение памяти для значений
@@ -48,13 +48,13 @@ int extract_matrix_values(matrix_t *matrix)
 {
     matrix->max_values *= 2;
     
-    int *tmp = realloc(matrix->values, matrix->max_values);
+    int *tmp = realloc(matrix->values, matrix->max_values * sizeof(int));
     if (!tmp)
         return MEM_ERROR;
 
     matrix->values = tmp;
 
-    tmp = realloc(matrix->ind, matrix->max_values);
+    tmp = realloc(matrix->ind, matrix->max_values * sizeof(size_m));
     if (!tmp)
         return MEM_ERROR;
 
@@ -175,7 +175,7 @@ int mult_row_by_col(dim_data_t *d_csr, dim_data_t *d_csc)
         {
             if (data_a.ind[i] == data_b.ind[j])
             {
-                res += data_a.value[i] * data_b.ind[j];
+                res += data_a.value[i] * data_b.value[j];
                 j_last = j;
             }
         }
@@ -194,7 +194,7 @@ int mult_row_by_col(dim_data_t *d_csr, dim_data_t *d_csc)
     // int rc = create_dim_data(data, len);
     // if (rc != OK)
     //     return rc;
-
+#include <stdio.h>
 int mult_csr_by_csc(matrix_t *mtr, matrix_t *m_csr, matrix_t *m_csc)
 {
     int rc;
@@ -213,10 +213,18 @@ int mult_csr_by_csc(matrix_t *mtr, matrix_t *m_csr, matrix_t *m_csc)
     size_t num_count = 0;
     for (size_t i = 0; i < m_csr->n; i++)
     {
+        get_dim_data(&row, m_csr, i);
+        // for(size_t i = 0; i < row.len; i++)
+        //     printf("%d(%u) ", row.value[i], row.ind[i]);
+        // printf("\n");
+
+
         for (size_t j = 0; j < m_csc->m; j++)
         {
-            get_dim_data(&row, m_csr, i);
             get_dim_data(&col, m_csc, j);
+            // for (size_t i = 0; i < col.len; i++)
+            //     printf("%d(%u) ", col.value[i], col.ind[i]);
+            // printf("\n");
 
             val = mult_row_by_col(&row, &col);
             if (val == 0)
@@ -225,8 +233,10 @@ int mult_csr_by_csc(matrix_t *mtr, matrix_t *m_csr, matrix_t *m_csc)
             mtr->values[num_count] = val;
             mtr->ind[num_count] = j;
             num_count++;
+            // break;
         }
         mtr->dim[i] = num_count;
+        // break;
     }
 
     free_dim_data(&row);

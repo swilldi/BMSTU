@@ -1,3 +1,0 @@
-7
-./func_tests/data/pos_10_in_file.txt
-0

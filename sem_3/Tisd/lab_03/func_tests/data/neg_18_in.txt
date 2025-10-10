@@ -1,6 +1,0 @@
-1
-./func_tests/data/neg_17_in_file.txt
-bf
-3
-0
-849735986734433453
