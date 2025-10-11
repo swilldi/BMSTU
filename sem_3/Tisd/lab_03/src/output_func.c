@@ -92,3 +92,24 @@ void print_csr_matrix(matrix_t *mtr)
         printf("\n");
     }
 }
+
+void print_csr_coord(matrix_t *mtr)
+{
+    size_t shift = 0, len;
+    for (size_t i = 0; i < mtr->n; i++)
+    {
+        if (i != 0)
+            len = mtr->dim[i] - mtr->dim[i - 1];
+        else
+            len = mtr->dim[i];
+
+        
+        for (size_t j = 0; j < len; j++)
+        {
+            printf("%zu %u %d\n", i, mtr->ind[shift + j], mtr->values[shift + j]);
+        }
+        shift = mtr->dim[i];
+    }
+}
+
+

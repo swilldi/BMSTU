@@ -5,7 +5,9 @@
 #include "matrix_struct.h"
 
 int** create_matrix(size_t n, size_t m);
-void free_matrix(matrix_data_t matrix, size_t n);
+void free_matrix(matrix_data_t *matrix, size_t n);
 int create_dim_data(dim_data_t *data, size_t len);
+void free_matrix_razr(matrix_t *m);
+void free_dim_data(dim_data_t *data);
 
 #endif

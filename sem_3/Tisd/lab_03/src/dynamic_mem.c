@@ -15,7 +15,7 @@ matrix_data_t create_matrix(size_t n, size_t m)
         matrix[i] = calloc(m, sizeof(int));
         if (!matrix[i])
         {
-            free_matrix(matrix, i + 1);
+            free_matrix(&matrix, i);
             return NULL;
         }
     }
@@ -23,13 +23,20 @@ matrix_data_t create_matrix(size_t n, size_t m)
     return matrix;
 }
 
-void free_matrix(matrix_data_t matrix, size_t n)
+void free_matrix(matrix_data_t *matrix, size_t n)
 {
-    if (matrix )
-    for (size_t i = 0; i < n; i++)
-        free(matrix[i]);
+    if (*matrix == NULL)
+        return;
     
-    free(matrix);
+    for (size_t i = 0; i < n; i++)
+    {
+        free((*matrix)[i]);
+        (*matrix)[i] = NULL;
+    }
+        
+    
+    free(*matrix);
+    *matrix = NULL;
 }
 
 int create_dim_data(dim_data_t *data, size_t len)
@@ -47,5 +54,31 @@ int create_dim_data(dim_data_t *data, size_t len)
         return MEM_ERROR;
 
     return OK;
+}
+
+void free_matrix_razr(matrix_t *m)
+{
+    if (!m->values && !m->ind && !m->dim)
+        return;
+        
+    free(m->values);
+    m->values = NULL;
+    
+    free(m->ind);
+    m->ind = NULL;
+        
+    free(m->dim);
+    m->dim = NULL;
+}
+
+void free_dim_data(dim_data_t *data)
+{
+    if (!data->ind && !data->value)
+        return;
+    
+    free(data->ind);
+    data->ind = NULL;
+    free(data->value);
+    data->value = NULL;
 }
 

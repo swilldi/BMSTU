@@ -25,7 +25,6 @@ int create_matrix_razr(matrix_t *mtr, size_m n, size_m m, type_m type)
     mtr->ind = malloc(START_NUMBER_VALUES * sizeof(size_m));
     if (!mtr->ind)
     {
-        free_matrix_razr(mtr);
         return MEM_ERROR;
     }
         
@@ -37,7 +36,6 @@ int create_matrix_razr(matrix_t *mtr, size_m n, size_m m, type_m type)
     
     if (!mtr->dim)
     {
-        free_matrix_razr(mtr);
         return MEM_ERROR;
     }
     
@@ -63,15 +61,7 @@ int extract_matrix_values(matrix_t *matrix)
     return OK;
 }
 
-void free_matrix_razr(matrix_t *m)
-{
-    if (m->values)
-        free(m->values);
-    if (m->ind)   
-        free(m->ind);
-    if (m->dim)
-        free(m->dim);
-}
+
 
 int matrix_to_csr(matrix_t *m_csr, matrix_data_t mtr, size_m n, size_m m)
 {
@@ -264,10 +254,4 @@ void get_dim_data(dim_data_t *data, matrix_t *mtr, size_t ind)
     
 }
 
-void free_dim_data(dim_data_t *data)
-{
-    if (data->ind)
-        free(data->ind);
-    if (data->value)
-        free(data->value);
-}
+

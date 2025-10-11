@@ -9,7 +9,6 @@
 
 int create_matrix_razr(matrix_t *mtr, size_m n, size_m m, type_m type);
 int extract_matrix_values(matrix_t *matrix);
-void free_matrix_razr(matrix_t *m);
 int matrix_to_csr(matrix_t *m_csr, matrix_data_t mtr, size_m n, size_m m);
 int matrix_to_csc(matrix_t *m_csr, matrix_data_t mtr, size_m n, size_m m);
 int mult_row_by_col(dim_data_t *d_csr, dim_data_t *d_csc);
