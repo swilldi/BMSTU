@@ -10,5 +10,7 @@ size_t contain_num(int *pb, int *pe, int value);
 void print_razr_debug(matrix_t *mtr);
 void print_csr_matrix(matrix_t *mtr);
 void print_csr_coord(matrix_t *mtr);
+void print_input_cmd_list(void);
+void print_output_cmd_list(void);
 
 #endif 

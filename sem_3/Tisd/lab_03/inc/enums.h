@@ -25,4 +25,11 @@ typedef enum
 } output_command_t;
 #define OUTPUT_CMD_MAX CSR
 
+typedef enum 
+{ 
+    TYPE_NONE = 0, 
+    TYPE_CSR, 
+    TYPE_CSC 
+} type_matrixt;
+
 #endif

@@ -24,46 +24,8 @@
 #include <stdio.h>
 
 
-
-void print_input_cmd_list(void)
-{
-    printf(
-        "1. Классический ввод\n"
-        "2. Координатный ввод\n"
-        "3. Классический файл\n"
-        "4. Координатный файл\n"
-        "5. Сравнение\n"
-    );
-}
-
-void print_output_cmd_list(void)
-{
-    printf(
-        "1. Матричный вывод\n"
-        "2. Координатный ввод\n"
-        "3. CSR файл\n"
-    );
-}
-
-int input_command(int *cmd, command_t type)
-{
-    if (scanf("%d", cmd) != 1)
-        return INVALID_INPUT;
-    
-    if (*cmd < 0)
-        return CMD_RANGE_ERR;
-
-    if (type == INPUT && *cmd > INPUT_CMD_MAX)
-        return CMD_RANGE_ERR;
-    else if (type == OUTPUT && *cmd > OUTPUT_CMD_MAX)
-        return CMD_RANGE_ERR;
-
-    return OK;
-}
-
 int main(void)
 {
-    // size_m n, m, p, q;
     size_m n = 0, m, p = 0, q;
     int cmd;
     
@@ -86,11 +48,13 @@ int main(void)
     if (rc != OK)
         return rc;
 
+    // Ввод классическим способом илил координатным
     if (cmd == CLASSIC_INPUT || cmd == CLASSIC_FILE)
         input_method = input_matrix_classic;
     else if (cmd == COORD_INPUT || cmd == COORD_FILE)
         input_method = input_matrix_coord;
     
+    // Ввод из файла или из консоли
     if (cmd == CLASSIC_INPUT || cmd == COORD_INPUT)
     {
         f = stdin;
@@ -114,93 +78,72 @@ int main(void)
     }
 
 
-    switch (cmd)
+    if (cmd == COMPARE)
     {
-        case COMPARE:
-            test_mult_method();
-            cmd = 0;
-            break;
-        default:
-            // ввод первой матрицы
-            rc = input_matrix(&m_1, &n, &m, f, input_method);
-            if (rc != OK)
-            {
-                cmd = 0;
-                break;
-            }
-
-            // ввод второй матрицы
-            rc = input_matrix(&m_2, &p, &q, f, input_method);
-            if (rc != OK)
-            {
-                cmd = 0;
-                break;
-            }
-            
-            if (m != p)
-            {
-                rc = NO_MULT_MATRIXES;
-                cmd = 0;
-                break;
-            }
-
-            rc = create_matrix_razr(&m_csr, n, m, csr);
-            if (rc != OK)
-            {
-                cmd = 0;
-                break;
-            }
-
-            rc = matrix_to_csr(&m_csr, m_1, n, m);
-            if (rc != OK)
-            {
-                cmd = 0;
-                break;
-            }
-            
-            rc = create_matrix_razr(&m_csc, p, q, csc);
-            if (rc != OK)
-            {
-                cmd = 0;
-                break;
-            }
-            
-            rc = matrix_to_csc(&m_csc, m_2, p, q);
-            if (rc != OK)
-            {
-                cmd = 0;
-                break;
-            }
-            
-            rc = create_matrix_razr(&res, m_csr.n, m_csc.m, csr);
-            if (rc != OK)
-            {
-                cmd = 0;
-                break;
-            }
-
-            rc = mult_csr_by_csc(&res, &m_csr, &m_csc); 
-            if (rc != OK)
-            {
-                cmd = 0;
-                break;
-            }
-
-            break;
+        start_testa();
+        return rc;
+    }
+    
+    // ввод матриц
+    rc = input_matrix(&m_1, &n, &m, f, input_method);
+    if (rc != OK)
+        return rc;
+    
+    // print_matrix(m_1, n, m);
+    
+    rc = input_matrix(&m_2, &p, &q, f, input_method);
+    if (rc != OK)
+    {
+        free_matrix(&m_1, n);
+        return rc;
     }
 
-    if (cmd)
+    // преобразование матриц к сжатому виду
+    rc = matrix_to_csr(&m_csr, m_1, n, m);
+    if (rc != OK)
     {
-        #ifndef FUNC_OUT
-        print_output_cmd_list();
-        printf("Введите номер команды: ");
-        #endif 
-
-        rc = input_command(&cmd, INPUT);
-        if (rc != OK)
-            return rc;
+        free_matrix(&m_1, n);
+        free_matrix(&m_2, p);
+        return rc;
     }
 
+    rc = matrix_to_csc(&m_csc, m_2, p, q);
+    if (rc != OK)
+    {
+        free_matrix_razr(&m_csr);
+        free_matrix(&m_1, n);
+        free_matrix(&m_2, p);
+        return rc;
+    }
+
+    // умножение матриц
+    rc = mult_csr_by_csc(&res, &m_csr, &m_csc);
+    if (rc != OK)
+    {
+        free_matrix_razr(&m_csr);
+        free_matrix_razr(&m_csc);
+        free_matrix(&m_1, n);
+        free_matrix(&m_2, p);
+        return rc;
+    }
+
+    // Ввод для типа выводма матрицы
+    #ifndef FUNC_OUT 
+    print_output_cmd_list();
+    #endif
+
+    rc = input_command(&cmd, OUTPUT);
+    if (rc != OK)
+    {
+        free_matrix_razr(&res);
+        free_matrix_razr(&m_csr);
+        free_matrix_razr(&m_csc);
+        free_matrix(&m_1, n);
+        free_matrix(&m_2, p);
+        return rc;
+    }
+
+    // вывод матрицы
     switch (cmd)
     {
         case MATRIX:
@@ -213,15 +156,12 @@ int main(void)
             print_razr_debug(&res);
             break;
     }
-
+    
     free_matrix_razr(&res);
     free_matrix_razr(&m_csr);
     free_matrix_razr(&m_csc);
-
     free_matrix(&m_1, n);
     free_matrix(&m_2, p);
-    if (f != stdin && f)
-        fclose(f); // норм реагирует на NULL???
-    
-    return rc;
+
+    return OK;
 }

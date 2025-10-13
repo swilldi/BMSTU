@@ -16,21 +16,10 @@ void print_matrix(matrix_data_t matrix, size_t n, size_t m)
     }
 }
 
-size_t contain_num(int *pb, int *pe, int value)
-{
-    for (int *pc = pb; pc != pe; pc++)
-    {
-        if (*pc == value)
-            return pe - pb;
-    }
-        
-    return (size_t)-1;
-}
-
 void print_razr_debug(matrix_t *mtr)
 {
     size_t elem_count, dim_len;
-    if (mtr->type == csr)
+    if (mtr->type == TYPE_CSR)
     {
         elem_count = mtr->dim[mtr->n - 1];
         dim_len = mtr->n;
@@ -81,7 +70,7 @@ void print_csr_matrix(matrix_t *mtr)
                 printf("%5d", mtr->values[ind]);
                 ind++;
                 len--;
-                i_in_row = mtr->ind[ind];
+                if(len) i_in_row = mtr->ind[ind]; // добавить проверку
             }
             else
             {
@@ -110,6 +99,27 @@ void print_csr_coord(matrix_t *mtr)
         }
         shift = mtr->dim[i];
     }
+}
+
+
+void print_input_cmd_list(void)
+{
+    printf(
+        "1. Классический ввод\n"
+        "2. Координатный ввод\n"
+        "3. Классический файл\n"
+        "4. Координатный файл\n"
+        "5. Сравнение\n"
+    );
+}
+
+void print_output_cmd_list(void)
+{
+    printf(
+        "1. Матричный вывод\n"
+        "2. Координатный ввод\n"
+        "3. CSR файл\n"
+    );
 }
 
 

@@ -2,19 +2,15 @@
 #define MATRIX_STRUCT_H__
 
 #include <stdbool.h>
+#include "enums.h"
 
 #define size_m unsigned int
-
-#define type_m bool
-#define not_type 0
-#define csr 1
-#define csc 2
 
 #define matrix_data_t int**
 
 typedef struct
 {
-    type_m type;
+    type_matrixt type;
 
     size_m n;
     size_m m;

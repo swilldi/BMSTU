@@ -1,143 +1,288 @@
-#include "test.h"
 #include "input_func.h"
-#include "output_func.h"
 #include "dynamic_mem.h"
 #include "matrix_struct.h"
 #include "exit_code.h"
 #include "matrix_func.h"
 #include "enums.h"
+#include "time.h"
 
-#define PRE_TEST_COUNT 0
-#define TEST_COUNT 1
+#define TEST_COUNT 2
+#define PRE_TEST_COUNT 5
 
-#define ST_HEADER_METHOD "| count | by_table, сек | by_key, сек | by_key / by_table, %% | cars mem, b  | keys mem, b | keys / cars, %% |\n"
-#define ST_HEADER_SORT   "| count |  quick, сек   | shaker, сек |   quick / shaker, %%  | cars mem, b  | keys mem, b | keys / cars, %% |\n"
-#define ST_SEPARATOR     "--------+---------------+-------------+----------------------+--------------+-------------+-----------------\n"
-
-
-
-void test_csr(FILE *f, double *res_time, size_t *res_memory)
+size_t amount_no_zero(matrix_data_t mtr, size_t n, size_t m)
 {
-    fseek(f, 0, SEEK_SET);
+    size_t amount = 0;
+    for (size_t i = 0; i < n; i++)
+    {
+        for (size_t j = 0; j < m; j++)
+        {
+            if (mtr[i][j])
+                amount++;
+        }
+    }
 
-    clock_t start, end;
-    *res_time = 0;
-    *res_memory = 0;
+    return amount;
+}
+
+int get_matrix_info(char *file_name, double *k_razr_1, size_t *max_elem_1, double *k_razr_2, size_t *max_elem_2)
+{
+    FILE *f = fopen(file_name, "r");
+    if (!f)
+        return OPEN_FILE_ERR;
+
+    int rc;
+    size_m n = 0, m, p = 0, q;
+    matrix_data_t m_1 = NULL;
+    matrix_data_t m_2 = NULL;
     
+    // ввод матриц
+    rc = input_matrix(&m_1, &n, &m, f, input_matrix_coord);
+    if (rc != OK)
+        return rc;
+    
+    // print_matrix(m_1, n, m);
+    
+    rc = input_matrix(&m_2, &p, &q, f, input_matrix_coord);
+    if (rc != OK)
+    {
+        free_matrix(&m_1, n);
+        return rc;
+    }
+
+    fclose(f);
+
+    *max_elem_1 = n * m;
+    *max_elem_2 = p * q;
+
+    *k_razr_1 = (double)amount_no_zero(m_1, n, m) / (n * m);
+    *k_razr_2 = (double)amount_no_zero(m_2, p, q) / (p * q);
+
+    return OK;
+}
+
+int test_compress(char *file_name, double *time_res, size_t *memory_res)
+{
+    *time_res = 0;
+    *memory_res = 0;
+
+    FILE *f = fopen(file_name, "r");
+    if (!f)
+        return OPEN_FILE_ERR;
+
+    int rc;
+    size_m n = 0, m, p = 0, q;
     matrix_data_t m_1 = NULL;
     matrix_data_t m_2 = NULL;
     matrix_t m_csr = { 0 }, m_csc = { 0 }, res = { 0 };
-    size_m n, m, p, q;
 
-    input_matrix(&m_1, &n, &m, f, input_matrix_coord);
-    input_matrix(&m_2, &p, &q, f, input_matrix_coord);
-
-    int rc = create_matrix_razr(&m_csr, n, m, csr);
-    if (rc != OK)
-    {
-        free_matrix(&m_1, n);
-        free_matrix(&m_2, p);
-        return;
-    }
+    clock_t start, end;
     
-    rc = create_matrix_razr(&m_csc, p, q, csc);
+    // ввод матриц
+    rc = input_matrix(&m_1, &n, &m, f, input_matrix_coord);
+    if (rc != OK)
+        return rc;
+    
+    // print_matrix(m_1, n, m);
+    
+    rc = input_matrix(&m_2, &p, &q, f, input_matrix_coord);
     if (rc != OK)
     {
         free_matrix(&m_1, n);
-        free_matrix(&m_2, p);
-        free_matrix_razr(&m_csr);
-        return;
+        return rc;
     }
 
-    rc = create_matrix_razr(&res, n, q, csr);
-    if (rc != OK)
-    {
-        free_matrix(&m_1, n);
-        free_matrix(&m_2, p);
-        free_matrix_razr(&m_csr);
-        free_matrix_razr(&m_csc);
-        return;
-    }
+    fclose(f);
 
     for (size_t i = 0; i < PRE_TEST_COUNT; i++)
     {
-        matrix_to_csr(&m_csr, m_1, n, m);
-        matrix_to_csc(&m_csc, m_2, p, q);
-        mult_csr_by_csc(&res, &m_csr, &m_csc);
+        // преобразование матриц к сжатому виду
+        rc = matrix_to_csr(&m_csr, m_1, n, m);
+        if (rc != OK)
+        {
+            if (i)
+            {
+                free_matrix_razr(&res);
+                free_matrix_razr(&m_csc);
+                free_matrix_razr(&m_csr);
+            }
+            free_matrix(&m_1, n);
+            free_matrix(&m_2, p);
+            return rc;
+        }
+
+        rc = matrix_to_csc(&m_csc, m_2, p, q);
+        if (rc != OK)
+        {
+            if (i)
+            {
+                free_matrix_razr(&res);
+                free_matrix_razr(&m_csc);
+            }
+            free_matrix_razr(&m_csr);
+            free_matrix(&m_1, n);
+            free_matrix(&m_2, p);
+            return rc;
+        }
+
+        // умножение матриц
+        rc = mult_csr_by_csc(&res, &m_csr, &m_csc);
+        if (rc != OK)
+        {
+            if (i)
+                free_matrix_razr(&res);
+            free_matrix_razr(&m_csr);
+            free_matrix_razr(&m_csc);
+            free_matrix(&m_1, n);
+            free_matrix(&m_2, p);
+            return rc;
+        }
+        free_matrix_razr(&res);
     }
-    
-    
+
     for (size_t i = 0; i < TEST_COUNT; i++)
     {
-        start = clock();
-        matrix_to_csr(&m_csr, m_1, n, m);
-        matrix_to_csc(&m_csc, m_2, p, q);
-        mult_csr_by_csc(&res, &m_csr, &m_csc);
+        start =clock();
+        // преобразование матриц к сжатому виду
+        rc = matrix_to_csr(&m_csr, m_1, n, m);
+        if (rc != OK)
+        {
+            if (i)
+            {
+                free_matrix_razr(&res);
+                free_matrix_razr(&m_csc);
+                free_matrix_razr(&m_csr);
+            }
+            free_matrix(&m_1, n);
+            free_matrix(&m_2, p);
+            return rc;
+        }
+
+        rc = matrix_to_csc(&m_csc, m_2, p, q);
+        if (rc != OK)
+        {
+            if (i)
+            {
+                free_matrix_razr(&res);
+                free_matrix_razr(&m_csc);
+            }
+            free_matrix_razr(&m_csr);
+            free_matrix(&m_1, n);
+            free_matrix(&m_2, p);
+            return rc;
+        }
+
+        // умножение матриц
+        rc = mult_csr_by_csc(&res, &m_csr, &m_csc);
+        if (rc != OK)
+        {
+            if (i)
+                free_matrix_razr(&res);
+            free_matrix_razr(&m_csr);
+            free_matrix_razr(&m_csc);
+            free_matrix(&m_1, n);
+            free_matrix(&m_2, p);
+            return rc;
+        }
         end = clock();
 
-        *res_time = (end - start + *res_time) / 2;
+        *time_res += end - start;
+        free_matrix_razr(&res);
     }
+    
+    *time_res /= TEST_COUNT;
+    *memory_res = (n + m + 2 * m_csc.max_values + 2 * m_csr.max_values) * sizeof(int);
 
-                     
-
+    
+    free_matrix_razr(&m_csr);
+    free_matrix_razr(&m_csc);
     free_matrix(&m_1, n);
     free_matrix(&m_2, p);
-    free_matrix_razr(&m_csc);
-    free_matrix_razr(&m_csr);
-    free_matrix_razr(&res);
     
-    *res_time /= CLOCKS_PER_SEC;
+    return OK;
 }
 
-
-void test_classic(FILE *f, double *res_time, size_t *res_memory)
+int test_classic(char *file_name, double *time_res, size_t *memory_res)
 {
-    fseek(f, 0, SEEK_SET);
-
-    clock_t start, end;
-    *res_time = 0;
-    *res_memory = 0;
+    *time_res = 0;
+    *memory_res = 0;
     
+    FILE *f = fopen(file_name, "r");
+    if (!f)
+        return OPEN_FILE_ERR;
+
+    int rc;
+    size_m n = 0, m, p = 0, q;
     matrix_data_t m_1 = NULL;
     matrix_data_t m_2 = NULL;
     matrix_data_t res = NULL;
-    size_m n, m, p, q;
 
-    input_matrix(&m_1, &n, &m, f, input_matrix_coord);
-    input_matrix(&m_2, &p, &q, f, input_matrix_coord);
-    res = create_matrix(n, q);
-    if (!res)
-        return;
-
-
-    for (size_t i = 0; i < PRE_TEST_COUNT; i++)
+    clock_t start, end;
+    
+    // ввод матриц
+    rc = input_matrix(&m_1, &n, &m, f, input_matrix_coord);
+    if (rc != OK)
+        return rc;
+    
+    // print_matrix(m_1, n, m);
+    
+    rc = input_matrix(&m_2, &p, &q, f, input_matrix_coord);
+    if (rc != OK)
     {
-        classic_mult(res, m_1, m_2, n, m, q);
+        free_matrix(&m_1, n);
+        return rc;
     }
-    
-    
+
+    fclose(f);
+
     for (size_t i = 0; i < TEST_COUNT; i++)
     {
-        start = clock();
-        classic_mult(res, m_1, m_2, n, m, q);
-        end = clock();
-
-        *res_time = (end - start + *res_time) / 2;
+        // умножение матриц
+        rc = classic_mult(&res, m_1, m_2, n, m, q);
+        if (rc != OK)
+        {
+            if (i)
+                free_matrix(&res, n);
+            free_matrix(&m_1, n);
+            free_matrix(&m_2, p);
+            return rc;
+        }
+        free_matrix(&res, n);
     }
 
+    for (size_t i = 0; i < TEST_COUNT; i++)
+    {
+
+        start =clock();
+        // умножение матриц
+        rc = classic_mult(&res, m_1, m_2, n, m, q);
+        if (rc != OK)
+        {
+            if (i)
+                free_matrix(&res, n);
+            free_matrix(&m_1, n);
+            free_matrix(&m_2, p);
+            return rc;
+        }
+        end = clock();
+        
+        *time_res += end - start;
+        free_matrix(&res, n);
+    }
+
+    *time_res /= TEST_COUNT;
+    *memory_res = (n * m + p * q + n * q) * sizeof(int);
+
+    free_matrix(&res, n);
     free_matrix(&m_1, n);
     free_matrix(&m_2, p);
-    free_matrix(&res, n);
-
-    // *res_memory = sizeof(int) * m + sizeof(int*) * n + sizeof(int) * q + sizeof(int*) * p + sizeof(int) * q + sizeof(int*) * n; 
-    *res_time /= CLOCKS_PER_SEC;
+    return OK;
 }
 
 
-int test_mult_method(void)
+int start_testa(void)
 {
-    // int rc; 
-    char *(paths[]) = {
+    char *paths[] = 
+    {
         "./test_files/test_matrix_5x5_1.txt",
         "./test_files/test_matrix_5x5_2.txt",
         "./test_files/test_matrix_5x5_3.txt",
@@ -146,14 +291,14 @@ int test_mult_method(void)
         "./test_files/test_matrix_5x10_2.txt",
         "./test_files/test_matrix_5x10_3.txt",
         "./test_files/test_matrix_5x10_4.txt",
-        "./test_files/test_matrix_10x10_1.txt",
-        "./test_files/test_matrix_10x10_2.txt",
-        "./test_files/test_matrix_10x10_3.txt",
-        "./test_files/test_matrix_10x10_4.txt",
         "./test_files/test_matrix_20x20_1.txt",
         "./test_files/test_matrix_20x20_2.txt",
         "./test_files/test_matrix_20x20_3.txt",
         "./test_files/test_matrix_20x20_4.txt",
+        "./test_files/test_matrix_10x10_1.txt",
+        "./test_files/test_matrix_10x10_2.txt",
+        "./test_files/test_matrix_10x10_3.txt",
+        "./test_files/test_matrix_10x10_4.txt",
         "./test_files/test_matrix_100x50_1.txt",
         "./test_files/test_matrix_100x50_2.txt",
         "./test_files/test_matrix_100x50_3.txt",
@@ -168,72 +313,44 @@ int test_mult_method(void)
         "./test_files/test_matrix_1000x1000_4.txt"
     };
 
+    int rc;
+    double time_res_compr, time_res_classic;
+    size_t memory_res_compr, memory_res_classic;
+    double k_razr_1, k_razr_2;
+    size_t amount_elem_1, amount_elem_2;
+
+
     printf(
-        // ST_SEPARATOR
-        // ST_HEADER_SORT
-        ST_SEPARATOR
+        "|----------------------------------------------------------------------------------------------------------------------------|||-----------------------|\n"
+        "|                   CSR/CSC                                   ||                                     CLASSIC                 |||        Сравнение      |\n"
+        "|----------------------------------------------------------------------------------------------------------------------------|||-----------------------|\n"
+        "| кол-во элем. | заполненость, %% | время, сек | Память, байт  || кол-во элем. | заполненость, %% | время, сек | Память, байт  |||  Время, %% | Память, %% |\n"
+        "|----------------------------------------------------------------------------------------------------------------------------|||-----------------------|\n"
     );
+            
 
     for (size_t i = 0; i < sizeof(paths) / sizeof(*paths); i++)
     {
-        double csr_time, classic_time;
-        size_t csr_mem, classic_mem;
-        size_m n, m;
-        double k_razr;
-
-        FILE *f = NULL;
+        rc = test_compress(paths[i], &time_res_compr, &memory_res_compr);
+        if (rc != OK)
+            return rc;
+        rc = test_classic(paths[i], &time_res_classic, &memory_res_classic);
+        if (rc != OK)
+            return rc;
         
-        f = fopen((char *)paths[i], "r");
-        if (f == NULL)
-            return 1;
-
-        get_sizes(f, &n, &m);
-        get_k_razr(f, &k_razr);
-
-        test_csr(f, &csr_time, &csr_mem);
-        test_classic(f, &classic_time, &classic_mem);
-
-        fclose(f);
+        rc = get_matrix_info(paths[i], &k_razr_1, &amount_elem_1, &k_razr_2, &amount_elem_2);
         
-        // size_t cars_mem = sizeof(car_t) * count, keys_mem = sizeof(key_value_t) * count;
-        double percent_time = (classic_time - csr_time) / classic_time * 100;
-        double percent_memory = (double)(csr_mem - classic_mem) / csr_mem * 100;
-        double percent_razr = k_razr * 100;
+        time_res_classic /= CLOCKS_PER_SEC;
+        time_res_compr /= CLOCKS_PER_SEC;
         
-        // printf("| %5lu | %13.5lf | %11.5lf | %19.2lf%% | %12lu | %11lu | %14.2lf |\n", count, res_quick, res_shaker, percent_time, cars_mem, keys_mem, percent_memory);
-        printf("| %6u | %4.2lf | %lf | %lf | %lf | %zu | %zu | %lf |\n", n * m, percent_razr, csr_time, classic_time, percent_time, csr_mem, classic_mem, percent_memory);
+        printf("| %12ld | %15lf | %10lf | %12ld  || %12ld | %15lf | %10lf | %12ld  ||| %9.2lf | %9.2lf |\n", 
+                amount_elem_1, k_razr_1, time_res_compr, memory_res_compr, 
+                amount_elem_2, k_razr_2, time_res_classic, memory_res_classic,
+                (time_res_classic - time_res_compr) / time_res_classic * 100,
+                ((double)memory_res_classic - memory_res_compr) / (double)memory_res_classic * 100
+        );
     }
-    printf(ST_SEPARATOR);
+    
     return OK;
 }
 
-void get_sizes(FILE *f, size_m *n, size_m *m)
-{
-    fseek(f, 0, SEEK_SET);
-    fscanf(f, "%u%u", n, m);
-
-}
-
-void get_k_razr(FILE *f, double *k_razr)
-{
-    fseek(f, 0, SEEK_SET);
-
-    char buff[BUFF_LEN];
-    size_t count = 0;
-    size_m n, m;
-
-    fscanf(f, "%u%u", &n, &m);
-
-    int c;
-    while ((c = fgetc(f)) != '\n' && c != EOF);
-
-    while (fgets(buff, sizeof(buff), f))
-    {
-        if (buff[0] == '\n')
-            break;
-
-        count++;
-    }
-
-    *k_razr = (double)count / n / m;
-}

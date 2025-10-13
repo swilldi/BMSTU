@@ -5,6 +5,22 @@
 #include <string.h>
 #include "input_func.h"
 
+int input_command(int *cmd, command_t type)
+{
+    if (scanf("%d", cmd) != 1)
+        return INVALID_INPUT;
+    
+    if (*cmd < 0)
+        return CMD_RANGE_ERR;
+
+    if (type == INPUT && *cmd > INPUT_CMD_MAX)
+        return CMD_RANGE_ERR;
+    else if (type == OUTPUT && *cmd > OUTPUT_CMD_MAX)
+        return CMD_RANGE_ERR;
+
+    return OK;
+}
+
 
 int input_size(size_m *num, FILE *f)
 {
@@ -24,7 +40,7 @@ int input_size(size_m *num, FILE *f)
 }
 
 int input_num(int *num, FILE *f)
-{
+{    
     int rc = fscanf(f, "%d", num);
     
     if (rc == EOF)
@@ -44,11 +60,14 @@ int input_str(char *str, size_t max_len, FILE *f)
 
     if (!fgets(buff, BUFF_LEN - 2, f))
         return INVALID_INPUT;
-    size_t l = strlen(buff) - 1;
-    if (l > max_len)
+    
+    size_t l = strlen(buff);
+    if (l >= max_len)
         return STR_OVERFLOW;
     
-    buff[l] = 0;
+    if (l > 0 && buff[l - 1] == '\n')
+        buff[--l] = '\0';
+    
     strcpy(str, buff);
 
     return OK;
@@ -67,7 +86,7 @@ int input_matrix_sizes(size_m *n, size_m *m, FILE *f)
     rc = input_size(n, f);
     if (rc != OK)
         return rc;
-    if (n == 0)
+    if (*n == 0)
         return ZERO_SIZE;
     
     #ifndef FUNC_OUT
@@ -78,7 +97,7 @@ int input_matrix_sizes(size_m *n, size_m *m, FILE *f)
     rc = input_size(m, f);
     if (rc != OK)
         return rc;
-    if (m == 0)
+    if (*m == 0)
         return ZERO_SIZE;
     
     return OK;

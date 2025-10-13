@@ -48,37 +48,68 @@ int create_dim_data(dim_data_t *data, size_t len)
     data->value = malloc(len * sizeof(int));
     if (!data->value)
         return MEM_ERROR;
-    
+
     data->ind = malloc(len * sizeof(size_m));
     if (!data->ind)
+    {
+        free(data->value);
+        data->value = NULL;
         return MEM_ERROR;
+    }
 
     return OK;
 }
 
 void free_matrix_razr(matrix_t *m)
 {
-    if (!m->values && !m->ind && !m->dim)
-        return;
-        
     free(m->values);
-    m->values = NULL;
-    
     free(m->ind);
-    m->ind = NULL;
-        
     free(m->dim);
+    m->values = NULL;
+    m->ind = NULL;
     m->dim = NULL;
 }
 
 void free_dim_data(dim_data_t *data)
 {
-    if (!data->ind && !data->value)
-        return;
-    
     free(data->ind);
-    data->ind = NULL;
     free(data->value);
+    data->ind = NULL;
     data->value = NULL;
+}
+
+#define START_NUMBER_VALUES 50
+
+int create_matrix_razr(matrix_t *mtr, size_m n, size_m m, type_matrixt type)
+{
+    mtr->n = n;
+    mtr->m = m;
+    mtr->type = type;
+    mtr->max_values = START_NUMBER_VALUES;
+    mtr->values = NULL;
+    mtr->ind = NULL;
+    mtr->dim = NULL;
+
+    mtr->values = malloc(START_NUMBER_VALUES * sizeof(int));
+    if (!mtr->values)
+        return MEM_ERROR;
+
+    mtr->ind = malloc(START_NUMBER_VALUES * sizeof(size_m));
+    if (!mtr->ind)
+    {
+        free(mtr->values);
+        return MEM_ERROR;
+    }
+
+    size_t dim_len = (type == TYPE_CSR) ? n : m;
+    mtr->dim = malloc(dim_len * sizeof(size_m));
+    if (!mtr->dim)
+    {
+        free(mtr->values);
+        free(mtr->ind);
+        return MEM_ERROR;
+    }
+
+    return OK;
 }
 
