@@ -18,20 +18,14 @@
 #include "matrix_struct.h"
 #include "exit_code.h"
 #include "matrix_func.h"
+#include "enums.h"
+#include "test.h"
 
 #include <stdio.h>
 
-typedef enum
-{
-    CLASSIC_INPUT = 1,
-    COORD_INPUT,
-    CLASSIC_FILE,
-    COORD_FILE,
-    COMPARE
-} command_t;
-#define COMMAND_MAX COMPARE
 
-void print_command_list(void)
+
+void print_input_cmd_list(void)
 {
     printf(
         "1. Классический ввод\n"
@@ -42,12 +36,26 @@ void print_command_list(void)
     );
 }
 
-int input_command(command_t *cmd)
+void print_output_cmd_list(void)
+{
+    printf(
+        "1. Матричный вывод\n"
+        "2. Координатный ввод\n"
+        "3. CSR файл\n"
+    );
+}
+
+int input_command(int *cmd, command_t type)
 {
     if (scanf("%d", cmd) != 1)
         return INVALID_INPUT;
     
-    if (*cmd < 0 || *cmd > COMMAND_MAX)
+    if (*cmd < 0)
+        return CMD_RANGE_ERR;
+
+    if (type == INPUT && *cmd > INPUT_CMD_MAX)
+        return CMD_RANGE_ERR;
+    else if (type == OUTPUT && *cmd > OUTPUT_CMD_MAX)
         return CMD_RANGE_ERR;
 
     return OK;
@@ -57,11 +65,11 @@ int main(void)
 {
     // size_m n, m, p, q;
     size_m n = 0, m, p = 0, q;
-    command_t cmd;
+    int cmd;
     
     matrix_data_t m_1 = NULL;
     matrix_data_t m_2 = NULL;
-    matrix_t m_csr, m_csc, res;
+    matrix_t m_csr = { 0 }, m_csc = { 0 }, res = { 0 };
     method_input_matrix input_method = NULL;
     
 
@@ -70,11 +78,11 @@ int main(void)
     FILE *f = NULL;
     
     #ifndef FUNC_OUT
-    print_command_list();
+    print_input_cmd_list();
     printf("Введите номер команды: ");
     #endif 
 
-    rc = input_command(&cmd);
+    rc = input_command(&cmd, INPUT);
     if (rc != OK)
         return rc;
 
@@ -109,52 +117,102 @@ int main(void)
     switch (cmd)
     {
         case COMPARE:
-            // будут выполняться замеры времени и памяти
+            test_mult_method();
+            cmd = 0;
             break;
         default:
             // ввод первой матрицы
             rc = input_matrix(&m_1, &n, &m, f, input_method);
             if (rc != OK)
+            {
+                cmd = 0;
                 break;
+            }
 
-            // printf("M_1:\n");
-            // print_matrix(m_1, n, m);
-            // printf("\n");
-            
-            rc = matrix_to_csr(&m_csr, m_1, n, m);
-            if (rc != OK)
-                break;
-            
             // ввод второй матрицы
             rc = input_matrix(&m_2, &p, &q, f, input_method);
             if (rc != OK)
+            {
+                cmd = 0;
                 break;
+            }
             
-            // printf("M_2:\n");
-            // print_matrix(m_2, p, q);
-            // printf("\n");
+            if (m != p)
+            {
+                rc = NO_MULT_MATRIXES;
+                cmd = 0;
+                break;
+            }
 
+            rc = create_matrix_razr(&m_csr, n, m, csr);
+            if (rc != OK)
+            {
+                cmd = 0;
+                break;
+            }
+
+            rc = matrix_to_csr(&m_csr, m_1, n, m);
+            if (rc != OK)
+            {
+                cmd = 0;
+                break;
+            }
+            
+            rc = create_matrix_razr(&m_csc, p, q, csc);
+            if (rc != OK)
+            {
+                cmd = 0;
+                break;
+            }
+            
             rc = matrix_to_csc(&m_csc, m_2, p, q);
             if (rc != OK)
+            {
+                cmd = 0;
                 break;
+            }
             
+            rc = create_matrix_razr(&res, m_csr.n, m_csc.m, csr);
+            if (rc != OK)
+            {
+                cmd = 0;
+                break;
+            }
+
             rc = mult_csr_by_csc(&res, &m_csr, &m_csc); 
             if (rc != OK)
+            {
+                cmd = 0;
                 break;
-            
-            // print_razr_debug(&m_csr);
-            // printf("\n");
-            // print_razr_debug(&m_csc);
-            // printf("\n");
-            // print_razr_debug(&res);
-            
-            // print_csr_matrix(&res);
-            // printf("\n");
-            print_csr_coord(&res);
-            // printf("\n");
-            // print_razr_debug(&res);
+            }
+
             break;
-    }    
+    }
+
+    if (cmd)
+    {
+        #ifndef FUNC_OUT
+        print_output_cmd_list();
+        printf("Введите номер команды: ");
+        #endif 
+
+        rc = input_command(&cmd, INPUT);
+        if (rc != OK)
+            return rc;
+    }
+
+    switch (cmd)
+    {
+        case MATRIX:
+            print_csr_matrix(&res);
+            break;
+        case COORD:
+            print_csr_coord(&res);
+            break;
+        case CSR:
+            print_razr_debug(&res);
+            break;
+    }
 
     free_matrix_razr(&res);
     free_matrix_razr(&m_csr);

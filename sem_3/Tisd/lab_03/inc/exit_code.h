@@ -12,6 +12,7 @@
 #define STR_OVERFLOW 16
 #define OPEN_FILE_ERR 17 
 #define ZERO_SIZE 18
+#define NO_MULT_MATRIXES 19
 
 #define MEM_ERROR 21
 

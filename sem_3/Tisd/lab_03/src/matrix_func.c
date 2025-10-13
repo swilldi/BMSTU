@@ -66,9 +66,7 @@ int extract_matrix_values(matrix_t *matrix)
 int matrix_to_csr(matrix_t *m_csr, matrix_data_t mtr, size_m n, size_m m)
 {
     int rc;
-    rc = create_matrix_razr(m_csr, n, m, csr);
-    if (rc != OK)
-        return rc;
+    
 
     size_t num_count = 0;
     for (size_t i = 0; i < n; i++)
@@ -101,9 +99,7 @@ int matrix_to_csr(matrix_t *m_csr, matrix_data_t mtr, size_m n, size_m m)
 int matrix_to_csc(matrix_t *m_csr, matrix_data_t mtr, size_m n, size_m m)
 {
     int rc;
-    rc = create_matrix_razr(m_csr, n, m, csc);
-    if (rc != OK)
-        return rc;
+    
 
     size_t num_count = 0;
     for (size_t i = 0; i < m; i++)
@@ -189,15 +185,16 @@ int mult_csr_by_csc(matrix_t *mtr, matrix_t *m_csr, matrix_t *m_csc)
 {
     int rc;
     dim_data_t row, col;
-    rc = create_matrix_razr(mtr, m_csr->n, m_csc->m, csr);
-    if (rc != OK)
-        return rc;
     rc = create_dim_data(&row, m_csr->n);
     if (rc != OK)
         return rc;
     rc = create_dim_data(&col, m_csc->m);
     if (rc != OK)
+    {
+        free_dim_data(&row);
         return rc;
+    }
+        
 
     int val;
     size_t num_count = 0;
@@ -254,4 +251,17 @@ void get_dim_data(dim_data_t *data, matrix_t *mtr, size_t ind)
     
 }
 
+int classic_mult(matrix_data_t res, matrix_data_t a, matrix_data_t b, size_t n, size_t m, size_t k)
+{
+    for (size_t i = 0; i < n; i++)
+    {
+        for (size_t j = 0; j < k; j++)
+        {
+            res[i][j] = 0;
+            for (size_t common_i = 0; common_i < m; common_i++)
+                res[i][j] += a[i][common_i] * b[common_i][j];
+        }
+    }
 
+    return OK;
+}

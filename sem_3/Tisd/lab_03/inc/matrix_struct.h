@@ -6,8 +6,9 @@
 #define size_m unsigned int
 
 #define type_m bool
-#define csr 0
-#define csc 1
+#define not_type 0
+#define csr 1
+#define csc 2
 
 #define matrix_data_t int**
 

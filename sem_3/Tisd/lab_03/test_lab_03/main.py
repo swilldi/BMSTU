@@ -1,58 +1,26 @@
-def input_matrix(n: int, m: int) -> list[list[int]]:
-    matrix = [[0] * m for _ in range(n)]
-    for i in range(n):
-            matrix[i] = list(map(int, input().split()))
-    
-    return matrix
+from func import *
 
-def transp_matrix(mtr):
-    n, m = len(mtr), len(mtr[0])
-    tr_mtr = [[0] * m for _ in range(n)]
-    for i in range(n):
-        for j in range(m):
-            tr_mtr[i][j] = mtr[j][i]
-    return tr_mtr
+sizes = [
+    (5, 5),
+    (5, 10),
+    (10, 10),
+    (20, 20),
+    (100, 50),
+    (100, 100),
+    (1000, 1000)
+]
 
-def mult_row_col(row, col):
-    l = len(col)
-    res = 0
-    for i in range(l):
-        res += row[i] * col[i]
-    
-    return res
-
-def mult_matrix(mtr_a: list[list[int]], mtr_b: list[list[int]]) -> list[list[int]]:
-    n, m = len(mtr_a), len(mtr_b[0])
-    
-    mtr = [[0] * m for _ in range(n)]
-    for i in range(n):
-        for j in range(m):
-            mtr[i][j] = mult_row_col(mtr_a[i], mtr_b[j])
-    
-    return mtr
-
-def print_matrix(mtr):
-    for i, row in enumerate(mtr):
-        for j, el in enumerate(row):
-            if el != 0:
-                print(f"{i} {j} {el:3}")
-                
-
-n, m = map(int, input().split())
-mtr_a = input_matrix(n, m)
-
-p, q = map(int, input().split())
-mtr_b = transp_matrix(input_matrix(p, q))
-
-res = mult_matrix(mtr_a, mtr_b)
-print_matrix(res)
-
-
-
-
-
-
-
-
-
+for size in sizes:
+    for razr in range(1, 5):
+        file_name = f"test_matrix_{size[0]}x{size[1]}_{razr}.txt"
+        print(f'"./test_files/{file_name}",')
+        
+        # f = open(file_name, "w")
+        
+        # mtr = generate_matrix(*size, get_razr(razr))
+        # write_matrix(f, mtr)
+        # mtr = generate_matrix(*(size[::-1]), get_razr(razr))
+        # write_matrix(f, mtr)
+        
+        # f.close()
 

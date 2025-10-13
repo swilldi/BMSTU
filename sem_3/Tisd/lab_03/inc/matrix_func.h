@@ -15,6 +15,7 @@ int mult_row_by_col(dim_data_t *d_csr, dim_data_t *d_csc);
 int mult_csr_by_csc(matrix_t *mtr, matrix_t *m_csr, matrix_t *m_csc);
 void get_dim_data(dim_data_t *data, matrix_t *mtr, size_t ind);
 void free_dim_data(dim_data_t *data);
+int classic_mult(matrix_data_t res, matrix_data_t a, matrix_data_t b, size_t n, size_t m, size_t k);
 
 
 #endif
