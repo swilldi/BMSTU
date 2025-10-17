@@ -5,7 +5,6 @@
 
 #define INVALID_INPUT 10
 #define NEGATIVE_SIZE 11
-#define END_INPUT 12
 #define MATR_RANGE_ERR 13
 #define MATRIX_OVERFLOW 14
 #define CMD_RANGE_ERR 15
@@ -14,7 +13,7 @@
 #define ZERO_SIZE 18
 #define NO_MULT_MATRIXES 19
 
-#define MEM_ERROR 21
+#define MEM_ERROR 20
 
 
 #endif

@@ -2,6 +2,43 @@
 #include "matrix_struct.h"
 #include "exit_code.h"
 
+int extract_matrix_values(matrix_t *matrix)
+{
+    matrix->max_values *= 2;
+    
+    int *tmp = realloc(matrix->values, matrix->max_values * sizeof(int));
+    if (!tmp)
+        return MEM_ERROR;
+
+    matrix->values = tmp;
+
+    tmp = realloc(matrix->ind, matrix->max_values * sizeof(size_m));
+    if (!tmp)
+        return MEM_ERROR;
+
+    matrix->ind = (unsigned int*)tmp;
+
+    return OK;
+}
+
+void get_dim_data(dim_data_t *data, matrix_t *mtr, size_t ind)
+{
+    size_t len = mtr->dim[ind], shift = 0;
+    if (ind != 0)
+    {
+        len -= mtr->dim[ind - 1];
+        shift = mtr->dim[ind - 1];
+    }
+        
+    data->len = len;
+    for (size_t i = 0; i < len; i++)
+    {
+        data->value[i] = mtr->values[shift + i];
+        data->ind[i] = mtr->ind[shift + i];
+    }
+    
+}
+
 matrix_data_t create_matrix(size_t n, size_t m)
 {
     matrix_data_t matrix = malloc(n * sizeof(int*));

@@ -4,29 +4,6 @@
 #include "dynamic_mem.h"
 #include <stdlib.h>
 
-
-
-int extract_matrix_values(matrix_t *matrix)
-{
-    matrix->max_values *= 2;
-    
-    int *tmp = realloc(matrix->values, matrix->max_values * sizeof(int));
-    if (!tmp)
-        return MEM_ERROR;
-
-    matrix->values = tmp;
-
-    tmp = realloc(matrix->ind, matrix->max_values * sizeof(size_m));
-    if (!tmp)
-        return MEM_ERROR;
-
-    matrix->ind = (unsigned int*)tmp;
-
-    return OK;
-}
-
-
-
 int matrix_to_csr(matrix_t *m_csr, matrix_data_t mtr, size_m n, size_m m)
 {
     int rc;
@@ -185,23 +162,7 @@ int mult_csr_by_csc(matrix_t *mtr, matrix_t *m_csr, matrix_t *m_csc)
 }
 
 
-void get_dim_data(dim_data_t *data, matrix_t *mtr, size_t ind)
-{
-    size_t len = mtr->dim[ind], shift = 0;
-    if (ind != 0)
-    {
-        len -= mtr->dim[ind - 1];
-        shift = mtr->dim[ind - 1];
-    }
-        
-    data->len = len;
-    for (size_t i = 0; i < len; i++)
-    {
-        data->value[i] = mtr->values[shift + i];
-        data->ind[i] = mtr->ind[shift + i];
-    }
-    
-}
+
 
 int classic_mult(matrix_data_t *res, matrix_data_t a, matrix_data_t b, size_t n, size_t m, size_t k)
 {
