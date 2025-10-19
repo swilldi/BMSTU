@@ -11,7 +11,7 @@ UNIT_OBJS := $(patsubst ./unit_tests/%.c, ./out/%.o, $(wildcard ./unit_tests/*.c
 DEPS := $(patsubst ./%.o, ./%.d, $(OBJS)) $(patsubst ./%.o, ./%.d, $(UNIT_OBJS))
 NODEPS := clean
 
-.PHONY: clean release debug asan ubsan msan func func_tests unit_tests.exe
+.PHONY: clean release debug asan ubsan msan func func_tests func_valg unit_tests.exe 
 
 ### СБОРКИ ПРОГРАММЫ
 # сборка основной программы
@@ -53,6 +53,7 @@ gcov: app.exe
 func: CFLAGS += -DFUNC_OUT
 func: release
 	-./func_tests/scripts/func_tests.sh
+
 
 # Все санитайзеры
 func_san: func_asan func_ubsan func_msan

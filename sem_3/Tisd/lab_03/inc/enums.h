@@ -19,7 +19,8 @@ typedef enum
 
 typedef enum 
 {
-    MATRIX = 1,
+    EXIT = 0,
+    MATRIX,
     COORD,
     CSR
 } output_command_t;

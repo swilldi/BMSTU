@@ -23,6 +23,37 @@
 
 #include <stdio.h>
 
+void f_close(FILE *f)
+{
+    if (f == stdin)
+    {
+        return;
+    }
+    else 
+    {
+        fclose(f);
+        return;
+    }
+}
+
+void print_method_input_info(method_input_matrix method)
+{
+    if (method == input_matrix_coord)
+    {
+        printf(
+            "Ввод матриц в формате: i j v\n"
+            "i – Номер столбца\n"
+            "j – Номер строки\n"
+            "v – Значение элемента\n"
+        );
+    }
+    else if (method == input_matrix_classic)
+    {
+        printf(
+            "Необходимо ввести матрицу полностью\n"
+        );
+    }
+}
 
 int main(void)
 {
@@ -72,6 +103,7 @@ int main(void)
         f = fopen(path, "r");
         if (!f)
         {
+            print_err_msg(rc);
             rc = OPEN_FILE_ERR;
             return rc;
         }
@@ -85,16 +117,37 @@ int main(void)
     }
     
     // ввод матриц
+    #ifndef FUNC_OUT
+    if (f == stdin)
+        print_method_input_info(input_method);
+    #endif
+    
     rc = input_matrix(&m_1, &n, &m, f, input_method);
     if (rc != OK)
+    {
+        print_err_msg(rc);
+        if (rc != MEM_ERROR)
+            free_matrix(&m_1, n);
+        f_close(f);
         return rc;
+    }
+        
     
     // print_matrix(m_1, n, m);
-    
+    #ifndef FUNC_OUT
+    if (f == stdin)
+        print_method_input_info(input_method);
+    #endif
+
     rc = input_matrix(&m_2, &p, &q, f, input_method);
     if (rc != OK)
     {
+        print_err_msg(rc);
+        if (rc != MEM_ERROR)
+            free_matrix(&m_2, p);
+
         free_matrix(&m_1, n);
+        f_close(f);
         return rc;
     }
 
@@ -102,17 +155,27 @@ int main(void)
     rc = matrix_to_csr(&m_csr, m_1, n, m);
     if (rc != OK)
     {
+        print_err_msg(rc);
+        if (rc != MEM_ERROR)
+            free_matrix_razr(&m_csr);
+
         free_matrix(&m_1, n);
         free_matrix(&m_2, p);
+        f_close(f);
         return rc;
     }
 
     rc = matrix_to_csc(&m_csc, m_2, p, q);
     if (rc != OK)
     {
+        print_err_msg(rc);
+        if (rc != MEM_ERROR)
+            free_matrix_razr(&m_csc);
+
         free_matrix_razr(&m_csr);
         free_matrix(&m_1, n);
         free_matrix(&m_2, p);
+        f_close(f);
         return rc;
     }
 
@@ -120,10 +183,12 @@ int main(void)
     rc = mult_csr_by_csc(&res, &m_csr, &m_csc);
     if (rc != OK)
     {
+        print_err_msg(rc);
         free_matrix_razr(&m_csr);
         free_matrix_razr(&m_csc);
         free_matrix(&m_1, n);
         free_matrix(&m_2, p);
+        f_close(f);
         return rc;
     }
 
@@ -132,36 +197,43 @@ int main(void)
     print_output_cmd_list();
     #endif
 
-    rc = input_command(&cmd, OUTPUT);
-    if (rc != OK)
+    while (cmd != EXIT)
     {
-        free_matrix_razr(&res);
-        free_matrix_razr(&m_csr);
-        free_matrix_razr(&m_csc);
-        free_matrix(&m_1, n);
-        free_matrix(&m_2, p);
-        return rc;
-    }
+        #ifndef FUNC_OUT 
+        printf("Введите номер команды: ");
+        #endif
 
-    // вывод матрицы
-    switch (cmd)
-    {
-        case MATRIX:
-            print_csr_matrix(&res);
+        rc = input_command(&cmd, OUTPUT);
+        if (rc != OK)
+        {
+            print_err_msg(rc);
             break;
-        case COORD:
-            print_csr_coord(&res);
-            break;
-        case CSR:
-            print_razr_debug(&res);
-            break;
+        }
+
+        // вывод матрицы
+        switch (cmd)
+        {
+            case MATRIX:
+                print_csr_matrix(&res);
+                break;
+            case COORD:
+                print_csr_coord(&res);
+                break;
+            case CSR:
+                print_razr_debug(&res);
+                break;
+            case EXIT:     
+                break;
+        }
     }
+    
     
     free_matrix_razr(&res);
     free_matrix_razr(&m_csr);
     free_matrix_razr(&m_csc);
     free_matrix(&m_1, n);
     free_matrix(&m_2, p);
+    f_close(f);
 
-    return OK;
+    return rc;
 }

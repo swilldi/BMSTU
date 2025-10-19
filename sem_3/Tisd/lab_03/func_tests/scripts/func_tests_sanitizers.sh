@@ -21,7 +21,7 @@ else
     verb=true
 fi
 
-sanitizers=$(find . -regex "./build_debug_.*\.sh")
+
 fail_count=0
 
 for builder in $sanitizers

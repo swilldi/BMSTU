@@ -1,6 +1,7 @@
 #include "matrix_struct.h"
 #include <stdio.h>
 #include "output_func.h"
+#include "exit_code.h"
 
 #include <stdbool.h>
 
@@ -95,7 +96,7 @@ void print_csr_coord(matrix_t *mtr)
         
         for (size_t j = 0; j < len; j++)
         {
-            printf("%zu %u %d\n", i, mtr->ind[shift + j], mtr->values[shift + j]);
+            printf("%zu %u %d\n", i + 1, mtr->ind[shift + j] + 1, mtr->values[shift + j]);
         }
         shift = mtr->dim[i];
     }
@@ -104,6 +105,8 @@ void print_csr_coord(matrix_t *mtr)
 
 void print_input_cmd_list(void)
 {
+    printf("Программы выполняет умножение матриц\n");
+    printf("При координатном вводе/выводе индексы матрицы начинаются с 0\n");
     printf(
         "1. Классический ввод\n"
         "2. Координатный ввод\n"
@@ -119,7 +122,48 @@ void print_output_cmd_list(void)
         "1. Матричный вывод\n"
         "2. Координатный ввод\n"
         "3. CSR файл\n"
+        "0. Выход"
     );
 }
 
 
+void print_err_msg(int code)
+{
+    #ifdef FUNC_OUT
+    code = OK;
+    #endif
+
+    switch (code)
+    {
+        case INVALID_INPUT:
+            printf("Некоректный ввод\n");
+            break;
+        case NEGATIVE_SIZE:
+            printf("Отрицательная размерность\n");
+            break;
+        case MATR_RANGE_ERR:
+            printf("Индекс вне диапазона матрицы\n");
+            break;
+        case MATRIX_OVERFLOW:
+            printf("Указано слишком много элеменов для матрицы\n");
+            break;
+        case CMD_RANGE_ERR:
+            printf("Неизвестный номер команды\n");
+            break;
+        case STR_OVERFLOW:
+            printf("Слишком длинная строка\n");
+            break;
+        case OPEN_FILE_ERR:
+            printf("Ошибка открытия файла\n");
+            break;
+        case ZERO_SIZE:
+            printf("Размерность нулевая\n");
+            break;
+        case NO_MULT_MATRIXES:
+            printf("Матрицы не умножаются\n");
+            break;
+        case MEM_ERROR:
+            printf("Ошибка выделения памяти");
+            break;
+    }
+}

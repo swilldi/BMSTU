@@ -40,7 +40,7 @@ def print_coord(mtr):
     for i, row in enumerate(mtr):
         for j, el in enumerate(row):
             if el != 0:
-                print(f"{i} {j} {el:3}")
+                print(f"{i + 1} {j + 1} {el:3}")
 
 def print_matrix(mtr):
     for i, row in enumerate(mtr):
@@ -49,19 +49,19 @@ def print_matrix(mtr):
         print("")
         
 
-n, m = map(int, input().split())
-mtr_a = input_matrix(n, m)
+# n, m = map(int, input().split())
+# mtr_a = input_matrix(n, m)
 
-p, q = map(int, input().split())
-mtr_b = transp_matrix(input_matrix(p, q))
+# p, q = map(int, input().split())
+# mtr_b = transp_matrix(input_matrix(p, q))
 
-res = mult_matrix(mtr_a, mtr_b)
+# res = mult_matrix(mtr_a, mtr_b)
 
-print("\nКоординаты")
-print_coord(res)
+# print("\nКоординаты")
+# print_coord(res)
 
-print("\nМатрицы")
-print_matrix(res)
+# print("\nМатрицы")
+# print_matrix(res)
 
 
 

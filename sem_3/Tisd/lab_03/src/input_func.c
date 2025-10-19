@@ -167,13 +167,13 @@ int input_matrix_coord(matrix_data_t matrix, size_m n, size_m m, FILE *f)
         if (sscanf(buff, "%u %u %d", &i, &j, &num) != 3)
             return INVALID_INPUT;
 
-        if (i >= n || j >= m) 
+        if (i > n || j > m || i <= 0 || j <= 0) 
             return MATR_RANGE_ERR;
         
         if (count >= max_count)
             return MATRIX_OVERFLOW;
 
-        matrix[i][j] = num;
+        matrix[i - 1][j - 1] = num;
         count++;
     }
 

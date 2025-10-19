@@ -6,7 +6,7 @@
 #include "enums.h"
 #include "time.h"
 
-#define TEST_COUNT 2
+#define TEST_COUNT 3
 #define PRE_TEST_COUNT 5
 
 size_t amount_no_zero(matrix_data_t mtr, size_t n, size_t m)
@@ -287,30 +287,67 @@ int start_testa(void)
         "./test_files/test_matrix_5x5_2.txt",
         "./test_files/test_matrix_5x5_3.txt",
         "./test_files/test_matrix_5x5_4.txt",
+        "./test_files/test_matrix_5x5_5.txt",
+
         "./test_files/test_matrix_5x10_1.txt",
         "./test_files/test_matrix_5x10_2.txt",
         "./test_files/test_matrix_5x10_3.txt",
         "./test_files/test_matrix_5x10_4.txt",
-        "./test_files/test_matrix_20x20_1.txt",
-        "./test_files/test_matrix_20x20_2.txt",
-        "./test_files/test_matrix_20x20_3.txt",
-        "./test_files/test_matrix_20x20_4.txt",
+        "./test_files/test_matrix_5x10_5.txt",
+
         "./test_files/test_matrix_10x10_1.txt",
         "./test_files/test_matrix_10x10_2.txt",
         "./test_files/test_matrix_10x10_3.txt",
         "./test_files/test_matrix_10x10_4.txt",
+        "./test_files/test_matrix_10x10_5.txt",
+
+        "./test_files/test_matrix_20x20_1.txt",
+        "./test_files/test_matrix_20x20_2.txt",
+        "./test_files/test_matrix_20x20_3.txt",
+        "./test_files/test_matrix_20x20_4.txt",
+        "./test_files/test_matrix_20x20_5.txt",
+
+        "./test_files/test_matrix_20x50_1.txt",
+        "./test_files/test_matrix_20x50_2.txt",
+        "./test_files/test_matrix_20x50_3.txt",
+        "./test_files/test_matrix_20x50_4.txt",
+        "./test_files/test_matrix_20x50_5.txt",
+
+        "./test_files/test_matrix_100x20_1.txt",
+        "./test_files/test_matrix_100x20_2.txt",
+        "./test_files/test_matrix_100x20_3.txt",
+        "./test_files/test_matrix_100x20_4.txt",
+        "./test_files/test_matrix_100x20_5.txt",
+
+        "./test_files/test_matrix_100x30_1.txt",
+        "./test_files/test_matrix_100x30_2.txt",
+        "./test_files/test_matrix_100x30_3.txt",
+        "./test_files/test_matrix_100x30_4.txt",
+        "./test_files/test_matrix_100x30_5.txt",
+
+        "./test_files/test_matrix_100x40_1.txt",
+        "./test_files/test_matrix_100x40_2.txt",
+        "./test_files/test_matrix_100x40_3.txt",
+        "./test_files/test_matrix_100x40_4.txt",
+        "./test_files/test_matrix_100x40_5.txt",
+
         "./test_files/test_matrix_100x50_1.txt",
         "./test_files/test_matrix_100x50_2.txt",
         "./test_files/test_matrix_100x50_3.txt",
         "./test_files/test_matrix_100x50_4.txt",
+        "./test_files/test_matrix_100x50_5.txt",
+
         "./test_files/test_matrix_100x100_1.txt",
         "./test_files/test_matrix_100x100_2.txt",
         "./test_files/test_matrix_100x100_3.txt",
         "./test_files/test_matrix_100x100_4.txt",
-        "./test_files/test_matrix_1000x1000_1.txt",
-        "./test_files/test_matrix_1000x1000_2.txt",
-        "./test_files/test_matrix_1000x1000_3.txt",
-        "./test_files/test_matrix_1000x1000_4.txt"
+        "./test_files/test_matrix_100x100_5.txt",
+
+        "./test_files/test_matrix_500x1000_1.txt",
+        "./test_files/test_matrix_500x1000_2.txt",
+        "./test_files/test_matrix_500x1000_3.txt",
+        "./test_files/test_matrix_500x1000_4.txt",
+        "./test_files/test_matrix_500x1000_5.txt"
     };
 
     int rc;
@@ -343,12 +380,15 @@ int start_testa(void)
         time_res_classic /= CLOCKS_PER_SEC;
         time_res_compr /= CLOCKS_PER_SEC;
         
-        printf("| %12ld | %15lf | %10lf | %12ld  || %12ld | %15lf | %10lf | %12ld  ||| %9.2lf | %9.2lf |\n", 
-                amount_elem_1, k_razr_1, time_res_compr, memory_res_compr, 
-                amount_elem_2, k_razr_2, time_res_classic, memory_res_classic,
+        printf("| %12ld | %15.2lf | %10lf | %12ld  || %12ld | %15.2lf | %10lf | %12ld  ||| %9.2lf | %9.2lf |\n", 
+                amount_elem_1, k_razr_1 * 100, time_res_compr, memory_res_compr, 
+                amount_elem_2, k_razr_2 * 100, time_res_classic, memory_res_classic,
                 (time_res_classic - time_res_compr) / time_res_classic * 100,
                 ((double)memory_res_classic - memory_res_compr) / (double)memory_res_classic * 100
         );
+
+        if ((i + 1) % 5 == 0)
+            printf("|----------------------------------------------------------------------------------------------------------------------------|||-----------------------|\n");
     }
     
     return OK;

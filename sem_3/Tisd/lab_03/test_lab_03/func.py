@@ -1,16 +1,16 @@
-from random import randint, choice
+from random import randint, choice, choices
 
 def get_razr(prm):
     if prm == 1:
-        start, end = 75, 100
+        return 10
     elif prm == 2:
-        start, end = 50, 74
+        return  30
     elif prm == 3:
-        start, end = 25, 49
+        return  50
     elif prm == 4:
-        start, end = 1, 24
-    
-    return randint(start, end)
+        return 75
+    elif prm == 5:
+        return 100
 
 def write_matrix(f, mtr):
     
@@ -19,7 +19,8 @@ def write_matrix(f, mtr):
     for i, row in enumerate(mtr):
         for j, el in enumerate(row):
             if el:
-                f.write(f"{i} {j} {el}\n")
+                f.write(f"{i + 1} {j + 1} {el}\n")
+    f.write("\n")
                 
 #  def generate_matrix(n, m, razr):
 
@@ -31,15 +32,26 @@ def print_matrix(mtr):
         
     
 
-def generate_matrix(n, m, razr):
-    mtr = [[0] * m for _ in range(n)]
-    mtr_values = list(range(-5, 0)) + list(range(1, 10))
+from random import choice, sample
 
-    for i in range(n):
-        for j in range(m):
-            r = randint(0, 100)
-            if r < razr:
-                mtr[i][j] = choice(mtr_values)
-    
+def generate_matrix(n, m, razr):
+    """
+    Генерирует матрицу n×m с разреженностью 'razr' (0–100).
+    Количество ненулевых элементов строго соответствует проценту.
+    """
+    total = n * m
+    non_zero_count = round(total * razr / 100)  # округляем до ближайшего целого
+
+    # создаём список всех возможных позиций (i, j)
+    positions = [(i, j) for i in range(n) for j in range(m)]
+    # выбираем случайные ячейки для ненулевых значений
+    non_zero_positions = sample(positions, non_zero_count)
+
+    mtr_values = list(range(-5, 0)) + list(range(1, 10))
+    mtr = [[0 for _ in range(m)] for _ in range(n)]
+
+    for i, j in non_zero_positions:
+        mtr[i][j] = choice(mtr_values)
+
     return mtr
     
