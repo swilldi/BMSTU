@@ -67,7 +67,7 @@ int main(void)
     method_input_matrix input_method = NULL;
     
 
-    int rc;
+    int rc = OK;
     char path[PATH_LEN];
     FILE *f = NULL;
     
@@ -113,16 +113,26 @@ int main(void)
 
     if (cmd == COMPARE)
     {
-        start_testa();
+        rc = start_testa();
         return rc;
     }
     
     // ввод матриц
     #ifndef FUNC_OUT
     if (f == stdin)
+    {
         printf("\nВвод матрицы A");
         print_method_input_info(input_method);
+    }
     #endif
+
+    rc = input_matrix_sizes(&n, &m, f);
+    if (rc != OK)
+    {
+        print_err_msg(rc);
+        f_close(f);
+        return rc;
+    }
     
     rc = input_matrix(&m_1, &n, &m, f, input_method);
     if (rc != OK)
@@ -136,9 +146,24 @@ int main(void)
         
     #ifndef FUNC_OUT
     if (f == stdin)
+    {
         printf("\nВвод матрицы B");
         print_method_input_info(input_method);
+    }
     #endif
+
+    rc = input_matrix_sizes(&p, &q, f);
+    if (rc != OK || m != p)
+    {
+        if (m != p)
+            rc = NO_MULT_MATRIXES;
+
+        print_err_msg(rc);
+        
+        free_matrix(&m_1, n);
+        f_close(f);
+        return rc;
+    }
 
     rc = input_matrix(&m_2, &p, &q, f, input_method);
     if (rc != OK)
@@ -152,16 +177,7 @@ int main(void)
         return rc;
     }
 
-    if (m != p)
-    {
-        rc = NO_MULT_MATRIXES;
-        print_err_msg(rc);
-
-        free_matrix(&m_1, n);
-        free_matrix(&m_2, p);
-        f_close(f);
-        return rc;
-    }
+    
 
     // преобразование матриц к сжатому виду
     rc = matrix_to_csr(&m_csr, m_1, n, m);

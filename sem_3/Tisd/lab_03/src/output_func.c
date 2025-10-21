@@ -31,12 +31,14 @@ void print_razr_debug(matrix_t *mtr)
         dim_len = mtr->m;
     }
 
+    printf("Индекс в строке: ");
     for (size_t i = 0; i < elem_count; i++)
     {
         printf("%3d ", mtr->ind[i]);
     }
     printf("\n");
 
+    printf("       Значение: ");
     for (size_t i = 0; i < elem_count; i++)
     {
         printf("%3d ", mtr->values[i]);
@@ -44,7 +46,7 @@ void print_razr_debug(matrix_t *mtr)
     printf("\n");
 
     
-    
+    printf("кол-во в строке: ");
     for (size_t i = 0; i < dim_len; i++)
     {
         printf("%3d ", mtr->dim[i]);
@@ -85,6 +87,12 @@ void print_csr_matrix(matrix_t *mtr)
 
 void print_csr_coord(matrix_t *mtr)
 {
+    printf(
+        "\nВывод в формате i j v\n"
+        "i – строка\n"
+        "j - колонка\n"
+        "v – значение\n"
+    );
     size_t shift = 0, len;
     for (size_t i = 0; i < mtr->n; i++)
     {

@@ -106,10 +106,6 @@ int input_matrix_sizes(size_m *n, size_m *m, FILE *f)
 int input_matrix(matrix_data_t *matrix, size_m *n, size_m *m, FILE *f, method_input_matrix input_func)
 {
     int rc;
-    rc = input_matrix_sizes(n, m, f);
-    if (rc != OK)
-        return rc;
-
     // ввод матрицы
     *matrix = create_matrix(*n, *m);
     if (!*matrix)

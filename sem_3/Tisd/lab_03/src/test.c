@@ -36,12 +36,17 @@ int get_matrix_info(char *file_name, double *k_razr_1, size_t *max_elem_1, doubl
     matrix_data_t m_2 = NULL;
     
     // ввод матриц
+    rc = input_matrix_sizes(&n, &m, f);
+    if (rc != OK)
+        return rc;
     rc = input_matrix(&m_1, &n, &m, f, input_matrix_coord);
     if (rc != OK)
         return rc;
     
     // print_matrix(m_1, n, m);
-    
+    rc = input_matrix_sizes(&p, &q, f);
+    if (rc != OK)
+        return rc;
     rc = input_matrix(&m_2, &p, &q, f, input_matrix_coord);
     if (rc != OK)
     {
@@ -78,12 +83,17 @@ int test_compress(char *file_name, double *time_res, size_t *memory_res)
     clock_t start, end;
     
     // ввод матриц
+    rc = input_matrix_sizes(&n, &m, f);
+    if (rc != OK)
+        return rc;
     rc = input_matrix(&m_1, &n, &m, f, input_matrix_coord);
     if (rc != OK)
         return rc;
     
     // print_matrix(m_1, n, m);
-    
+    rc = input_matrix_sizes(&p, &q, f);
+    if (rc != OK)
+        return rc;
     rc = input_matrix(&m_2, &p, &q, f, input_matrix_coord);
     if (rc != OK)
     {
@@ -219,12 +229,17 @@ int test_classic(char *file_name, double *time_res, size_t *memory_res)
     clock_t start, end;
     
     // ввод матриц
+    rc = input_matrix_sizes(&n, &m, f);
+    if (rc != OK)
+        return rc;
     rc = input_matrix(&m_1, &n, &m, f, input_matrix_coord);
     if (rc != OK)
         return rc;
     
     // print_matrix(m_1, n, m);
-    
+    rc = input_matrix_sizes(&p, &q, f);
+    if (rc != OK)
+        return rc;
     rc = input_matrix(&m_2, &p, &q, f, input_matrix_coord);
     if (rc != OK)
     {
