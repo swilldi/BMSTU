@@ -1,0 +1,152 @@
+#include "dynamic_mem.h"
+#include "matrix_struct.h"
+#include "exit_code.h"
+
+int extract_matrix_values(matrix_t *matrix)
+{
+    matrix->max_values *= 2;
+    
+    int *tmp = realloc(matrix->values, matrix->max_values * sizeof(int));
+    if (!tmp)
+        return MEM_ERROR;
+
+    matrix->values = tmp;
+
+    tmp = realloc(matrix->ind, matrix->max_values * sizeof(size_m));
+    if (!tmp)
+        return MEM_ERROR;
+
+    matrix->ind = (unsigned int*)tmp;
+
+    return OK;
+}
+
+void get_dim_data(dim_data_t *data, matrix_t *mtr, size_t ind)
+{
+    size_t len = mtr->dim[ind], shift = 0;
+    if (ind != 0)
+    {
+        len -= mtr->dim[ind - 1];
+        shift = mtr->dim[ind - 1];
+    }
+        
+    data->len = len;
+    for (size_t i = 0; i < len; i++)
+    {
+        data->value[i] = mtr->values[shift + i];
+        data->ind[i] = mtr->ind[shift + i];
+    }
+    
+}
+
+matrix_data_t create_matrix(size_t n, size_t m)
+{
+    matrix_data_t matrix = malloc(n * sizeof(int*));
+    if (!matrix)
+    {
+        return NULL;    
+    }
+
+    for (size_t i = 0; i < n; i++)
+    {
+        matrix[i] = calloc(m, sizeof(int));
+        if (!matrix[i])
+        {
+            free_matrix(&matrix, i);
+            return NULL;
+        }
+    }
+    
+    return matrix;
+}
+
+void free_matrix(matrix_data_t *matrix, size_t n)
+{
+    if (*matrix == NULL)
+        return;
+    
+    for (size_t i = 0; i < n; i++)
+    {
+        free((*matrix)[i]);
+        (*matrix)[i] = NULL;
+    }
+        
+    
+    free(*matrix);
+    *matrix = NULL;
+}
+
+int create_dim_data(dim_data_t *data, size_t len)
+{
+    data->value = NULL;
+    data->ind = NULL;
+    data->len = len;
+
+    data->value = malloc(len * sizeof(int));
+    if (!data->value)
+        return MEM_ERROR;
+
+    data->ind = malloc(len * sizeof(size_m));
+    if (!data->ind)
+    {
+        free(data->value);
+        data->value = NULL;
+        return MEM_ERROR;
+    }
+
+    return OK;
+}
+
+void free_matrix_razr(matrix_t *m)
+{
+    free(m->values);
+    free(m->ind);
+    free(m->dim);
+    m->values = NULL;
+    m->ind = NULL;
+    m->dim = NULL;
+}
+
+void free_dim_data(dim_data_t *data)
+{
+    free(data->ind);
+    free(data->value);
+    data->ind = NULL;
+    data->value = NULL;
+}
+
+#define START_NUMBER_VALUES 50
+
+int create_matrix_razr(matrix_t *mtr, size_m n, size_m m, type_matrixt type)
+{
+    mtr->n = n;
+    mtr->m = m;
+    mtr->type = type;
+    mtr->max_values = START_NUMBER_VALUES;
+    mtr->values = NULL;
+    mtr->ind = NULL;
+    mtr->dim = NULL;
+
+    mtr->values = malloc(START_NUMBER_VALUES * sizeof(int));
+    if (!mtr->values)
+        return MEM_ERROR;
+
+    mtr->ind = malloc(START_NUMBER_VALUES * sizeof(size_m));
+    if (!mtr->ind)
+    {
+        free(mtr->values);
+        return MEM_ERROR;
+    }
+
+    size_t dim_len = (type == TYPE_CSR) ? n : m;
+    mtr->dim = malloc(dim_len * sizeof(size_m));
+    if (!mtr->dim)
+    {
+        free(mtr->values);
+        free(mtr->ind);
+        return MEM_ERROR;
+    }
+
+    return OK;
+}
+
