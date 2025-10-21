@@ -114,7 +114,7 @@ int input_matrix(matrix_data_t *matrix, size_m *n, size_m *m, FILE *f, method_in
     *matrix = create_matrix(*n, *m);
     if (!*matrix)
         return MEM_ERROR;
-        
+    
     rc = input_func(*matrix, *n, *m, f);
     if (rc != OK)
         return rc;

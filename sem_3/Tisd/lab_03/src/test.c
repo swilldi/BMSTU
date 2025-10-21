@@ -313,18 +313,6 @@ int start_testa(void)
         "./test_files/test_matrix_20x50_4.txt",
         "./test_files/test_matrix_20x50_5.txt",
 
-        "./test_files/test_matrix_100x20_1.txt",
-        "./test_files/test_matrix_100x20_2.txt",
-        "./test_files/test_matrix_100x20_3.txt",
-        "./test_files/test_matrix_100x20_4.txt",
-        "./test_files/test_matrix_100x20_5.txt",
-
-        "./test_files/test_matrix_100x30_1.txt",
-        "./test_files/test_matrix_100x30_2.txt",
-        "./test_files/test_matrix_100x30_3.txt",
-        "./test_files/test_matrix_100x30_4.txt",
-        "./test_files/test_matrix_100x30_5.txt",
-
         "./test_files/test_matrix_100x40_1.txt",
         "./test_files/test_matrix_100x40_2.txt",
         "./test_files/test_matrix_100x40_3.txt",

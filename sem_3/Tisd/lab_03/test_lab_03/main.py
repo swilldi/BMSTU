@@ -15,7 +15,7 @@ sizes = [
     # (100, 100),
     # (500, 1000)
     # (20, 20)
-    (3,3)
+    (10,3)
 ]
 
 f = open("paths.txt", "w")
@@ -41,8 +41,8 @@ for size in sizes:
         #     f.write("\n")
         f.close()
         
-        res = mult_matrix(mtr_1, mtr_2)
-        print_coord(res)
+        # res = mult_matrix(mtr_1, mtr_2)
+        # print_coord(res)
         break
         
 

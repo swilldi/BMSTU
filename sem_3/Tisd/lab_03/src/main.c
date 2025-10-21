@@ -38,6 +38,7 @@ void f_close(FILE *f)
 
 void print_method_input_info(method_input_matrix method)
 {
+    printf("\n");
     if (method == input_matrix_coord)
     {
         printf(
@@ -119,6 +120,7 @@ int main(void)
     // ввод матриц
     #ifndef FUNC_OUT
     if (f == stdin)
+        printf("\nВвод матрицы A");
         print_method_input_info(input_method);
     #endif
     
@@ -132,10 +134,9 @@ int main(void)
         return rc;
     }
         
-    
-    // print_matrix(m_1, n, m);
     #ifndef FUNC_OUT
     if (f == stdin)
+        printf("\nВвод матрицы B");
         print_method_input_info(input_method);
     #endif
 
@@ -147,6 +148,17 @@ int main(void)
             free_matrix(&m_2, p);
 
         free_matrix(&m_1, n);
+        f_close(f);
+        return rc;
+    }
+
+    if (m != p)
+    {
+        rc = NO_MULT_MATRIXES;
+        print_err_msg(rc);
+
+        free_matrix(&m_1, n);
+        free_matrix(&m_2, p);
         f_close(f);
         return rc;
     }
