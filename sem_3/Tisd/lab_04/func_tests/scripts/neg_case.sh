@@ -5,7 +5,7 @@
 
 # echo "$1"
 # cat "$1"
-if ! ./app.exe < "$1"; then
+if ! ./app.exe < "$1" > /dev/null; then
     exit 0
 else
     exit 1

@@ -1,4 +1,4 @@
-MAKEFLAGS += -s
+# MAKEFLAGS += -s
 
 CC := gcc
 CFLAGS := -Wall -Werror -Wextra -Wpedantic -std=c99 -Wfloat-equal -Wfloat-conversion -Wvla -Iinc
@@ -28,24 +28,32 @@ release: app.exe
 # сборка для дебага
 debug: CFLAGS += -g3
 debug: app.exe
+# сборка для дебага с нуля
+clean_debug:
+	$(MAKE) clean
+	$(MAKE) debug
 
 # Санитайзер адрессов
-asan: CFLAGS += -fsanitize=address -fno-omit-frame-pointer
+asan: CFLAGS += -fsanitize=address -fno-omit-frame-pointer -DFUNC_OUT -g3
 asan: LDFLAGS += -fsanitize=address
-asan: debug
+asan: clean
+asan: app.exe
 # Сантизайзер неопределенного поведения
-ubsan: CFLAGS += -fsanitize=undefined -fno-omit-frame-pointer
+ubsan: CFLAGS += -fsanitize=undefined -fno-omit-frame-pointer -DFUNC_OUT -g3
 ubsan: LDFLAGS += -fsanitize=undefined
-ubsan: debug
+ubsan: clean
+ubsan: app.exe
 # Сантизайзер памяти
-msan: CFLAGS += -fsanitize=memory -fPIE -fno-omit-frame-pointer
+msan: CFLAGS += -fsanitize=memory -fPIE -fno-omit-frame-pointer -DFUNC_OUT -g3
 msan: LDFLAGS += -fsanitize=memory -fPIE -pie
-msan: debug
+msan: CC := clang
+msan: clean
+msan: app.exe
 
 # Сборка для проверки покрытия тестов
 gcov: CFLAGS += -coverage
 gcov: LDFLAGS += -coverage
-gcov: app.exe
+gcov: clean_debug
 
 
 ### ЗАПУСК ФУНКЦИОНАЛЬНЫХ ТЕСТОВ
@@ -92,7 +100,6 @@ clean:
 	rm -f ./func_tests/data/result.txt
 	rm -rf out
 	rm -f *.exe
-	mkdir -p out
 	
 
 # TODO
