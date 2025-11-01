@@ -2,7 +2,7 @@
 #define STACK_TYPE_H__
 
 #include <stdint.h>
-#define STACK_MAX_LEN 64
+#define STACK_MAX_LEN 6
 #define STR_MAX_LEN 64
 #define str_t char*
 
@@ -18,7 +18,6 @@ struct stack_list_t
     stack_list_t *prev;  // Предыдущий элемент стека
 
     char sp[STR_MAX_LEN];                // Текущий элемент
-    unsigned char ind;
 };
 
 #endif

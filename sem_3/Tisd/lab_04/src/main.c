@@ -129,6 +129,7 @@ int main(void)
 
     char data[STACK_MAX_LEN][STR_MAX_LEN];
     my_stack_t stack = { .down_p = data, .sp = data - 1};
+    size_t node_count = 0;
     
     stack_list_t *stack_l = NULL;
     del_history_arr *history_arr;
@@ -250,6 +251,11 @@ int main(void)
                     free_history_arr(history_arr);
                     break;
                 case ADD:
+                    if (node_count == STACK_MAX_LEN)
+                    {
+                        rc = STACK_OVERFLOW;
+                        break;
+                    }
                     #ifndef FUNC_OUT
                     printf("Введите строку: ");
                     #endif
@@ -258,6 +264,7 @@ int main(void)
                         break;
 
                     rc = push_l(&stack_l, buff);
+                    node_count += 1;
                     break;
                 case REMOVE:
                     rc = add_elem_to_history_arr(history_arr, stack_l);
@@ -293,6 +300,11 @@ int main(void)
         {
             rc = OK;
             printf("Стек пустой\n");
+        }
+        else if (rc == STACK_OVERFLOW)
+        {
+            rc = OK;
+            printf("Стек переполнен\n");
         }
     }
 

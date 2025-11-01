@@ -15,9 +15,14 @@ char test_file_paths[][PATH_LEN] = {
     "files_for_test/test_word_5000.txt",
     "files_for_test/test_word_8000.txt",
     "files_for_test/test_word_10000.txt",
+    "files_for_test/test_word_30000.txt",
+    "files_for_test/test_word_50000.txt",
+    "files_for_test/test_word_70000.txt",
+    "files_for_test/test_word_80000.txt",
+    "files_for_test/test_word_90000.txt",
     "files_for_test/test_word_100000.txt"
-
 };
+
 
 // Подсчёт строк в файле
 size_t count_lines_in_file(FILE *f)
@@ -87,11 +92,26 @@ void free_words(char **words, size_t count)
 #define MAIN_TEST_COUNT 100
 #define STACK_LEN_TEST 100000
 
+error push_test(my_stack_t *stack, str_t value)
+{
+    stack->sp += 1;
+
+    if (stack->sp >= stack->down_p + STACK_LEN_TEST)
+    {
+        stack->sp -= 1;
+        return STACK_OVERFLOW;
+    }
+    
+    strcpy(*stack->sp, value);
+    return OK;
+}
+
 error run_static(char **words, size_t n, double *work_time)
 {
     error rc; 
-    char data[STACK_LEN_TEST][STR_MAX_LEN];
-    my_stack_t stack = { .sp = data - 1, .down_p = data };
+    // char data[STACK_LEN_TEST][STR_MAX_LEN];
+    char **data = malloc(STACK_LEN_TEST * STR_MAX_LEN);
+    my_stack_t stack = { .sp = (char(*)[64])data - 1, .down_p = (char(*)[64])data };
     char tmp_str[STR_MAX_LEN];
 
 
@@ -100,7 +120,7 @@ error run_static(char **words, size_t n, double *work_time)
         for (size_t i = 0; i < n; i++)
         {
             reverse_str(tmp_str, words[i]);
-            rc = push(&stack, tmp_str);
+            rc = push_test(&stack, tmp_str);
             if (rc != OK)
                 return rc;
         }
@@ -122,7 +142,7 @@ error run_static(char **words, size_t n, double *work_time)
         for (size_t i = 0; i < n; i++)
         {
             reverse_str(tmp_str, words[i]);
-            rc = push(&stack, tmp_str);
+            rc = push_test(&stack, tmp_str);
             if (rc != OK)
                 return rc;
         }
@@ -138,6 +158,7 @@ error run_static(char **words, size_t n, double *work_time)
     }
 
     *work_time = (double)time_res / MAIN_TEST_COUNT / CLOCKS_PER_SEC;
+    free(data);
     return OK;
 }
 
@@ -235,6 +256,11 @@ error run_tests(void)
         long m_list = n * sizeof(stack_list_t);
         double k_mem = (double)(m_static - m_list) / m_static * 100;
         rc = run_static(words, n, &t_static);
+        if (rc != OK)
+        {
+            free_words(words, n);
+            return rc;
+        }
         rc = run_list(words, n, &t_list);
         double k_time = (t_list - t_static) / t_list * 100;
         

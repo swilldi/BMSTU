@@ -9,6 +9,7 @@
 #define START_COUNT 2
 #define EXTRACT_K 2
 
+
 stack_list_t* create_stack_node(stack_list_t *stack, str_t str)
 {
     stack_list_t *node = malloc(sizeof(stack_list_t));
@@ -16,7 +17,6 @@ stack_list_t* create_stack_node(stack_list_t *stack, str_t str)
     {
         node->prev = stack;
         strcpy(node->sp, str);
-        node->ind = stack->ind + 1;
     }
     
     return node;
@@ -135,7 +135,7 @@ void free_history_arr(del_history_arr *arr)
 
 error extern_arr(del_history_arr *arr)
 {
-    printf(" ___РАСШИРЕНИЕ___\n");
+    // printf(" ___РАСШИРЕНИЕ___\n");
     stack_list_t **tmp = realloc(arr->data, arr->max_len * 2);
     if (!tmp)
         return MEMORY_ERR;
@@ -199,9 +199,9 @@ error print_rev_str_l(stack_list_t **stack)
     // печать элементов
     while (pop_l(stack, data_tmp[size]) != STACK_IS_EMPTY)
     {
-        #ifndef FUNC_OUT
-        printf("Значение: ");
-        #endif
+        // #ifndef FUNC_OUT
+        // printf("Значение: ");
+        // #endif
         reverse_str(rev_str, data_tmp[size]);
         printf("%s\n", rev_str);
         size++;

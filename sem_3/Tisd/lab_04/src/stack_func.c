@@ -22,7 +22,10 @@ error push(my_stack_t *stack, str_t value)
     stack->sp += 1;
 
     if (stack->sp >= stack->down_p + STACK_MAX_LEN)
+    {
+        stack->sp -= 1;
         return STACK_OVERFLOW;
+    }
     
     strcpy(*stack->sp, value);
     return OK;

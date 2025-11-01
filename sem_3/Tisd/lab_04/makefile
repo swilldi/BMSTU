@@ -1,4 +1,4 @@
-# MAKEFLAGS += -s
+MAKEFLAGS += -s
 
 CC := gcc
 CFLAGS := -Wall -Werror -Wextra -Wpedantic -std=c99 -Wfloat-equal -Wfloat-conversion -Wvla -Iinc
