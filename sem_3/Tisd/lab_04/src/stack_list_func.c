@@ -153,13 +153,16 @@ error add_elem_to_history_arr(del_history_arr *arr, stack_list_t *value)
     if (arr->len == arr->max_len)
     {
         rc = extern_arr(arr);
-        if (!rc)
+        if (rc != OK)
             return rc;
     }
 
-    arr->data[arr->len] = malloc(sizeof(stack_list_t));
-    arr->data[arr->len]->prev = value;
-    strcpy(arr->data[arr->len]->sp, value->sp);
+    stack_list_t *tmp_elem = malloc(sizeof(stack_list_t));
+    
+    tmp_elem->prev = value;
+    strcpy(tmp_elem->sp, value->sp);
+    
+    arr->data[arr->len] = tmp_elem;
     arr->len++;
 
     return OK;
@@ -175,7 +178,7 @@ error print_history_arr(del_history_arr *arr)
     printf("История удаления (адресса):\n");
     for (size_t i = 0; i < arr->len; i++)
     {
-        printf("%lu: %s %p\n", i + 1, arr->data[i]->sp, (void*)arr->data[i]->prev);
+        printf("%lu: %s %p\n", i + 1, (arr->data[i])->sp, (void*)(arr->data[i])->prev);
     }
 
     return OK;

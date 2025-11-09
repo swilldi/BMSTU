@@ -16,7 +16,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define STR_MAX_LEN 64  // фиксированная длина слова
 
 // Подсчёт строк в файле
 size_t count_lines_in_file(FILE *f);

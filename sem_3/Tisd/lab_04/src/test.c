@@ -25,10 +25,11 @@ char test_file_paths[][PATH_LEN] = {
 
 
 // Подсчёт строк в файле
+#define BUFFER_LEN 128
 size_t count_lines_in_file(FILE *f)
 {
     size_t count = 0;
-    char buffer[STR_MAX_LEN];
+    char buffer[BUFFER_LEN];
     while (fgets(buffer, sizeof(buffer), f))
         count++;
     rewind(f);
@@ -111,7 +112,7 @@ error run_static(char **words, size_t n, double *work_time)
     error rc; 
     // char data[STACK_LEN_TEST][STR_MAX_LEN];
     char **data = malloc(STACK_LEN_TEST * STR_MAX_LEN);
-    my_stack_t stack = { .sp = (char(*)[64])data - 1, .down_p = (char(*)[64])data };
+    my_stack_t stack = { .sp = (char(*)[STR_MAX_LEN])data - 1, .down_p = (char(*)[STR_MAX_LEN])data };
     char tmp_str[STR_MAX_LEN];
 
 

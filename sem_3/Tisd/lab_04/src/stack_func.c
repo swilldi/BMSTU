@@ -79,3 +79,8 @@ error print_rev_str(my_stack_t *stack)
     
     return OK;
 }
+
+bool is_full(my_stack_t *stack)
+{
+    return stack->sp + 1 >= stack->down_p + STACK_MAX_LEN;
+}
