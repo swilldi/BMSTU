@@ -8,8 +8,6 @@
 
 // инициализация очереди
 static void init_queue_array(queue_array_t *q);
-// очередь пустая
-static bool is_empty_q_arr(queue_array_t*);
 // очередь полная
 static bool is_full_q_arr(queue_array_t*);
 
@@ -37,12 +35,6 @@ static void init_queue_array(queue_array_t *q)
 {
     q->pin = q->pout = q->data;
     q->count = 0;
-}
-
-// очередь пустая
-static bool is_empty_q_arr(queue_array_t *queue)
-{
-    return queue->count == 0;
 }
 
 // очередь полная
@@ -98,13 +90,30 @@ error pop_array(queue_array_t *queue, q_type *value)
     return OK;
 }
 
+// просмотр первого элемента из очереди
+error front_array(queue_array_t *queue, q_type *value)
+{
+    if (is_empty_q_arr(queue))
+        return QUEUE_IS_EMPTY;
+
+    *value = *queue->pout;
+
+    return OK;
+}
+
+// очередь пустая
+bool is_empty_q_arr(queue_array_t *queue)
+{
+    return queue->count == 0;
+}
+
 // вывод с
 void print_queue_array(queue_array_t *queue)
 {
     q_type *ptmp = queue->pout;
     while (ptmp < queue->pin)
     {
-        printf("%lf\n", *ptmp);
+        printf("%d\n", *ptmp);
         ptmp += 1;
     }
 }
@@ -117,7 +126,7 @@ void print_queue_array_full(queue_array_t *queue)
         if ((!(queue->data + i < queue->pout && queue->data + i >= queue->pin) && queue->pin < queue->pout) || 
             ((queue->data + i >= queue->pout && queue->data + i < queue->pin && queue->pin > queue->pout)) ||
             (queue->pin == queue->pout && queue->count == QUEUE_LEN))
-            printf("%10.4lf", queue->data[i]);
+            printf("%10.4d", queue->data[i]);
         else
             printf("%10s", "empty");
         

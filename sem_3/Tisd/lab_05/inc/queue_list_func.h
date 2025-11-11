@@ -15,6 +15,10 @@ queue_list_t *create_queue_list(void);
 error push_list(queue_list_t *queue, q_type value);
 // удаление элемента из очереди
 error pop_list(queue_list_t *queue, q_type *value);
+// просмотр первого элемента из очереди
+error front_list(queue_list_t *queue, q_type *value);
+// очередь пустая
+bool is_empty_q_list(queue_list_t *queue);
 // вывод только заполненных элементов очереди
 void print_queue_list(queue_list_t *queue);
 // вывод всей очереди даже пустные значения

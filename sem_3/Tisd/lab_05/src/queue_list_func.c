@@ -12,8 +12,6 @@ static void destroy_node(node_t *node);
 static void init_node(node_t *node, q_type value);
 // инициализация очереди на списке
 static void init_queue_list(queue_list_t *queue);
-// очередь пустая
-static bool is_empty_q_list(queue_list_t *queue);
 // очередь полная
 static bool is_full_q_list(queue_list_t *queue);
 
@@ -69,11 +67,6 @@ static void init_node(node_t *node, q_type value)
     node->pnext = NULL;
 }
 
-// очередь пустая
-static bool is_empty_q_list(queue_list_t *queue)
-{
-    return queue->pout == NULL ? true : false;
-}
 // очередь полная
 static bool is_full_q_list(queue_list_t *queue)
 {
@@ -140,6 +133,22 @@ error pop_list(queue_list_t *queue, q_type *value)
     return OK;
 }
 
+// просмотр первого элемента из очереди
+error front_list(queue_list_t *queue, q_type *value)
+{
+    if (is_empty_q_list(queue))
+        return QUEUE_IS_EMPTY;
+
+    *value = queue->pout->value;
+
+    return OK;
+}
+
+// очередь пустая
+bool is_empty_q_list(queue_list_t *queue)
+{
+    return queue->pout == NULL ? true : false;
+}
 
 // вывод только заполненных элементов очереди
 void print_queue_list(queue_list_t *queue)
@@ -147,7 +156,7 @@ void print_queue_list(queue_list_t *queue)
     node_t *node = queue->pout;
     while (node)
     {
-        printf("%10f\n", node->value);
+        printf("%10d\n", node->value);
         node = node->pnext;
     }
 }
@@ -159,7 +168,7 @@ void print_queue_list_info(queue_list_t *queue)
     node_t *node = queue->pout;
     while (node)
     {
-        printf("%10f", node->value);
+        printf("%10d", node->value);
         node = node->pnext;
 
         if (is_first)
