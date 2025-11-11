@@ -188,8 +188,8 @@ int main(void)
     queue_list_t *q = create_queue_list();
     size_t i_t1 = 0;
     interval_t cur_time = time_arrival_t1[i_t1];  // текущее время
-    interval_t end_time = cur_time;  // время завершение текущего процесса
-    interval_t free_time = cur_time;  // время время простоя
+    interval_t end_time = cur_time;               // время завершение текущего процесса
+    interval_t free_time = cur_time;              // время время простоя
     bool is_busy = false;
 
     while (i_t1 < REQUEST_COUNT)
