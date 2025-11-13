@@ -119,7 +119,9 @@ int main(void) {
 
     int rc;
 
+    // Ввод типа данных на которых работает очередь
     queue_mode_t mode = LIST;
+    // Создание двух очередй
     queue_t *q1 = create_queue(mode);
     queue_t *q2 = create_queue(mode);
 
@@ -129,32 +131,42 @@ int main(void) {
     double t3_min = 0.0, t3_max = 4.0;  // Диапазон времени в I
     double t4_min = 0.0, t4_max = 1.0;  // Диапазон времени в II
 
+    // количество вошедших и вышедших в ОА заявок I-го типа
     int in_t1 = 0;
     int out_t1 = 0;
+    
+    // количество вошедших и вышедших в ОА заявок II-го типа
     int in_t2 = 0;
     int out_t2 = 0;
+    // количество выброшенных заявок II-го типа 
+    int drop_t2 = 0;
 
+    // среднее время в очереди
+    // double avg_time_in_queue = 0;
 
-    // double cur_time = 0.0;
+    // Время прибытия следующих заявок I и II-го типов
     double next_arrive_1 = rand_uniform(t1_min, t1_max);
     double next_arrive_2 = rand_uniform(t2_min, t2_max);
+    // Время завершения текущего процесса
     double end_time = next_arrive_1 + next_arrive_2; 
 
-
+    // Статус ОА
     device_action_t device_status = FREE;
 
-    size_t processed_count = 0;
-    q_type free_time = 0;
+    // Количество выполненных заяок
+    int processed_count = 0;
+    // Время простоя
+    double free_time = 0;
+    // Текущее время
     q_type t;
 
+    // Следующая временная точка
     q_type next_time_point = 0.0;
+    // Следующее действие
     device_action_t next_action = FREE;
 
     while (out_t1 < REQUEST_COUNT) {
-        // printf("%zu\n", processed_count);
-        // Поиск ближайшего события
-        
-        
+        // Выбор следующей временной точки
         if (next_arrive_1 < next_arrive_2 && next_arrive_1 < end_time)
         {
             next_time_point = next_arrive_1;
@@ -171,55 +183,57 @@ int main(void) {
             next_action = WORK_END;
         }
         
-        t = next_time_point;
-
-        
+        // Выполнение действия
+        t = next_time_point;        
         if (next_action == WORK_T1) {
-            // Поступила заявка 1-го типа
-            // TODO обрабатывается заяка 2-го типа
+            // Добавление процесса I
             if (device_status == WORK_T2)
             {
-                // удаляем из очереди недообработанный процесс
+                drop_t2 += 1;
+
                 q_type tmp_time;
                 rc = pop(q2, &tmp_time);
 
-                // добавляем в конец остаток
                 rc = push(q2, end_time - t);
                 device_status = FREE;
             }
             
             rc = push(q1, rand_uniform(t3_min, t3_max));
             next_arrive_1 = t + rand_uniform(t1_min, t1_max);
-            // printf("t=%.2f: Поступила заявка 1\n", t);
         } else if (next_action == WORK_T2) {
-            // Поступила заявка 2-го типа
+            // Добавление процесса II
             rc = push(q2, rand_uniform(t4_min, t4_max));
             next_arrive_2 = t + rand_uniform(t2_min, t2_max);
-            // printf("t=%.2f: Поступила заявка 2\n", t);
         } else if (next_action == WORK_END) {
-            // Завершение обслуживания
+            // Закончена обработка процесса
+            if (device_status == WORK_T1)
+                out_t1 += 1;
+            else if (device_status == WORK_T2)
+                out_t2 += 1;
+
             processed_count += 1;
             device_status = FREE;
         }
 
-        // Если никто не обслуживается — взять с головы очереди
         if (device_status == FREE) {
             if (!is_empty_q(q1)) {
                 device_status = WORK_T1;
+                
+                in_t1 += 1;
                 
                 q_type work_time;
                 rc = pop(q1, &work_time);
 
                 end_time = t + work_time;
-                // printf("t=%.2f: Начато обслуживание заявки 1\n", t);
             } else if (!is_empty_q(q2)) {
                 device_status = WORK_T2;
+                
+                in_t2 += 1;
                 
                 q_type work_time;
                 rc = pop(q2, &work_time);
 
                 end_time = t + work_time;
-                // printf("t=%.2f: Начато обслуживание заявки 2\n", t);
             }
             else
             {
@@ -230,7 +244,17 @@ int main(void) {
     }
 
     printf("t = %f\n", t);
-    printf("free_time = %f\n", free_time);
+    printf("free_time = %f\n\n", free_time);
+    
+    printf("in_t1 = %d\n", in_t1);
+    printf("out_t1 = %d\n\n", out_t1);
+    
+    printf("in_t2 = %d\n", in_t2);
+    printf("out_t2 = %d\n", out_t2);
+    printf("drop_t2 = %d\n\n", drop_t2);
+
+    printf("processed_count = %d\n\n", processed_count);
+    
     printf("rc = %d\n", rc);
     return 0;
 }
