@@ -113,7 +113,7 @@ void print_queue_array(queue_array_t *queue)
     q_type *ptmp = queue->pout;
     while (ptmp < queue->pin)
     {
-        printf("%d\n", *ptmp);
+        printf("%f\n", *ptmp);
         ptmp += 1;
     }
 }
@@ -126,7 +126,7 @@ void print_queue_array_full(queue_array_t *queue)
         if ((!(queue->data + i < queue->pout && queue->data + i >= queue->pin) && queue->pin < queue->pout) || 
             ((queue->data + i >= queue->pout && queue->data + i < queue->pin && queue->pin > queue->pout)) ||
             (queue->pin == queue->pout && queue->count == QUEUE_LEN))
-            printf("%10.4d", queue->data[i]);
+            printf("%10.4f", queue->data[i]);
         else
             printf("%10s", "empty");
         

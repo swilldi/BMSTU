@@ -156,7 +156,7 @@ void print_queue_list(queue_list_t *queue)
     node_t *node = queue->pout;
     while (node)
     {
-        printf("%10d\n", node->value);
+        printf("%10f\n", node->value);
         node = node->pnext;
     }
 }
@@ -168,7 +168,7 @@ void print_queue_list_info(queue_list_t *queue)
     node_t *node = queue->pout;
     while (node)
     {
-        printf("%10d", node->value);
+        printf("%10f", node->value);
         node = node->pnext;
 
         if (is_first)

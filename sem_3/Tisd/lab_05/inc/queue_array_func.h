@@ -7,6 +7,7 @@
 
 typedef struct queue_array_t queue_array_t;
 
+queue_array_t *create_queue_array(void);
 // добавление элемента в очередь
 error push_array(queue_array_t *queue, q_type value);
 // удаление элемента из очереди

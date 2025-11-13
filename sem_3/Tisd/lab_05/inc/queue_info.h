@@ -3,8 +3,8 @@
 
 #include <stdlib.h>
 
-#define QUEUE_LEN 10
+#define QUEUE_LEN 1000
 // #define q_type float
-#define q_type int
+#define q_type float
 
 #endif

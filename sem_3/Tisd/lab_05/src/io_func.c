@@ -27,7 +27,7 @@ error input_value(q_type *value)
     char buffer[BUFFER_LEN];
     if (fgets(buffer, BUFFER_LEN, stdin) == NULL)
         return INVALID_INPUT;
-    if (sscanf(buffer, "%d", value) != 1)
+    if (sscanf(buffer, "%f", value) != 1)
         return INVALID_INPUT;
     
     return OK; 
