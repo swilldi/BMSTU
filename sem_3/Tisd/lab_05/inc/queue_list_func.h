@@ -4,6 +4,7 @@
 #include <stdbool.h>
 
 #include "exit_code.h"
+#include "queue.h"
 #include "queue_info.h"
 
 typedef struct queue_list_t queue_list_t;
@@ -27,5 +28,10 @@ void print_queue_list_info(queue_list_t *queue);
 int len_list(queue_list_t *queue);
 // Осовобождение выделенной памяти
 void destroy_queue_list(queue_list_t *queue);
+// Размер node_t
+size_t get_size_node_t(void);
+// Размер queue_list_t
+size_t get_size_queue_list_t(void);
+
 
 #endif

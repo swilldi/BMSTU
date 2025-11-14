@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include "queue_array_func.h"
+#include "queue.h"
 
 
 // ----------------------------------
@@ -148,6 +148,6 @@ void print_queue_array_full(queue_array_t *queue)
 // Освобождение выделенной памяти
 void destroy_queue_array(queue_array_t *queue)
 {
-    free(queue->data);
+    // free(queue->data);
     free(queue);
 }

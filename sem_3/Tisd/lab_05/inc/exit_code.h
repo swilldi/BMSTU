@@ -8,7 +8,8 @@ typedef enum
     QUEUE_IS_EMPTY,
     INVALID_INPUT,
     INVALID_CMD_RANGE,
-    MEM_ERR
+    MEM_ERR,
+    INVALID_RANGE
 } error;
 
 #endif 

@@ -1,10 +1,7 @@
-#ifndef QUEUE_STRUCT_H__
-#define QUEUE_STRUCT_H__
+#ifndef QUEUE_INFO_H__
+#define QUEUE_INFO_H__
 
-#include <stdlib.h>
-
-#define QUEUE_LEN 1000
-// #define q_type float
+#define QUEUE_LEN 10000
 #define q_type float
 
 #endif

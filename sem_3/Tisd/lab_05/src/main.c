@@ -4,359 +4,220 @@
 #include "exit_code.h"
 #include "io_func.h"
 #include "enums.h"
-#include "queue_array_func.h"
-#include "queue_list_func.h"
-#include "io_func.h"
+#include "test.h"
 
-#define SEPARATOR_LINE "-----------------------------\n"
+#include "process_device.h"
 
-#include <time.h>
 
-#define REQUEST_COUNT 1000
-#define EPS 1e-5
-#include <math.h>
+// TODO Выбор типа данных для очереди
+// TODO Выбор симуляция очереди
 
-typedef enum
+void print_prog_mode_list(void)
 {
-    LIST,
-    ARRAY
-} queue_mode_t;
-
-typedef struct 
-{
-    union
-    {
-        queue_array_t *arr;
-        queue_list_t *list;
-    } data;
-    queue_mode_t mode;
-
-} queue_t;
-
-
-error push(queue_t *queue, q_type value)
-{
-    if (queue->mode == ARRAY)
-        return push_array(queue->data.arr, value);
-    else if (queue->mode == LIST)
-        return push_list(queue->data.list, value);
-    else
-        // TODO Придумать ощибку
-        return 1;
+    printf(
+        "Выберите режим работы программы:\n"
+        "--------------------------------\n"
+        "1. Очередь на списке\n"
+        "2. Обслуживающий аппарат\n"
+        "3. Выполнить сравнение\n"
+        "0. Выход\n"
+        "--------------------------------\n"
+    );
 }
 
-error pop(queue_t *queue, q_type *value)
+void print_queue_mode_list(void)
 {
-    if (queue->mode == ARRAY)
-        return pop_array(queue->data.arr, value);
-    else if (queue->mode == LIST)
-        return pop_list(queue->data.list, value);
-    else
-        // TODO Придумать ощибку
-        return 1;
-}
-
-error is_empty_q(queue_t *queue)
-{
-    if (queue->mode == ARRAY)
-        return is_empty_q_arr(queue->data.arr);
-    else if (queue->mode == LIST)
-        return is_empty_q_list(queue->data.list);
-    else
-        // TODO Придумать ощибку
-        return 1;
-}
-
-int len_q(queue_t *queue)
-{
-    if (queue->mode == ARRAY)
-        return len_array(queue->data.arr);
-    else if (queue->mode == LIST)
-        return len_list(queue->data.list);
-    
-    return -1;
+    printf(
+        "\nВыберите на каком типе данных будет работать очередь:\n"
+        "-----------------------------------------------------\n"
+        "1. Статический массив\n"
+        "2. Список\n"
+        "0. Выход\n"
+        "-----------------------------------------------------\n"
+    );
 }
 
 
-queue_t *create_queue(queue_mode_t mode)
+int input_trange(trange_t *tr)
 {
-
-    queue_t *queue = malloc(sizeof(queue_t));
-    if (!queue)
-        return NULL;
-
-    queue->mode = mode;
-
-    if (mode == ARRAY)
-    {
-        queue->data.arr = create_queue_array();
-        if (!queue->data.arr)
-            return NULL;
-    }
-    else if (mode == LIST)
-    {
-        queue->data.list = create_queue_list();
-        if (!queue->data.list)
-            return NULL;
-    }
-    else
-    {
-        return NULL;
-    }
-
-    return queue;
-}
-
-void destroy_queue(queue_t *queue)
-{
-    if (queue->mode == ARRAY)
-        destroy_queue_array(queue->data.arr);
-    else if (queue->mode == LIST)
-        destroy_queue_array(queue->data.list);
-}
-
-typedef enum 
-{
-    WORK_T1,
-    WORK_T2,
-    WORK_END,
-    FREE
-} device_action_t;
-
-double rand_uniform(double min, double max) {
-    return min + (max - min) * ((double) rand() / RAND_MAX);
-}
-
-q_type min(q_type a, q_type b)
-{
-    return a < b ? a : b;
-}
-
-
-typedef struct 
-{
-    q_type max;
-    q_type min;
-} trange_t;
-
-int run_process_divece(mode_t mode, trange_t *t1, trange_t *t2, trange_t *t3, trange_t *t4)
-{
-    time_t seed  = time(NULL);
-    printf("seed = %ld\n", seed);
-    srand(seed);
-
     int rc;
-
-    // Создание двух очередй
-    queue_t *q1 = create_queue(mode);
-    queue_t *q2 = create_queue(mode);
-
-
-    // double t1_min = 1.0, t1_max = 5.0;  // Приход в очередь I
-    // double t2_min = 0.0, t2_max = 3.0;  // Приход в очередь II
-    // double t3_min = 0.0, t3_max = 4.0;  // Диапазон времени в I
-    // double t4_min = 0.0, t4_max = 1.0;  // Диапазон времени в II
-
-    // количество вошедших и вышедших в ОА заявок I-го типа
-    int in_t1 = 0;
-    int out_t1 = 0;
-    
-    // количество вошедших и вышедших в ОА заявок II-го типа
-    int in_t2 = 0;
-    int out_t2 = 0;
-    // количество выброшенных заявок II-го типа 
-    int drop_t2 = 0;
-
-    // Средние значения
-    // double avg_time_in_queue = 0;
-    double avg_len_q1 = 0;
-    double avg_len_q2 = 0;
-
-
-    // Время прибытия следующих заявок I и II-го типов
-    double next_arrive_1 = rand_uniform(t1->min, t1->max);
-    double next_arrive_2 = rand_uniform(t2->min, t2->max);
-    // Время завершения текущего процесса
-    double end_time = next_arrive_1 + next_arrive_2; 
-
-    // Статус ОА
-    device_action_t device_status = FREE;
-
-    // Количество выполненных заяок
-    int processed_count = 0;
-    // Время простоя
-    double free_time = 0;
-    // Текущее время
-    q_type t;
-
-
-    // Следующая временная точка
-    q_type next_time_point = 0.0;
-    // Следующее действие
-    device_action_t next_action = FREE;
-
-    while (out_t1 < REQUEST_COUNT) {
-        // Выбор следующей временной точки
-        if (next_arrive_1 < next_arrive_2 && next_arrive_1 < end_time)
-        {
-            next_time_point = next_arrive_1;
-            next_action = WORK_T1;
-        }
-        else if (next_arrive_2 < next_arrive_1 && next_arrive_2 < end_time)
-        {
-            next_time_point = next_arrive_2;
-            next_action = WORK_T2;
-        }
-        else if (end_time < next_arrive_1 && end_time < next_arrive_2)
-        {
-            next_time_point = end_time;
-            next_action = WORK_END;
-        }
-        
-        // Выполнение действия
-        t = next_time_point;        
-        if (next_action == WORK_T1) {
-            // Добавление процесса I
-
-            // В работе процесс II
-            if (device_status == WORK_T2)
-            {
-                drop_t2 += 1;
-
-                q_type tmp_time;
-                rc = pop(q2, &tmp_time);
-                rc = push(q2, end_time - t);
-                // rc = push(q2, tmp_time);
-                device_status = FREE;
-            }
-            
-            rc = push(q1, rand_uniform(t3->min, t3->max));
-            next_arrive_1 = t + rand_uniform(t1->min, t1->max);
-        } else if (next_action == WORK_T2) {
-            // Добавление процесса II
-            rc = push(q2, rand_uniform(t4->min, t4->max));
-            next_arrive_2 = t + rand_uniform(t2->min, t2->max);
-        } else if (next_action == WORK_END) {
-            // Закончена обработка процесса
-            if (device_status == WORK_T1)
-                out_t1 += 1;
-            else if (device_status == WORK_T2)
-                out_t2 += 1;
-
-            processed_count += 1;
-            device_status = FREE;
-        }
-
-        if (device_status == FREE) {
-            if (!is_empty_q(q1)) {
-                device_status = WORK_T1;
-                
-                in_t1 += 1;
-                
-                q_type work_time;
-                rc = pop(q1, &work_time);
-
-                end_time = t + work_time;
-            } else if (!is_empty_q(q2)) {
-                device_status = WORK_T2;
-                
-                in_t2 += 1;
-                
-                q_type work_time;
-                rc = pop(q2, &work_time);
-
-                end_time = t + work_time;
-            }
-            else
-            {
-                end_time = next_arrive_1 + next_arrive_2;
-                free_time += min(next_arrive_1, next_arrive_2) - t;
-            }
-        }
-
-        avg_len_q1 += len_q(q1);
-        avg_len_q2 += len_q(q2);
+    q_type tmp;
+    rc = input_value(&tmp);
+    if (tmp < 0)
+    {
+        return rc;
     }
+    tr->min = tmp;
 
-    // делим на время
-    avg_len_q1 /= t;
-    avg_len_q2 /= t;
+    rc = input_value(&tmp);
+    if (tmp <= tr->min)
+    {
+        return INVALID_RANGE;
+    }
+    else if (tmp < 0)
+    {
+        return rc;
+    }
+    tr->max = tmp;
 
-    printf("Общее время работы: %.2f\n", t);
-    printf("Время простоя: %.2f\n\n", free_time);
+    return OK; 
 
-    double avg_t1 = (t1->max + t1->min) / 2;
-    double theor_out = out_t1 * avg_t1;
-    double percent_error = 100.0 * fabs(t - theor_out) / theor_out;
-
-    printf(
-        SEPARATOR_LINE
-        "ВРЕМЯ РАБОТЫ ОА\n" 
-        SEPARATOR_LINE
-        "Время работы: %.2lf\n"
-        "Теор. время работы: %.2lf\n"
-        "Расхождение: %.2lf%%\n"
-        SEPARATOR_LINE
-        "Время простоя: %.2lf\n"
-        SEPARATOR_LINE, 
-        t, theor_out, percent_error, free_time
-    );
-    
-    printf(
-        "\n\n"
-        SEPARATOR_LINE
-        "СТАТИСТИКА ВХОДА/ВЫХОДА\n"
-        SEPARATOR_LINE
-        "Всего вышло: %d\n"
-        SEPARATOR_LINE
-        "Заявки I-го типа\n" 
-        "Вошло: %d\n"
-        "Вышло: %d\n"
-        SEPARATOR_LINE
-        "Заявки II-го типа\n" 
-        "Вошло: %d\n"
-        "Вышло: %d\n"
-        "Выброшено: %d\n"
-        SEPARATOR_LINE,
-        processed_count,
-        in_t1, out_t1,
-        in_t2, out_t2, drop_t2
-    );
-
-    
-    printf(
-        "\n\n"
-        SEPARATOR_LINE
-        "СРЕДНЯЯ ДЛИНА ОЧЕРЕДИ\n" 
-        SEPARATOR_LINE
-        "I-й тип: %.2lf\n"
-        "II-й тип: %.2lf\n"
-        SEPARATOR_LINE,
-        avg_len_q1, avg_len_q2
-    );
-
-    destroy_queue(q1);
-    destroy_queue(q2);
-
-    printf("rc = %d", rc);
-
-    return 0;
 }
-
-
 
 int main(void) 
 {
+    int rc = OK;
+    int cmd = NO_CMD;
+    q_type tmp_value;
+
+    
+
+    // TODO Выбор режима работы
+    print_prog_mode_list();
+    
+    printf("Введите номер: ");
+    rc = input_cmd(&cmd, MAX_PROGRAMM_MODE);
+    if (rc != OK)
+    {
+        print_err_msg(rc);
+        return rc;
+    }
+    printf("--------------------------------\n");
+
+    if (cmd == COMPARE)
+    {
+        rc = run_compare_tests();
+        return rc;
+    }
+    else if (cmd == PROCESS_DEVICE)
+    {
+        trange_t t1, t2, t3, t4;
+        mode_t mode;
+        int request_count = 1000;
+
+        print_queue_mode_list();
+        printf("Введите номер: ");
+
+        rc = input_cmd(&cmd, MAX_QUEUE_MODE);
+        if (rc != OK)
+        {
+            print_err_msg(rc);
+            return rc;
+        }
+        printf("-----------------------------------------------------\n");
+
+        if (cmd == EXIT)
+            return rc;
         
+        mode = cmd;
+        
+        // Завки I-го типа
+        printf(
+            "\nЗАЯВКА I-ГО ТИПА: \n"
+            "Диапазон прихода: "
+        );
+        rc = input_trange(&t1);
+        if (rc != OK)
+        {
+            print_err_msg(rc);
+            return rc;
+        }
+        printf("Диапазон выполнения: ");
+        rc = input_trange(&t3);
+        if (rc != OK)
+        {
+            print_err_msg(rc);
+            return rc;
+        }
+        
+        // Завки II-го типа
+        printf(
+            "ЗАЯВКА II-ГО ТИПА: \n"
+            "Диапазон прихода: "
+        );
+        rc = input_trange(&t2);
+        if (rc != OK)
+        {
+            print_err_msg(rc);
+            return rc;
+        }
+        printf("Диапазон выполнения: ");
+        rc = input_trange(&t4);
+        if (rc != OK)
+        {
+            print_err_msg(rc);
+            return rc;
+        }
+
+        rc = run_process_divece(mode, request_count, &t1, &t2, &t3, &t4);
+    }
+    else if (cmd == EMULATE_LIST_QUEUE)
+    {
+        // Эмуляция очереди на списке
+        print_queue_cmd_list();
+        queue_list_t *queue = create_queue_list();
+        while (rc == OK && cmd != EXIT)
+        {
+            #ifndef FUNC_OUT
+            printf("Введите номер: ");
+            #endif
+            
+            rc = input_cmd(&cmd, MAX_CMD_ACTION);
+            if (rc != OK)
+                cmd = CONTINUE;
+
+            switch (cmd)
+            {
+                case CONTINUE:
+                case EXIT:
+                    break;
+                case PUSH:
+                    // TODO переполнение
+                    // if (is_full(queue))
+                    // {
+                    //     rc = QUEUE_OVERFLOW;
+                    //     break;
+                    // }
+
+                    #ifndef FUNC_OUT
+                    printf("Введите число: ");
+                    #endif
+
+                    rc = input_value(&tmp_value);
+                    if (rc != OK)
+                        break;
+                    rc = push_list(queue, tmp_value);
+                    printf("-----------------------------\n");
+                    break;
+                case POP:
+                    
+                    rc = pop_list(queue, &tmp_value);
+                
+                    #ifndef FUNC_OUT
+                    if (rc == OK)
+                        printf("Удален: %.2lf\n", tmp_value);
+                    #endif
+                    printf("-----------------------------\n");
+                    break;
+                case PRINT_VALUE:
+                    print_queue_list_info(queue);
+                    printf("-----------------------------\n");
+                    break;
+                default:
+                    rc = INVALID_CMD_RANGE;
+                    break;
+            }
+
+            if (rc != OK)
+            {
+                print_err_msg(rc);
+                rc = OK;
+            }
+        }
+
+        destroy_queue_list(queue);
+    }
+
+    
 }
-
-
-/*
-2 может войти если нет в процессе 1
-
-Если работает 2-я и в пустую очередь приходит 1, то
-- обработка останавливается
-- процесс уходит в конец очереди
-- прищедщая заявка начинает выполняться
-*/
 

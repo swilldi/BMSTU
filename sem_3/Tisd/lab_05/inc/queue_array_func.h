@@ -3,6 +3,7 @@
 
 #include <stdbool.h>
 #include "exit_code.h"
+#include "queue.h"
 #include "queue_info.h"
 
 typedef struct queue_array_t queue_array_t;

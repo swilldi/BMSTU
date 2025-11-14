@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include "queue_list_func.h"
+#include "queue.h"
 
 // ----------------------------------
 // ОБЪЯВЛЕНИЯ ВНУТРЕНИХ ФУНКЦИЙ     |
@@ -193,7 +193,7 @@ void print_queue_list_info(queue_list_t *queue)
     node_t *node = queue->pout;
     while (node)
     {
-        printf("%10f", node->value);
+        printf("%10.3f (%p)", node->value, (void*)node);
         node = node->pnext;
 
         if (is_first)
@@ -206,11 +206,24 @@ void print_queue_list_info(queue_list_t *queue)
     
     if (!is_full_q_list(queue))
     {
-        printf("%-10s", "empty");
+        
+        printf("%10s (0x000000000)", "empty");
         if (is_first)
             printf("<-- out");
 
         printf(" <-- in\n");
+        printf("Очередь пустая\n");
     }
     
+}
+
+// Размер node_t
+size_t get_size_node_t(void)
+{
+    return sizeof(node_t);
+}
+// Размер queue_list_t
+size_t get_size_queue_list_t(void)
+{
+    return sizeof(queue_list_t);
 }

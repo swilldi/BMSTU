@@ -3,32 +3,36 @@
 #include "enums.h"
 
 
-error input_cmd(int *cmd)
+error input_cmd(int *cmd, int max_value)
 {
-    char buffer[BUFFER_LEN];
-    if (fgets(buffer, BUFFER_LEN, stdin) == NULL)
+    long tmp_cmd;
+    if (fscanf(stdin, "%ld", &tmp_cmd) != 1)
+    {
+        while (getchar() != '\n');
         return INVALID_INPUT;
-    if (sscanf(buffer, "%d", cmd) != 1)
-        return INVALID_INPUT;
+    }
     
-    if (*cmd >= MAX_CMD_ACTION || *cmd < 0)
+    if (tmp_cmd >= max_value || tmp_cmd < 0)
         return INVALID_CMD_RANGE;
+
+    *cmd = tmp_cmd;
 
     // очищение буффера stdin
     // int ch = fgetc(stdin);
     // while (ch != '\n' && !feof(stdin))
     //     ch = fgetc(stdin);
+
     
     return OK; 
 }
 
 error input_value(q_type *value)
 {
-    char buffer[BUFFER_LEN];
-    if (fgets(buffer, BUFFER_LEN, stdin) == NULL)
+    if (fscanf(stdin, "%f", value) != 1)
+    {
+        while (getchar() == '\n');
         return INVALID_INPUT;
-    if (sscanf(buffer, "%f", value) != 1)
-        return INVALID_INPUT;
+    }
     
     return OK; 
 }
@@ -52,6 +56,9 @@ void print_err_msg(error rc)
         case INVALID_CMD_RANGE:
             printf("Введенный номер команды вне диапазона");
             break;
+        case INVALID_RANGE:
+            printf("Минимальное значение больше максимального");
+            break;
         default:
             printf("Неизвествная ошибка");
             break;
@@ -60,13 +67,15 @@ void print_err_msg(error rc)
 
 }
 
-void print_cmd_list(void)
+void print_queue_cmd_list(void)
 {
     printf(
+        "\nВыберите действие:\n"
+        "-----------------------------\n"
         "1. Добавить элемент\n"
         "2. Удалить элемент\n"
         "3. Вывести содержимое очереди\n"
-        "4. Вывести полное представление очереди\n"
         "0. Выход\n"
+        "-----------------------------\n"
     );
 }
