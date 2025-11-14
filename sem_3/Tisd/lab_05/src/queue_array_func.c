@@ -101,6 +101,12 @@ error front_array(queue_array_t *queue, q_type *value)
     return OK;
 }
 
+// Длина очереди
+int len_array(queue_array_t *queue)
+{
+    return queue->count;
+}
+
 // очередь пустая
 bool is_empty_q_arr(queue_array_t *queue)
 {
@@ -137,4 +143,11 @@ void print_queue_array_full(queue_array_t *queue)
         
         printf("\n");
     }
+}
+
+// Освобождение выделенной памяти
+void destroy_queue_array(queue_array_t *queue)
+{
+    free(queue->data);
+    free(queue);
 }

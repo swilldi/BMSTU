@@ -23,5 +23,9 @@ bool is_empty_q_list(queue_list_t *queue);
 void print_queue_list(queue_list_t *queue);
 // вывод всей очереди даже пустные значения
 void print_queue_list_info(queue_list_t *queue);
+// Длина очереди
+int len_list(queue_list_t *queue);
+// Осовобождение выделенной памяти
+void destroy_queue_list(queue_list_t *queue);
 
 #endif

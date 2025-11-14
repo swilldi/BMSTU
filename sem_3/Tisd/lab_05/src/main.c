@@ -8,7 +8,7 @@
 #include "queue_list_func.h"
 #include "io_func.h"
 
-
+#define SEPARATOR_LINE "-----------------------------\n"
 
 #include <time.h>
 
@@ -67,6 +67,16 @@ error is_empty_q(queue_t *queue)
         return 1;
 }
 
+int len_q(queue_t *queue)
+{
+    if (queue->mode == ARRAY)
+        return len_array(queue->data.arr);
+    else if (queue->mode == LIST)
+        return len_list(queue->data.list);
+    
+    return -1;
+}
+
 
 queue_t *create_queue(queue_mode_t mode)
 {
@@ -97,6 +107,14 @@ queue_t *create_queue(queue_mode_t mode)
     return queue;
 }
 
+void destroy_queue(queue_t *queue)
+{
+    if (queue->mode == ARRAY)
+        destroy_queue_array(queue->data.arr);
+    else if (queue->mode == LIST)
+        destroy_queue_array(queue->data.list);
+}
+
 typedef enum 
 {
     WORK_T1,
@@ -114,22 +132,30 @@ q_type min(q_type a, q_type b)
     return a < b ? a : b;
 }
 
-int main(void) {
-    srand(time(NULL));
+
+typedef struct 
+{
+    q_type max;
+    q_type min;
+} trange_t;
+
+int run_process_divece(mode_t mode, trange_t *t1, trange_t *t2, trange_t *t3, trange_t *t4)
+{
+    time_t seed  = time(NULL);
+    printf("seed = %ld\n", seed);
+    srand(seed);
 
     int rc;
 
-    // Ввод типа данных на которых работает очередь
-    queue_mode_t mode = LIST;
     // Создание двух очередй
     queue_t *q1 = create_queue(mode);
     queue_t *q2 = create_queue(mode);
 
 
-    double t1_min = 1.0, t1_max = 5.0;  // Приход в очередь I
-    double t2_min = 0.0, t2_max = 3.0;  // Приход в очередь II
-    double t3_min = 0.0, t3_max = 4.0;  // Диапазон времени в I
-    double t4_min = 0.0, t4_max = 1.0;  // Диапазон времени в II
+    // double t1_min = 1.0, t1_max = 5.0;  // Приход в очередь I
+    // double t2_min = 0.0, t2_max = 3.0;  // Приход в очередь II
+    // double t3_min = 0.0, t3_max = 4.0;  // Диапазон времени в I
+    // double t4_min = 0.0, t4_max = 1.0;  // Диапазон времени в II
 
     // количество вошедших и вышедших в ОА заявок I-го типа
     int in_t1 = 0;
@@ -141,12 +167,15 @@ int main(void) {
     // количество выброшенных заявок II-го типа 
     int drop_t2 = 0;
 
-    // среднее время в очереди
+    // Средние значения
     // double avg_time_in_queue = 0;
+    double avg_len_q1 = 0;
+    double avg_len_q2 = 0;
+
 
     // Время прибытия следующих заявок I и II-го типов
-    double next_arrive_1 = rand_uniform(t1_min, t1_max);
-    double next_arrive_2 = rand_uniform(t2_min, t2_max);
+    double next_arrive_1 = rand_uniform(t1->min, t1->max);
+    double next_arrive_2 = rand_uniform(t2->min, t2->max);
     // Время завершения текущего процесса
     double end_time = next_arrive_1 + next_arrive_2; 
 
@@ -159,6 +188,7 @@ int main(void) {
     double free_time = 0;
     // Текущее время
     q_type t;
+
 
     // Следующая временная точка
     q_type next_time_point = 0.0;
@@ -187,23 +217,25 @@ int main(void) {
         t = next_time_point;        
         if (next_action == WORK_T1) {
             // Добавление процесса I
+
+            // В работе процесс II
             if (device_status == WORK_T2)
             {
                 drop_t2 += 1;
 
                 q_type tmp_time;
                 rc = pop(q2, &tmp_time);
-
                 rc = push(q2, end_time - t);
+                // rc = push(q2, tmp_time);
                 device_status = FREE;
             }
             
-            rc = push(q1, rand_uniform(t3_min, t3_max));
-            next_arrive_1 = t + rand_uniform(t1_min, t1_max);
+            rc = push(q1, rand_uniform(t3->min, t3->max));
+            next_arrive_1 = t + rand_uniform(t1->min, t1->max);
         } else if (next_action == WORK_T2) {
             // Добавление процесса II
-            rc = push(q2, rand_uniform(t4_min, t4_max));
-            next_arrive_2 = t + rand_uniform(t2_min, t2_max);
+            rc = push(q2, rand_uniform(t4->min, t4->max));
+            next_arrive_2 = t + rand_uniform(t2->min, t2->max);
         } else if (next_action == WORK_END) {
             // Закончена обработка процесса
             if (device_status == WORK_T1)
@@ -241,22 +273,81 @@ int main(void) {
                 free_time += min(next_arrive_1, next_arrive_2) - t;
             }
         }
+
+        avg_len_q1 += len_q(q1);
+        avg_len_q2 += len_q(q2);
     }
 
-    printf("t = %f\n", t);
-    printf("free_time = %f\n\n", free_time);
-    
-    printf("in_t1 = %d\n", in_t1);
-    printf("out_t1 = %d\n\n", out_t1);
-    
-    printf("in_t2 = %d\n", in_t2);
-    printf("out_t2 = %d\n", out_t2);
-    printf("drop_t2 = %d\n\n", drop_t2);
+    // делим на время
+    avg_len_q1 /= t;
+    avg_len_q2 /= t;
 
-    printf("processed_count = %d\n\n", processed_count);
+    printf("Общее время работы: %.2f\n", t);
+    printf("Время простоя: %.2f\n\n", free_time);
+
+    double avg_t1 = (t1->max + t1->min) / 2;
+    double theor_out = out_t1 * avg_t1;
+    double percent_error = 100.0 * fabs(t - theor_out) / theor_out;
+
+    printf(
+        SEPARATOR_LINE
+        "ВРЕМЯ РАБОТЫ ОА\n" 
+        SEPARATOR_LINE
+        "Время работы: %.2lf\n"
+        "Теор. время работы: %.2lf\n"
+        "Расхождение: %.2lf%%\n"
+        SEPARATOR_LINE
+        "Время простоя: %.2lf\n"
+        SEPARATOR_LINE, 
+        t, theor_out, percent_error, free_time
+    );
     
-    printf("rc = %d\n", rc);
+    printf(
+        "\n\n"
+        SEPARATOR_LINE
+        "СТАТИСТИКА ВХОДА/ВЫХОДА\n"
+        SEPARATOR_LINE
+        "Всего вышло: %d\n"
+        SEPARATOR_LINE
+        "Заявки I-го типа\n" 
+        "Вошло: %d\n"
+        "Вышло: %d\n"
+        SEPARATOR_LINE
+        "Заявки II-го типа\n" 
+        "Вошло: %d\n"
+        "Вышло: %d\n"
+        "Выброшено: %d\n"
+        SEPARATOR_LINE,
+        processed_count,
+        in_t1, out_t1,
+        in_t2, out_t2, drop_t2
+    );
+
+    
+    printf(
+        "\n\n"
+        SEPARATOR_LINE
+        "СРЕДНЯЯ ДЛИНА ОЧЕРЕДИ\n" 
+        SEPARATOR_LINE
+        "I-й тип: %.2lf\n"
+        "II-й тип: %.2lf\n"
+        SEPARATOR_LINE,
+        avg_len_q1, avg_len_q2
+    );
+
+    destroy_queue(q1);
+    destroy_queue(q2);
+
+    printf("rc = %d", rc);
+
     return 0;
+}
+
+
+
+int main(void) 
+{
+        
 }
 
 

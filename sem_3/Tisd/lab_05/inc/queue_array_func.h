@@ -20,5 +20,9 @@ void print_queue_array(queue_array_t *queue);
 void print_queue_array_full(queue_array_t *queue);
 // очередь пустая
 bool is_empty_q_arr(queue_array_t *queue);
+// Длина очереди
+int len_array(queue_array_t *queue);
+// Осовобождение выделенной памяти
+void destroy_queue_array(queue_array_t *queue);
 
 #endif

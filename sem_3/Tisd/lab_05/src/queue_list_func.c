@@ -96,6 +96,17 @@ queue_list_t *create_queue_list(void)
     return queue;
 }
 
+void destroy_queue_list(queue_list_t *queue)
+{
+    node_t *pnode = queue->pout;
+    while (pnode)
+    {
+        node_t *pnext = pnode->pnext;
+        destroy_node(pnode);
+        pnode = pnext;
+    }
+}
+
 // добавление элемента в очередь
 error push_list(queue_list_t *queue, q_type value)
 {
@@ -148,6 +159,20 @@ error front_list(queue_list_t *queue, q_type *value)
 bool is_empty_q_list(queue_list_t *queue)
 {
     return queue->pout == NULL ? true : false;
+}
+
+int len_list(queue_list_t *queue)
+{
+    int count = 0;
+    node_t *pnode = queue->pout;
+
+    while (pnode)
+    {
+        count++; 
+        pnode = pnode->pnext;
+    }
+
+    return count;
 }
 
 // вывод только заполненных элементов очереди
