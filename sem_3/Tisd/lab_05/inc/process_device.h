@@ -19,8 +19,8 @@ typedef struct
     q_type min;
 } trange_t;
 
-int run_process_divece(mode_t mode, int request_count, trange_t *t1, trange_t *t2, trange_t *t3, trange_t *t4);
-double rand_uniform(double min, double max);
+int run_process_divece(queue_mode_t mode, int request_count, trange_t *t1, trange_t *t2, trange_t *t3, trange_t *t4);
+q_type rand_uniform(double min, double max);
 q_type min(q_type a, q_type b);
 
 #endif

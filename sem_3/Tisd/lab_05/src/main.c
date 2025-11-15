@@ -43,20 +43,28 @@ int input_trange(trange_t *tr)
     int rc;
     q_type tmp;
     rc = input_value(&tmp);
-    if (tmp < 0)
+    if (rc != OK)
     {
         return rc;
+    }
+    if (tmp < 0)
+    {
+        return INVALID_INPUT;
     }
     tr->min = tmp;
 
     rc = input_value(&tmp);
-    if (tmp <= tr->min)
+    if (rc != OK)
+    {
+        return rc;
+    }
+    if (tmp < tr->min)
     {
         return INVALID_RANGE;
     }
     else if (tmp < 0)
     {
-        return rc;
+        return INVALID_INPUT;
     }
     tr->max = tmp;
 
@@ -69,7 +77,7 @@ int main(void)
     int rc = OK;
     int cmd = NO_CMD;
     q_type tmp_value;
-
+    
     
 
     // TODO Выбор режима работы
@@ -92,7 +100,7 @@ int main(void)
     else if (cmd == PROCESS_DEVICE)
     {
         trange_t t1, t2, t3, t4;
-        mode_t mode;
+        queue_mode_t mode;
         int request_count = 1000;
 
         print_queue_mode_list();

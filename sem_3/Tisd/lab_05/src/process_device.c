@@ -7,8 +7,8 @@
 
 #define SEPARATOR_LINE "-----------------------------\n"
 
-double rand_uniform(double min, double max) {
-    return min + (max - min) * ((double) rand() / RAND_MAX);
+q_type rand_uniform(double min, double max) {
+    return (q_type)(min + (max - min) * ((double)rand() / RAND_MAX));
 }
 
 q_type min(q_type a, q_type b)
@@ -16,7 +16,7 @@ q_type min(q_type a, q_type b)
     return a < b ? a : b;
 }
 
-int run_process_divece(mode_t mode, int request_count, trange_t *t1, trange_t *t2, trange_t *t3, trange_t *t4)
+int run_process_divece(queue_mode_t mode, int request_count, trange_t *t1, trange_t *t2, trange_t *t3, trange_t *t4)
 {
     time_t seed  = time(NULL);
     // printf("seed = %ld\n", seed);
@@ -51,10 +51,10 @@ int run_process_divece(mode_t mode, int request_count, trange_t *t1, trange_t *t
 
 
     // Время прибытия следующих заявок I и II-го типов
-    double next_arrive_1 = rand_uniform(t1->min, t1->max);
-    double next_arrive_2 = rand_uniform(t2->min, t2->max);
+    q_type next_arrive_1 = rand_uniform(t1->min, t1->max);
+    q_type next_arrive_2 = rand_uniform(t2->min, t2->max);
     // Время завершения текущего процесса
-    double end_time = next_arrive_1 + next_arrive_2; 
+    q_type end_time = next_arrive_1 + next_arrive_2; 
 
     // Статус ОА
     device_action_t device_status = FREE;

@@ -1,3 +1,5 @@
+// #define _POSIX_C_SOURCE 200809L
+
 #include <stdio.h>
 #include <stdbool.h>
 #include <math.h>
@@ -11,8 +13,8 @@
 #include <time.h>
 
 
-#define PRE_TEST_COUNT 1000
-#define TEST_COUNT 10000
+#define PRE_TEST_COUNT 100
+#define TEST_COUNT 100
 
 // Подсчёт строк в файле
 #define BUFFER_LEN 128
@@ -73,46 +75,51 @@ int test_queue_array(q_type *arr, size_t n, double *res_time)
         for (size_t i = 0; i < n; i++)
         {
             rc = push_array(queue, arr[i]);
-            if (!rc)
+            if (rc != OK)
                 return rc;
         }
 
         for (size_t i = 0; i < n; i++)
         {
            rc = pop_array(queue, &tmp);
-           if (!rc)
+           if (rc != OK)
                 return rc;
         }
     }
 
     // ОСНОВНЫЕ ТЕСТЫ
     double total_time = 0;
-    struct timespec start, end;
+    clock_t start, end;
     for (size_t test_i = 0; test_i < TEST_COUNT; test_i++)
     {
         q_type tmp;
 
-        clock_gettime(CLOCK_MONOTONIC, &start);
-
+        
+        start = clock();
         for (size_t i = 0; i < n; i++)
         {
             rc = push_array(queue, arr[i]);
-            if (!rc)
+            if (rc != OK)
                 return rc;
         }
         for (size_t i = 0; i < n; i++)
         {
-           rc = pop_array(queue, &tmp);
-           if (!rc)
+            rc = pop_array(queue, &tmp);
+            if (rc != OK)
                 return rc;
-        }    
-        clock_gettime(CLOCK_MONOTONIC, &end);
+        }
 
-        total_time += (end.tv_sec - start.tv_sec) * 1000000000L + (end.tv_nsec - start.tv_nsec);
+        end = clock();
+
+        // printf("start: %ld %ld\n", start.tv_sec, start.tv_nsec);
+        // printf("end:   %ld %ld\n", end.tv_sec, end.tv_nsec);
+
+        total_time += end - start;
     }
     
+    destroy_queue_array(queue);
 
-    *res_time = total_time / TEST_COUNT;
+    *res_time = total_time / TEST_COUNT / CLOCKS_PER_SEC;
 
     return OK;
 }
@@ -129,14 +136,14 @@ int test_queue_list(q_type *arr, size_t n, double *res_time)
         for (size_t i = 0; i < n; i++)
         {
             rc = push_list(queue, arr[i]);
-            if (!rc)
+            if (rc != OK)
                 return rc;
         }
 
         for (size_t i = 0; i < n; i++)
         {
            rc = pop_list(queue, &tmp);
-           if (!rc)
+           if (rc != OK)
                 return rc;
         }
     }
@@ -152,20 +159,22 @@ int test_queue_list(q_type *arr, size_t n, double *res_time)
         for (size_t i = 0; i < n; i++)
         {
             rc = push_list(queue, arr[i]);
-            if (!rc)
+            if (rc != OK)
                 return rc;
         }
 
         for (size_t i = 0; i < n; i++)
         {
            rc = pop_list(queue, &tmp);
-           if (!rc)
+           if (rc != OK)
                 return rc;
         }
         end = clock();
 
         total_time += end - start; 
     }
+
+    destroy_queue_list(queue);
 
     *res_time = total_time / TEST_COUNT / CLOCKS_PER_SEC;
 
@@ -180,17 +189,19 @@ char *file_paths[] =
     "./files_for_tests/elems_100.txt",
     "./files_for_tests/elems_500.txt",
     "./files_for_tests/elems_1000.txt",
+    "./files_for_tests/elems_2000.txt",
+    "./files_for_tests/elems_2500.txt",
     "./files_for_tests/elems_3000.txt",
     "./files_for_tests/elems_5000.txt",
     "./files_for_tests/elems_6000.txt",
     "./files_for_tests/elems_7000.txt",
     "./files_for_tests/elems_8000.txt",
     "./files_for_tests/elems_9000.txt",
-    "./files_for_tests/elems_10000.txt",
+    "./files_for_tests/elems_10000.txt"
 };
 
 
-#define TABLE_SEPARATOR "----------------------------------------------------------------------------------|\n"
+#define TABLE_SEPARATOR "|--------------------------------------------------------------------------------------------|\n"
 
 int run_compare_tests(void)
 {
@@ -199,8 +210,9 @@ int run_compare_tests(void)
 
     printf(
         TABLE_SEPARATOR
-        "| Количетсво |            Время                 |            ПАМЯТЬ               |\n"
-        "|  элементов |  массив | список | массив/список | массив | список | массив/список |\n"
+        "| Количетсво |            Время                      |            ПАМЯТЬ                     |\n"
+        "| элементов  |-------------------------------------------------------------------------------|\n"
+        "|            |   массив  |   список  | массив/список |   массив  |   список  | массив/список |\n"
         TABLE_SEPARATOR
     );
 
@@ -231,12 +243,14 @@ int run_compare_tests(void)
         double percent_memory = ((double)memory_array - memory_list) / memory_array * 100;
 
         printf(
-            "| %lu | %lf | %lf | %lf | %lu | %lu | %lf |\n",
+            "| %10lu | %9lf | %9lf | %13.2lf | %9lu | %9lu | %13.2lf |\n",
             n, time_array, time_list, percent_time, memory_array, memory_list, percent_memory
         );
 
         free(arr);
     }
+
+    printf(TABLE_SEPARATOR);
 
     return OK;
 }

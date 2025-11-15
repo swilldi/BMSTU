@@ -3,6 +3,8 @@
 "./files_for_tests/elems_100.txt",
 "./files_for_tests/elems_500.txt",
 "./files_for_tests/elems_1000.txt",
+"./files_for_tests/elems_2000.txt",
+"./files_for_tests/elems_2500.txt",
 "./files_for_tests/elems_3000.txt",
 "./files_for_tests/elems_5000.txt",
 "./files_for_tests/elems_6000.txt",
