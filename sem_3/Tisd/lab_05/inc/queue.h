@@ -8,7 +8,7 @@
 
 typedef enum
 {
-    ARRAY,
+    ARRAY = 1,
     LIST,
 
     MAX_QUEUE_MODE

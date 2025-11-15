@@ -9,7 +9,8 @@ typedef enum
     INVALID_INPUT,
     INVALID_CMD_RANGE,
     MEM_ERR,
-    INVALID_RANGE
+    INVALID_RANGE,
+    CMD_ERROR
 } error;
 
 #endif 

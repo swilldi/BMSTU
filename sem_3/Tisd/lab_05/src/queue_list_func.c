@@ -105,6 +105,7 @@ void destroy_queue_list(queue_list_t *queue)
         destroy_node(pnode);
         pnode = pnext;
     }
+    free(queue);
 }
 
 // добавление элемента в очередь

@@ -26,7 +26,16 @@ int run_process_divece(queue_mode_t mode, int request_count, trange_t *t1, trang
 
     // Создание двух очередй
     queue_t *q1 = create_queue(mode);
+    if (!q1)
+    {
+        return MEM_ERR;
+    }
     queue_t *q2 = create_queue(mode);
+    if (!q2)
+    {
+        destroy_queue(q1);
+        return MEM_ERR;
+    }
 
 
     // double t1_min = 1.0, t1_max = 5.0;  // Приход в очередь I
@@ -73,18 +82,21 @@ int run_process_divece(queue_mode_t mode, int request_count, trange_t *t1, trang
     device_action_t next_action = FREE;
 
     while (out_t1 < request_count) {
+        printf("%d\n", out_t1);
+
         // Выбор следующей временной точки
-        if (next_arrive_1 < next_arrive_2 && next_arrive_1 < end_time)
+        if (next_arrive_1 <= next_arrive_2 && next_arrive_1 <= end_time)
         {
             next_time_point = next_arrive_1;
             next_action = WORK_T1;
         }
-        else if (next_arrive_2 < next_arrive_1 && next_arrive_2 < end_time)
+        else if (next_arrive_2 <= next_arrive_1 && next_arrive_2 <= end_time)
         {
             next_time_point = next_arrive_2;
             next_action = WORK_T2;
         }
-        else if (end_time < next_arrive_1 && end_time < next_arrive_2)
+        else if (end_time <= next_arrive_1 && end_time <= next_arrive_2)
+        // else if (end_time < next_arrive_1 && end_time < next_arrive_2)
         {
             next_time_point = end_time;
             next_action = WORK_END;
@@ -96,13 +108,25 @@ int run_process_divece(queue_mode_t mode, int request_count, trange_t *t1, trang
             // Добавление процесса I
 
             // В работе процесс II
-            if (device_status == WORK_T2)
+            if (device_status == WORK_T2 && !is_empty_q(q2))
             {
                 drop_t2 += 1;
 
                 q_type tmp_time;
                 rc = pop(q2, &tmp_time);
+                if (rc != OK)
+                {
+                    destroy_queue(q1);
+                    destroy_queue(q2);
+                    return rc;
+                }
                 rc = push(q2, end_time - t);
+                if (rc != OK)
+                {
+                    destroy_queue(q1);
+                    destroy_queue(q2);
+                    return rc;
+                }
                 // rc = push(q2, tmp_time);
                 device_status = FREE;
             }
@@ -124,6 +148,13 @@ int run_process_divece(queue_mode_t mode, int request_count, trange_t *t1, trang
             device_status = FREE;
         }
 
+        if (rc != OK)
+        {
+            destroy_queue(q1);
+            destroy_queue(q2);
+            return rc;
+        }
+
         if (device_status == FREE) {
             if (!is_empty_q(q1)) {
                 device_status = WORK_T1;
@@ -132,6 +163,12 @@ int run_process_divece(queue_mode_t mode, int request_count, trange_t *t1, trang
                 
                 q_type work_time;
                 rc = pop(q1, &work_time);
+                if (rc != OK)
+                {
+                    destroy_queue(q1);
+                    destroy_queue(q2);
+                    return rc;
+                }
 
                 end_time = t + work_time;
             } else if (!is_empty_q(q2)) {
@@ -141,6 +178,12 @@ int run_process_divece(queue_mode_t mode, int request_count, trange_t *t1, trang
                 
                 q_type work_time;
                 rc = pop(q2, &work_time);
+                if (rc != OK)
+                {
+                    destroy_queue(q1);
+                    destroy_queue(q2);
+                    return rc;
+                }
 
                 end_time = t + work_time;
             }
@@ -150,6 +193,8 @@ int run_process_divece(queue_mode_t mode, int request_count, trange_t *t1, trang
                 free_time += min(next_arrive_1, next_arrive_2) - t;
             }
         }
+
+        
 
         avg_len_q1 += len_q(q1);
         avg_len_q2 += len_q(q2);
@@ -217,5 +262,5 @@ int run_process_divece(queue_mode_t mode, int request_count, trange_t *t1, trang
 
     printf("rc = %d", rc);
 
-    return 0;
+    return rc;
 }

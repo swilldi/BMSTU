@@ -9,7 +9,7 @@ error push(queue_t *queue, q_type value)
         return push_list(queue->data.list, value);
     else
         // TODO Придумать ощибку
-        return 1;
+        return CMD_ERROR;
 }
 
 error pop(queue_t *queue, q_type *value)
@@ -20,7 +20,7 @@ error pop(queue_t *queue, q_type *value)
         return pop_list(queue->data.list, value);
     else
         // TODO Придумать ощибку
-        return 1;
+        return CMD_ERROR;
 }
 
 error is_empty_q(queue_t *queue)
@@ -31,7 +31,7 @@ error is_empty_q(queue_t *queue)
         return is_empty_q_list(queue->data.list);
     else
         // TODO Придумать ощибку
-        return 1;
+        return CMD_ERROR;
 }
 
 int len_q(queue_t *queue)
@@ -58,16 +58,23 @@ queue_t *create_queue(queue_mode_t mode)
     {
         queue->data.arr = create_queue_array();
         if (!queue->data.arr)
+        {
+            free(queue);
             return NULL;
+        }
     }
     else if (mode == LIST)
     {
         queue->data.list = create_queue_list();
         if (!queue->data.list)
+        {
+            free(queue);
             return NULL;
+        }
     }
     else
     {
+        free(queue);
         return NULL;
     }
 
@@ -80,4 +87,6 @@ void destroy_queue(queue_t *queue)
         destroy_queue_array(queue->data.arr);
     else if (queue->mode == LIST)
         destroy_queue_list(queue->data.list);
+    
+    free(queue);
 }

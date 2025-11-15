@@ -95,6 +95,7 @@ int main(void)
     if (cmd == COMPARE)
     {
         rc = run_compare_tests();
+        print_err_msg(rc);
         return rc;
     }
     else if (cmd == PROCESS_DEVICE)
@@ -121,7 +122,8 @@ int main(void)
         
         // Завки I-го типа
         printf(
-            "\nЗАЯВКА I-ГО ТИПА: \n"
+            "-----------------------------------------------------\n"
+            "ЗАЯВКА I-ГО ТИПА: \n"
             "Диапазон прихода: "
         );
         rc = input_trange(&t1);
@@ -140,6 +142,7 @@ int main(void)
         
         // Завки II-го типа
         printf(
+            "-----------------------------------------------------\n"
             "ЗАЯВКА II-ГО ТИПА: \n"
             "Диапазон прихода: "
         );
@@ -156,6 +159,7 @@ int main(void)
             print_err_msg(rc);
             return rc;
         }
+        printf("-----------------------------------------------------\n\n");
 
         rc = run_process_divece(mode, request_count, &t1, &t2, &t3, &t4);
     }
