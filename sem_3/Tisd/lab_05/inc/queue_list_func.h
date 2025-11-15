@@ -33,5 +33,7 @@ size_t get_size_node_t(void);
 // Размер queue_list_t
 size_t get_size_queue_list_t(void);
 
+node_t *get_piout_queue_list(queue_list_t *queue);
+
 
 #endif

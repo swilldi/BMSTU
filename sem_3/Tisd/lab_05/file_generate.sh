@@ -2,7 +2,7 @@
 start=$(pwd)
 cd ./func_tests/data
 
-count=6
+count=9
 for i in $(seq 1 $count); do 
     if [ $i -lt 10 ]; then
         i="0"$i
@@ -12,7 +12,7 @@ for i in $(seq 1 $count); do
     # echo neg_"$i"_in_file_1.txt neg_"$i"_in_file_2.txt neg_"$i"_out_file.txt > neg_"$i"_args.txt
 done
 
-count=10
+count=13
 for i in $(seq 1 $count); do 
     if [ $i -lt 10 ]; then
         i="0"$i

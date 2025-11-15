@@ -13,10 +13,8 @@
 #include <time.h>
 
 
-// #define PRE_TEST_COUNT 100
-// #define TEST_COUNT 100
-#define PRE_TEST_COUNT 1
-#define TEST_COUNT 1
+#define PRE_TEST_COUNT 100
+#define TEST_COUNT 100
 
 // Подсчёт строк в файле
 #define BUFFER_LEN 128
@@ -245,7 +243,7 @@ int run_compare_tests(void)
         double percent_memory = ((double)memory_array - memory_list) / memory_array * 100;
 
         printf(
-            "| %10lu | %9lf | %9lf | %13.2lf | %9lu | %9lu | %13.2lf |\n",
+            "| %10lu | %9lf | %9lf | %12.2lf%% | %9lu | %9lu | %12.2lf%% |\n",
             n, time_array, time_list, percent_time, memory_array, memory_list, percent_memory
         );
 

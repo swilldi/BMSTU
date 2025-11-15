@@ -194,17 +194,29 @@ void print_queue_list_info(queue_list_t *queue)
     node_t *node = queue->pout;
     while (node)
     {
-        printf("%10.3f (%p)", node->value, (void*)node);
+        #ifdef FUNC_OUT
+        printf("%-10.3f", node->value);
+        #else
+        printf("%10.3f", node->value);
+        #endif
+        
+        #ifndef FUNC_OUT
+        printf(" (%p)", (void*)node);
+        #endif
         node = node->pnext;
 
         if (is_first)
         {
             is_first = false;
+            #ifndef FUNC_OUT
             printf(" <-- out");
+            #endif
         }
+
         printf("\n");
     }
     
+    #ifndef FUNC_OUT
     if (!is_full_q_list(queue))
     {
         
@@ -213,9 +225,14 @@ void print_queue_list_info(queue_list_t *queue)
             printf("<-- out");
 
         printf(" <-- in\n");
-        printf("Очередь пустая\n");
     }
+    #endif
     
+}
+
+node_t *get_piout_queue_list(queue_list_t *queue)
+{
+    return queue->pout;
 }
 
 // Размер node_t

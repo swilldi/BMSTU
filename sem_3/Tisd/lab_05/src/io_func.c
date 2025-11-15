@@ -6,7 +6,7 @@
 error input_cmd(int *cmd, int max_value)
 {
     long tmp_cmd;
-    if (fscanf(stdin, "%ld", &tmp_cmd) != 1)
+    if (scanf("%ld", &tmp_cmd) != 1)
     {
         while (getchar() != '\n');
         return INVALID_INPUT;
@@ -30,6 +30,7 @@ error input_value(q_type *value)
 {
     if (scanf("%f", value) != 1)
     {
+        while (getchar() != '\n');
         return INVALID_INPUT;
     }
     

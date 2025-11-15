@@ -4,7 +4,7 @@
 typedef enum
 {
     OK,
-    QUEUE_OVERFLOW,
+    QUEUE_OVERFLOW = 10,
     QUEUE_IS_EMPTY,
     INVALID_INPUT,
     INVALID_CMD_RANGE,
