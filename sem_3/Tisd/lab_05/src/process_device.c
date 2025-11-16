@@ -101,9 +101,12 @@ int run_process_divece(queue_mode_t mode, int request_count, trange_t *t1, trang
     // Следующее действие
     device_action_t next_action = FREE;
 
+
+    int last_printed_count = 0;
     while (out_t1 < request_count) {
-        if (out_t1 % 100 == 0)
+        if (out_t1 % 100 == 0 && out_t1 != last_printed_count)
         {
+            last_printed_count = out_t1;
             // текущей и средней длине каждой очереди и о среднем времени пребывания заявок
             // каждого типа в очереди
             
@@ -113,8 +116,8 @@ int run_process_divece(queue_mode_t mode, int request_count, trange_t *t1, trang
                 SEPARATOR_LINE
                 "СРЕДНЯЯ ДЛИНА ОЧЕРЕДИ\n" 
                 SEPARATOR_LINE
-                "I-й тип: %.2lf\n"
-                "II-й тип: %.2lf\n"
+                "I-й тип: %.0lf\n"
+                "II-й тип: %.0lf\n"
                 SEPARATOR_LINE
                 "СРЕДНЕЕ ВРЕМЯ В ОЧЕРЕДИ\n"
                 SEPARATOR_LINE
@@ -123,7 +126,7 @@ int run_process_divece(queue_mode_t mode, int request_count, trange_t *t1, trang
                 SEPARATOR_LINE
                 "\n",
                 out_t1, 
-                avg_len_q1 / t, avg_len_q2 / t, 
+                ceil(avg_len_q1 / t), ceil(avg_len_q2 / t), 
                 avg_time_q1 / out_t1, avg_time_q2 / out_t2
             );
         }
@@ -272,8 +275,7 @@ int run_process_divece(queue_mode_t mode, int request_count, trange_t *t1, trang
     double percent_error = 100.0 * fabs(t - theor_out) / theor_out;
 
     printf(
-        BOLD_SEPARATOR_LINE
-        BOLD_SEPARATOR_LINE
+        "\n\n---- ИТОГОВЫЕ РЕЗУЛЬТАТЫ ----\n"
         SEPARATOR_LINE
         "ВРЕМЯ РАБОТЫ ОА\n" 
         SEPARATOR_LINE
@@ -313,10 +315,10 @@ int run_process_divece(queue_mode_t mode, int request_count, trange_t *t1, trang
         SEPARATOR_LINE
         "СРЕДНЯЯ ДЛИНА ОЧЕРЕДИ\n" 
         SEPARATOR_LINE
-        "I-й тип: %.2lf\n"
-        "II-й тип: %.2lf\n"
+        "I-й тип: %.0lf\n"
+        "II-й тип: %.0lf\n"
         SEPARATOR_LINE,
-        avg_len_q1, avg_len_q2
+        ceil(avg_len_q1), ceil(avg_len_q2)
     );
 
     destroy_queue(q1);
