@@ -11,3 +11,6 @@ sem_2/C/lab_works/tamplate_directiry/
 *.jpeg
 *.xcodeproj
 *.d
+*.dot
+*.txt
+!**/data/*.txt
