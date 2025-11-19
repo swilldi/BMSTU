@@ -50,7 +50,7 @@ int run_process_divece(queue_mode_t mode, int request_count, trange_t *t1, trang
     {
         destroy_queue(q1);
         destroy_queue(q2);
-        destroy_queue(q2_time);
+        destroy_queue(q1_time);
         return MEM_ERR;
     }
 
@@ -98,6 +98,7 @@ int run_process_divece(queue_mode_t mode, int request_count, trange_t *t1, trang
 
     // Следующая временная точка
     q_type next_time_point = 0.0;
+    q_type last_event_time = 0.0;
     // Следующее действие
     device_action_t next_action = FREE;
 
@@ -119,15 +120,15 @@ int run_process_divece(queue_mode_t mode, int request_count, trange_t *t1, trang
                 "I-й тип: %.0lf\n"
                 "II-й тип: %.0lf\n"
                 SEPARATOR_LINE
-                "СРЕДНЕЕ ВРЕМЯ В ОЧЕРЕДИ\n"
+                "ДЛИНА ОЧЕРЕДЕЙ\n"
                 SEPARATOR_LINE
-                "I-й тип: %.2lf\n"
-                "II-й тип: %.2lf\n"
+                "I-й тип: %d\n"
+                "II-й тип: %d\n"
                 SEPARATOR_LINE
                 "\n",
                 out_t1, 
                 ceil(avg_len_q1 / t), ceil(avg_len_q2 / t), 
-                avg_time_q1 / out_t1, avg_time_q2 / out_t2
+                len_q(q1), len_q(q2)
             );
         }
 
@@ -151,6 +152,11 @@ int run_process_divece(queue_mode_t mode, int request_count, trange_t *t1, trang
         
         // Выполнение действия
         t = next_time_point;        
+        
+        avg_len_q1 += len_q(q1) * (t - last_event_time);
+        avg_len_q2 += len_q(q2) * (t - last_event_time);
+        last_event_time = t;
+
         if (next_action == WORK_T1) {
             // Добавление процесса I
 
@@ -187,8 +193,8 @@ int run_process_divece(queue_mode_t mode, int request_count, trange_t *t1, trang
         } else if (next_action == WORK_T2) {
             // Добавление процесса II
             push(q2_time, t);
-
             rc = push(q2, rand_uniform(t4->min, t4->max));
+
             next_arrive_2 = t + rand_uniform(t2->min, t2->max);
         } else if (next_action == WORK_END) {
             // Закончена обработка процесса
@@ -257,10 +263,6 @@ int run_process_divece(queue_mode_t mode, int request_count, trange_t *t1, trang
             }
         }
 
-        
-
-        avg_len_q1 += len_q(q1);
-        avg_len_q2 += len_q(q2);
     }
 
     // делим на время
@@ -313,12 +315,12 @@ int run_process_divece(queue_mode_t mode, int request_count, trange_t *t1, trang
     printf(
         "\n"
         SEPARATOR_LINE
-        "СРЕДНЯЯ ДЛИНА ОЧЕРЕДИ\n" 
+        "СРЕДНЕЕ ВРЕМЯ В ОЧЕРЕДИ\n" 
         SEPARATOR_LINE
-        "I-й тип: %.0lf\n"
-        "II-й тип: %.0lf\n"
+        "I-й тип: %.3lf\n"
+        "II-й тип: %.3lf\n"
         SEPARATOR_LINE,
-        ceil(avg_len_q1), ceil(avg_len_q2)
+        avg_time_q1 / out_t1, out_t2 ? avg_time_q2 / out_t2 : 0
     );
 
     destroy_queue(q1);

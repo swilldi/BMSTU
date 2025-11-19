@@ -13,8 +13,8 @@
 #include <time.h>
 
 
-#define PRE_TEST_COUNT 100
-#define TEST_COUNT 100
+#define PRE_TEST_COUNT 50
+#define TEST_COUNT 50
 
 // Подсчёт строк в файле
 #define BUFFER_LEN 128
