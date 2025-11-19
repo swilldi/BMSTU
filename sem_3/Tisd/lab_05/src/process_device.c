@@ -171,16 +171,12 @@ int run_process_divece(queue_mode_t mode, int request_count, trange_t *t1, trang
                 rc = pop(q2, &tmp_time);
                 if (rc != OK)
                 {
-                    destroy_queue(q1);
-                    destroy_queue(q2);
-                    return rc;
+                    break;
                 }
                 rc = push(q2, end_time - t);
                 if (rc != OK)
                 {
-                    destroy_queue(q1);
-                    destroy_queue(q2);
-                    return rc;
+                    break;
                 }
                 // rc = push(q2, tmp_time);
                 device_status = FREE;
@@ -189,11 +185,19 @@ int run_process_divece(queue_mode_t mode, int request_count, trange_t *t1, trang
             push(q1_time, t);
 
             rc = push(q1, rand_uniform(t3->min, t3->max));
+            if (rc != OK)
+            {
+                break;
+            }
             next_arrive_1 = t + rand_uniform(t1->min, t1->max);
         } else if (next_action == WORK_T2) {
             // Добавление процесса II
             push(q2_time, t);
             rc = push(q2, rand_uniform(t4->min, t4->max));
+            if (rc != OK)
+            {
+                break;
+            }
 
             next_arrive_2 = t + rand_uniform(t2->min, t2->max);
         } else if (next_action == WORK_END) {
@@ -209,9 +213,7 @@ int run_process_divece(queue_mode_t mode, int request_count, trange_t *t1, trang
 
         if (rc != OK)
         {
-            destroy_queue(q1);
-            destroy_queue(q2);
-            return rc;
+            break;
         }
 
         if (device_status == FREE) {
@@ -229,9 +231,7 @@ int run_process_divece(queue_mode_t mode, int request_count, trange_t *t1, trang
                 rc = pop(q1, &work_time);
                 if (rc != OK)
                 {
-                    destroy_queue(q1);
-                    destroy_queue(q2);
-                    return rc;
+                    break;
                 }
 
                 end_time = t + work_time;
@@ -249,9 +249,7 @@ int run_process_divece(queue_mode_t mode, int request_count, trange_t *t1, trang
                 rc = pop(q2, &work_time);
                 if (rc != OK)
                 {
-                    destroy_queue(q1);
-                    destroy_queue(q2);
-                    return rc;
+                    break;
                 }
 
                 end_time = t + work_time;
@@ -265,68 +263,71 @@ int run_process_divece(queue_mode_t mode, int request_count, trange_t *t1, trang
 
     }
 
-    // делим на время
-    avg_len_q1 /= t;
-    avg_len_q2 /= t;
+    if (rc == OK)
+    {
+        // делим на время
+        avg_len_q1 /= t;
+        avg_len_q2 /= t;
 
-    // printf("Общее время работы: %.2f\n", t);
-    // printf("Время простоя: %.2f\n\n", free_time);
+        // printf("Общее время работы: %.2f\n", t);
+        // printf("Время простоя: %.2f\n\n", free_time);
 
-    double avg_t1 = (t1->max + t1->min) / 2;
-    double theor_out = out_t1 * avg_t1;
-    double percent_error = 100.0 * fabs(t - theor_out) / theor_out;
+        double avg_t1 = (t1->max + t1->min) / 2;
+        double theor_out = out_t1 * avg_t1;
+        double percent_error = 100.0 * fabs(t - theor_out) / theor_out;
 
-    printf(
-        "\n\n---- ИТОГОВЫЕ РЕЗУЛЬТАТЫ ----\n"
-        SEPARATOR_LINE
-        "ВРЕМЯ РАБОТЫ ОА\n" 
-        SEPARATOR_LINE
-        "Время работы: %.2lf\n"
-        "Теор. время работы: %.2lf\n"
-        "Расхождение: %.2lf%%\n"
-        SEPARATOR_LINE
-        "Время простоя: %.2lf\n"
-        SEPARATOR_LINE, 
-        t, theor_out, percent_error, free_time
-    );
-    
-    printf(
-        "\n"
-        SEPARATOR_LINE
-        "СТАТИСТИКА ВХОДА/ВЫХОДА\n"
-        SEPARATOR_LINE
-        "Всего вышло: %d\n"
-        SEPARATOR_LINE
-        "Заявки I-го типа\n" 
-        "Вошло: %d\n"
-        "Вышло: %d\n"
-        SEPARATOR_LINE
-        "Заявки II-го типа\n" 
-        "Вошло: %d\n"
-        "Вышло: %d\n"
-        "Выброшено: %d\n"
-        SEPARATOR_LINE,
-        processed_count,
-        in_t1, out_t1,
-        in_t2, out_t2, drop_t2
-    );
+        printf(
+            "\n\n---- ИТОГОВЫЕ РЕЗУЛЬТАТЫ ----\n"
+            SEPARATOR_LINE
+            "ВРЕМЯ РАБОТЫ ОА\n" 
+            SEPARATOR_LINE
+            "Время работы: %.2lf\n"
+            "Теор. время работы: %.2lf\n"
+            "Расхождение: %.2lf%%\n"
+            SEPARATOR_LINE
+            "Время простоя: %.2lf\n"
+            SEPARATOR_LINE, 
+            t, theor_out, percent_error, free_time
+        );
+        
+        printf(
+            "\n"
+            SEPARATOR_LINE
+            "СТАТИСТИКА ВХОДА/ВЫХОДА\n"
+            SEPARATOR_LINE
+            "Всего вышло: %d\n"
+            SEPARATOR_LINE
+            "Заявки I-го типа\n" 
+            "Вошло: %d\n"
+            "Вышло: %d\n"
+            SEPARATOR_LINE
+            "Заявки II-го типа\n" 
+            "Вошло: %d\n"
+            "Вышло: %d\n"
+            "Выброшено: %d\n"
+            SEPARATOR_LINE,
+            processed_count,
+            in_t1, out_t1,
+            in_t2, out_t2, drop_t2
+        );
 
-    
-    printf(
-        "\n"
-        SEPARATOR_LINE
-        "СРЕДНЕЕ ВРЕМЯ В ОЧЕРЕДИ\n" 
-        SEPARATOR_LINE
-        "I-й тип: %.3lf\n"
-        "II-й тип: %.3lf\n"
-        SEPARATOR_LINE,
-        avg_time_q1 / out_t1, out_t2 ? avg_time_q2 / out_t2 : 0
-    );
+        
+        printf(
+            "\n"
+            SEPARATOR_LINE
+            "СРЕДНЕЕ ВРЕМЯ В ОЧЕРЕДИ\n" 
+            SEPARATOR_LINE
+            "I-й тип: %.3lf\n"
+            "II-й тип: %.3lf\n"
+            SEPARATOR_LINE,
+            avg_time_q1 / out_t1, out_t2 ? avg_time_q2 / out_t2 : 0
+        );
 
-    destroy_queue(q1);
-    destroy_queue(q2);
-    destroy_queue(q1_time);
-    destroy_queue(q2_time);
+        destroy_queue(q1);
+        destroy_queue(q2);
+        destroy_queue(q1_time);
+        destroy_queue(q2_time);
+    }
 
     // printf("rc = %d", rc);
 

@@ -187,6 +187,11 @@ int main(void)
         #endif
 
         rc = run_process_divece(mode, request_count, &t1, &t2, &t3, &t4);
+        if (rc != OK)
+        {
+            print_err_msg(rc);
+            return rc;
+        }
     }
     else if (cmd == EMULATE_LIST_QUEUE)
     {
