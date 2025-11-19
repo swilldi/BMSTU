@@ -1,4 +1,4 @@
-MAKEFLAGS += -s
+# MAKEFLAGS += -s
 
 CC := gcc
 CFLAGS := -Wall -Werror -Wextra -Wpedantic -std=c99 -Wfloat-equal -Wfloat-conversion -Wvla -Iinc
@@ -97,9 +97,13 @@ endif
 # очиста генерируемых файлов
 clean:
 # 	rm -fr *.o *.exe *.d *.txt *.bin *.gcno *.gcda *.gcov
-	rm -f ./func_tests/data/result.txt
 	rm -rf out
-	rm -f *.exe
+	rm -f \
+		./func_tests/data/result.txt \
+		*.exe \
+		*.png \
+		*.dot
+	
 	
 
 # TODO
