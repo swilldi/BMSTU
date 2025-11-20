@@ -1,4 +1,5 @@
 #include "input_func.h"
+#include <string.h>
 
 int input_cmd(int *cmd, int max_value)
 {

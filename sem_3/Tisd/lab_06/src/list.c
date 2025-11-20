@@ -59,8 +59,8 @@ void destroy_list(node_t *head)
     while (head)
     {
         next = head->next;
-        free(head);
         free(head->value);
+        free(head);
         head = next;
     }
 }

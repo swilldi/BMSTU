@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <string.h>
+#include <time.h>
 
 #include "tree.h"
 #include "list.h"
@@ -9,13 +10,71 @@
 #include "enums.h"
 #include "exit_code.h"
 #include "output_func.h"
+#include "input_func.h"
 
 
 #define TREE_DOT "tree.dot"
 #define TREE_PNG "tree.png"
 
+#define PRE_TEST_COUNT 10
+#define TEST_COUNT 100
 
+double tree_time_test(FILE *f, char tmp_char)
+{
+    clock_t start, end;
+    double res = 0;
 
+    tree_node *tmp_tree = read_from_file_to_tree(f);
+    if (!tmp_tree)
+        return -1;
+
+    for (size_t i = 0; i < PRE_TEST_COUNT; i++)
+    {
+        node_t *tmp_list_point = NULL;
+        tree_find_by_first_symbol_all(tmp_tree, &tmp_list_point, tmp_char);
+        destroy_list(tmp_list_point);
+    }
+
+    for (size_t i = 0; i < TEST_COUNT; i++)
+    {
+        node_t *tmp_list_point = NULL;
+        start = clock();
+        tree_find_by_first_symbol_all(tmp_tree, &tmp_list_point, tmp_char);
+        end = clock();
+        res += (double)(end - start);
+        destroy_list(tmp_list_point);
+    }
+
+    tree_destroy(tmp_tree);
+
+    return res / CLOCKS_PER_SEC / TEST_COUNT;
+}
+
+double file_time_test(FILE *f, char tmp_char)
+{
+    node_t *tmp_list = NULL;
+    clock_t start, end;
+    double res = 0;
+
+    for (size_t i = 0; i < PRE_TEST_COUNT; i++)
+    {
+        rewind(f);
+        tmp_list = read_from_file_by_letter(f, tmp_char);
+        destroy_list(tmp_list);
+    }
+
+    for (size_t i = 0; i < TEST_COUNT; i++)
+    {
+        rewind(f);
+        start = clock();
+        tmp_list = read_from_file_by_letter(f, tmp_char);
+        end = clock();
+        res += (double)(end - start);
+        destroy_list(tmp_list);
+    }
+
+    return res / CLOCKS_PER_SEC / TEST_COUNT;
+}
 
 
 int is_empty_file(FILE *f)
@@ -42,6 +101,14 @@ int main(void)
     int rc;
     int cmd;
 
+    tree_node *tree = NULL;
+
+    tree_node *tmp_node = NULL;
+    node_t *point_list = NULL; 
+    char tmp_str[STR_LEN];
+    char tmp_char;
+    FILE *f;
+
     #ifndef FUNC_OUT
     print_prog_mode_list();
     #endif
@@ -62,14 +129,6 @@ int main(void)
     {
         return rc;
     }
-
-    
-    tree_node *tree = NULL;
-    tree_node *tmp_node = NULL;
-    node_t *point_list = NULL; 
-    char tmp_str[STR_LEN];
-    char tmp_char;
-    FILE *f;
 
     #ifndef FUNC_OUT
     print_action_cmd_list();
@@ -134,7 +193,32 @@ int main(void)
                 break;
 
             case CMP_TREE_AND_FILE:
-                // TODO Сделать сравнение поиска в файле и в дереве
+                rc = input_str(tmp_str, "Введите файл: ");
+                if (rc != OK)
+                    break;
+                
+                f = fopen(tmp_str, "r");
+                if (!f)
+                {
+                    rc = OPEN_FILE_ERROR;
+                    break;
+                }
+                if (is_empty_file(f))
+                {
+                    rc = EMPTY_FILE;
+                    break;
+                }
+
+                rc = input_char(&tmp_char); 
+                if (rc != OK)
+                    break;
+
+                double tree_time = tree_time_test(f, tmp_char), file_time = file_time_test(f, tmp_char);
+
+                printf("Время для поиска в\nДереве: %.6f\nВ файле: %.6f\n", tree_time, file_time);
+
+                fclose(f);
+
                 break;
             
             case READ_TREE:
@@ -237,7 +321,7 @@ int main(void)
                 
                 destroy_list(point_list);
                 point_list = NULL;
-                break;
+                break;                
                 
             case CONTINUE:
             case EXIT:
