@@ -18,7 +18,7 @@ q_type min(q_type a, q_type b)
     return a < b ? a : b;
 }
 
-int run_process_divece(queue_mode_t mode, int request_count, trange_t *t1, trange_t *t2, trange_t *t3, trange_t *t4)
+int run_process_divece(queue_mode_t mode, int request_count, trange_t *arr_t1, trange_t *t1, trange_t *arr_t2, trange_t *t2)
 {
     time_t seed  = time(NULL);
     // printf("seed = %ld\n", seed);
@@ -80,10 +80,10 @@ int run_process_divece(queue_mode_t mode, int request_count, trange_t *t1, trang
 
 
     // Время прибытия следующих заявок I и II-го типов
-    q_type next_arrive_1 = rand_uniform(t1->min, t1->max);
-    q_type next_arrive_2 = rand_uniform(t2->min, t2->max);
+    q_type next_arrive_1 = rand_uniform(arr_t1->min, arr_t1->max);
+    q_type next_arrive_2 = rand_uniform(arr_t2->min, arr_t2->max);
     // Время завершения текущего процесса
-    q_type end_time = next_arrive_1 + next_arrive_2; 
+    q_type end_time = INFINITY; 
 
     // Статус ОА
     device_action_t device_status = FREE;
@@ -93,7 +93,7 @@ int run_process_divece(queue_mode_t mode, int request_count, trange_t *t1, trang
     // Время простоя
     double free_time = 0;
     // Текущее время
-    q_type t;
+    q_type t = 0;
 
 
     // Следующая временная точка
@@ -149,15 +149,23 @@ int run_process_divece(queue_mode_t mode, int request_count, trange_t *t1, trang
             next_time_point = end_time;
             next_action = WORK_END;
         }
+
         
         // Выполнение действия
-        t = next_time_point;        
+        last_event_time = t;  
+        t = next_time_point;
+
+        if (device_status == FREE)
+        {
+            free_time += t - last_event_time;
+        }
         
         avg_len_q1 += len_q(q1) * (t - last_event_time);
         avg_len_q2 += len_q(q2) * (t - last_event_time);
-        last_event_time = t;
+        
 
-        if (next_action == WORK_T1) {
+        if (next_action == WORK_T1) 
+        {
             // Добавление процесса I
 
             // В работе процесс II
@@ -184,23 +192,27 @@ int run_process_divece(queue_mode_t mode, int request_count, trange_t *t1, trang
             
             push(q1_time, t);
 
-            rc = push(q1, rand_uniform(t3->min, t3->max));
+            rc = push(q1, rand_uniform(t1->min, t1->max));
             if (rc != OK)
             {
                 break;
             }
-            next_arrive_1 = t + rand_uniform(t1->min, t1->max);
-        } else if (next_action == WORK_T2) {
+            next_arrive_1 = t + rand_uniform(arr_t1->min, arr_t1->max);
+        } 
+        else if (next_action == WORK_T2) 
+        {
             // Добавление процесса II
             push(q2_time, t);
-            rc = push(q2, rand_uniform(t4->min, t4->max));
+            rc = push(q2, rand_uniform(t2->min, t2->max));
             if (rc != OK)
             {
                 break;
             }
 
-            next_arrive_2 = t + rand_uniform(t2->min, t2->max);
-        } else if (next_action == WORK_END) {
+            next_arrive_2 = t + rand_uniform(arr_t2->min, arr_t2->max);
+        }
+        else if (next_action == WORK_END) 
+        {
             // Закончена обработка процесса
             if (device_status == WORK_T1)
                 out_t1 += 1;
@@ -216,8 +228,12 @@ int run_process_divece(queue_mode_t mode, int request_count, trange_t *t1, trang
             break;
         }
 
-        if (device_status == FREE) {
-            if (!is_empty_q(q1)) {
+        // if (device_status == FREE && is_empty_q(q1) && is_empty_q(q2))
+
+        if (device_status == FREE) 
+        {
+            if (!is_empty_q(q1)) 
+            {
                 q_type in_time;
                 pop(q1_time, &in_time);
 
@@ -235,7 +251,9 @@ int run_process_divece(queue_mode_t mode, int request_count, trange_t *t1, trang
                 }
 
                 end_time = t + work_time;
-            } else if (!is_empty_q(q2)) {
+            } 
+            else if (!is_empty_q(q2)) 
+            {
                 q_type in_time;
                 pop(q2_time, &in_time);
 
@@ -256,9 +274,11 @@ int run_process_divece(queue_mode_t mode, int request_count, trange_t *t1, trang
             }
             else
             {
-                end_time = next_arrive_1 + next_arrive_2;
-                free_time += min(next_arrive_1, next_arrive_2) - t;
+                end_time = INFINITY;
+                // free_time += min(next_arrive_1, next_arrive_2) - t;
+                // free_time += next_time_point - t;
             }
+
         }
 
     }
@@ -272,9 +292,29 @@ int run_process_divece(queue_mode_t mode, int request_count, trange_t *t1, trang
         // printf("Общее время работы: %.2f\n", t);
         // printf("Время простоя: %.2f\n\n", free_time);
 
-        double avg_t1 = (t1->max + t1->min) / 2;
+        double avg_t1 = (arr_t1->max + arr_t1->min) / 2;
         double theor_out = out_t1 * avg_t1;
         double percent_error = 100.0 * fabs(t - theor_out) / theor_out;
+
+        printf(
+            SEPARATOR_LINE
+            "КОЛИЧЕСТВО ЗАЯВОК: %d\n"
+            SEPARATOR_LINE
+            "СРЕДНЯЯ ДЛИНА ОЧЕРЕДИ\n" 
+            SEPARATOR_LINE
+            "I-й тип: %.0lf\n"
+            "II-й тип: %.0lf\n"
+            SEPARATOR_LINE
+            "ДЛИНА ОЧЕРЕДЕЙ\n"
+            SEPARATOR_LINE
+            "I-й тип: %d\n"
+            "II-й тип: %d\n"
+            SEPARATOR_LINE
+            "\n",
+            out_t1, 
+            ceil(avg_len_q1), ceil(avg_len_q2), 
+            len_q(q1), len_q(q2)
+        );
 
         printf(
             "\n\n---- ИТОГОВЫЕ РЕЗУЛЬТАТЫ ----\n"
@@ -323,11 +363,12 @@ int run_process_divece(queue_mode_t mode, int request_count, trange_t *t1, trang
             avg_time_q1 / out_t1, out_t2 ? avg_time_q2 / out_t2 : 0
         );
 
-        destroy_queue(q1);
-        destroy_queue(q2);
-        destroy_queue(q1_time);
-        destroy_queue(q2_time);
     }
+
+    destroy_queue(q1);
+    destroy_queue(q2);
+    destroy_queue(q1_time);
+    destroy_queue(q2_time);
 
     // printf("rc = %d", rc);
 

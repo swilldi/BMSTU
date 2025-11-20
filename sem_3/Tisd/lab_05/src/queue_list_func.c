@@ -111,8 +111,8 @@ void destroy_queue_list(queue_list_t *queue)
 // добавление элемента в очередь
 error push_list(queue_list_t *queue, q_type value)
 {
-    if (is_full_q_list(queue))
-        return QUEUE_OVERFLOW;
+    // if (is_full_q_list(queue))
+    //     return QUEUE_OVERFLOW;
 
     // создание нового элемента 
     node_t *new_node = create_node(value);

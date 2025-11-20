@@ -106,9 +106,10 @@ int main(void)
     }
     else if (cmd == PROCESS_DEVICE)
     {
-        trange_t t1, t2, t3, t4;
+        trange_t arr_t1, t1, arr_t2, t2;
         queue_mode_t mode;
         int request_count = 1000;
+        // int request_count = 100;
 
         #ifndef FUNC_OUT
         print_queue_mode_list();
@@ -143,7 +144,7 @@ int main(void)
             "Диапазон прихода (1 5): "
         );
         #endif
-        rc = input_trange(&t1);
+        rc = input_trange(&arr_t1);
         if (rc != OK)
         {
             print_err_msg(rc);
@@ -152,7 +153,7 @@ int main(void)
         #ifndef FUNC_OUT
         printf("Диапазон выполнения (0 4): ");
         #endif
-        rc = input_trange(&t3);
+        rc = input_trange(&t1);
         if (rc != OK)
         {
             print_err_msg(rc);
@@ -167,7 +168,7 @@ int main(void)
             "Диапазон прихода (0 3): "
         );
         #endif
-        rc = input_trange(&t2);
+        rc = input_trange(&arr_t2);
         if (rc != OK)
         {
             print_err_msg(rc);
@@ -176,7 +177,7 @@ int main(void)
         #ifndef FUNC_OUT
         printf("Диапазон выполнения (0 1): ");
         #endif 
-        rc = input_trange(&t4);
+        rc = input_trange(&t2);
         if (rc != OK)
         {
             print_err_msg(rc);
@@ -186,7 +187,8 @@ int main(void)
         printf("----------------------------------\n\n");
         #endif
 
-        rc = run_process_divece(mode, request_count, &t1, &t2, &t3, &t4);
+        // rc = run_process_divece(mode, request_count, &arr_t1, &t1, &arr_t2, &t2);
+        rc = run_process_divece(mode, request_count, &arr_t1, &t1, &arr_t2, &t2);
         if (rc != OK)
         {
             print_err_msg(rc);
