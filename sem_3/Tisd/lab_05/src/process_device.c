@@ -201,6 +201,8 @@ int run_process_divece(queue_mode_t mode, int request_count, trange_t *arr_t1, t
         } 
         else if (next_action == WORK_T2) 
         {
+
+            in_t2 += 1;
             // Добавление процесса II
             push(q2_time, t);
             rc = push(q2, rand_uniform(t2->min, t2->max));
@@ -261,7 +263,7 @@ int run_process_divece(queue_mode_t mode, int request_count, trange_t *arr_t1, t
                 
                 device_status = WORK_T2;
                 
-                in_t2 += 1;
+                // in_t2 += 1;
                 
                 q_type work_time;
                 rc = pop(q2, &work_time);
@@ -352,6 +354,20 @@ int run_process_divece(queue_mode_t mode, int request_count, trange_t *arr_t1, t
         );
 
         
+        double avg_time_in_queue_2;
+        if (avg_time_q2 < 1e-5)
+        {
+            avg_time_in_queue_2 = t;
+        }
+        else if (out_t2)
+        {
+            avg_time_in_queue_2 = avg_time_q2 / out_t2;
+        }
+        else
+        {
+            avg_time_in_queue_2 = 0;
+        }
+
         printf(
             "\n"
             SEPARATOR_LINE
@@ -360,9 +376,11 @@ int run_process_divece(queue_mode_t mode, int request_count, trange_t *arr_t1, t
             "I-й тип: %.3lf\n"
             "II-й тип: %.3lf\n"
             SEPARATOR_LINE,
-            avg_time_q1 / out_t1, out_t2 ? avg_time_q2 / out_t2 : 0
+            avg_time_q1 / out_t1, avg_time_in_queue_2
         );
-
+        
+        // printf("out_t2: %d\n", out_t2);
+        // printf("avg: %lf\n", avg_time_q2);
     }
 
     destroy_queue(q1);

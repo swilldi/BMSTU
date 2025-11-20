@@ -16,8 +16,9 @@ typedef enum
 typedef enum 
 {
     EMULATE_LIST_QUEUE = 1,
-    PROCESS_DEVICE = 2,
-    COMPARE = 3,
+    EMULATE_ARRAY_QUEUE = 2,
+    PROCESS_DEVICE = 3,
+    COMPARE = 4,
 
     MAX_PROGRAMM_MODE
 } programm_mode_t;

@@ -18,8 +18,9 @@ void print_prog_mode_list(void)
         "РЕЖИМ ПРОГРАММЫ:\n"
         "--------------------------------\n"
         "1. Очередь на списке\n"
-        "2. Обслуживающий аппарат\n"
-        "3. Выполнить сравнение\n"
+        "2. Очередь на массиве\n"
+        "3. Обслуживающий аппарат\n"
+        "4. Выполнить сравнение\n"
         "0. Выход\n"
         "--------------------------------\n"
     );
@@ -279,7 +280,89 @@ int main(void)
 
         destroy_queue_list(queue);
     }
+    
+    else if (cmd == EMULATE_ARRAY_QUEUE)
+    {
+        // Эмуляция очереди на списке
+        #ifndef FUNC_OUT
+        print_queue_cmd_list();
+        #endif
+        queue_array_t *queue = create_queue_array();
+        while (rc == OK && cmd != EXIT)
+        {
+            #ifndef FUNC_OUT
+            printf("Введите номер: ");
+            #endif
+            
+            rc = input_cmd(&cmd, MAX_CMD_ACTION);
+            if (rc != OK)
+                cmd = CONTINUE;
 
+            switch (cmd)
+            {
+                case CONTINUE:
+                case EXIT:
+                    break;
+                case PUSH:
+                    // TODO переполнение
+                    // if (is_full(queue))
+                    // {
+                    //     rc = QUEUE_OVERFLOW;
+                    //     break;
+                    // }
+
+                    #ifndef FUNC_OUT
+                    printf("Введите число: ");
+                    #endif
+
+                    rc = input_value(&tmp_value);
+                    if (rc != OK)
+                        break;
+                    rc = push_array(queue, tmp_value);
+                    #ifndef FUNC_OUT
+                    printf("-----------------------------\n");
+                    #endif
+                    break;
+                case POP:
+                    if (is_empty_q_arr(queue))
+                    {
+                        rc = QUEUE_IS_EMPTY;
+                        break;
+                    }
+                    
+                    rc = pop_array(queue, &tmp_value);
+                
+                    #ifndef FUNC_OUT
+                    if (rc == OK)
+                    {
+                        printf("Удален: %.2lf\n", tmp_value);
+                    }
+                    printf("-----------------------------\n");
+                    #endif
+                    break;
+                case PRINT_VALUE:
+                    print_queue_array_full(queue);
+                    #ifndef FUNC_OUT
+                    printf("-----------------------------\n");
+                    #endif
+                    break;
+                default:
+                    rc = INVALID_CMD_RANGE;
+                    break;
+            }
+
+            if (rc != OK)
+            {
+                print_err_msg(rc);
+                #ifndef FUNC_OUT
+                printf("-----------------------------\n");
+                #endif
+                rc = OK;
+            }
+        }
+
+        destroy_queue_array(queue);
+    }
     
 }
 
