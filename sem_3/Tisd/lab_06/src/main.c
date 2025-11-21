@@ -28,13 +28,16 @@ double tree_time_test(FILE *f, char tmp_char)
     if (!tmp_tree)
         return -1;
 
+    printf("Начались прогревочные тесты\n");
     for (size_t i = 0; i < PRE_TEST_COUNT; i++)
     {
         node_t *tmp_list_point = NULL;
         tree_find_by_first_symbol_all(tmp_tree, &tmp_list_point, tmp_char);
         destroy_list(tmp_list_point);
     }
+    printf("Завершились прогревочные тесты\n");
 
+    printf("Начались основные тесты\n");
     for (size_t i = 0; i < TEST_COUNT; i++)
     {
         node_t *tmp_list_point = NULL;
@@ -43,7 +46,11 @@ double tree_time_test(FILE *f, char tmp_char)
         end = clock();
         res += (double)(end - start);
         destroy_list(tmp_list_point);
+        
+        if ((i + 1) % 10 == 0)
+            printf("Выполнено %lu тестов\n", i + 1);
     }
+    printf("Заврешились основные тесты\n");
 
     tree_destroy(tmp_tree);
 
@@ -56,13 +63,16 @@ double file_time_test(FILE *f, char tmp_char)
     clock_t start, end;
     double res = 0;
 
+    printf("Начались прогревочные тесты\n");
     for (size_t i = 0; i < PRE_TEST_COUNT; i++)
     {
         rewind(f);
         tmp_list = read_from_file_by_letter(f, tmp_char);
         destroy_list(tmp_list);
     }
+    printf("Завершились прогревочные тесты\n");
 
+    printf("Начались основные тесты\n");
     for (size_t i = 0; i < TEST_COUNT; i++)
     {
         rewind(f);
@@ -71,7 +81,10 @@ double file_time_test(FILE *f, char tmp_char)
         end = clock();
         res += (double)(end - start);
         destroy_list(tmp_list);
+        if ((i + 1) % 10 == 0)
+            printf("Выполнено %lu тестов\n", i + 1);
     }
+    printf("Заврешились основные тесты\n");
 
     return res / CLOCKS_PER_SEC / TEST_COUNT;
 }
@@ -215,7 +228,7 @@ int main(void)
 
                 double tree_time = tree_time_test(f, tmp_char), file_time = file_time_test(f, tmp_char);
 
-                printf("Время для поиска в\nДереве: %.6f\nВ файле: %.6f\n", tree_time, file_time);
+                printf("Время для поиска в\nВ дереве: %.6f сек.\nВ файле:  %.6f сек.\n", tree_time, file_time);
 
                 fclose(f);
 
