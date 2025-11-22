@@ -6,13 +6,14 @@
 #include <stdbool.h>
 #include "list.h"
 #include "value_t.h"
+#include "array_t.h"
 
 #define STR_LEN 128
 
 #define FMT_TYPE "%s"
 #define FMT      FMT_TYPE" -> "FMT_TYPE";\n"
 #define SPACE_FMT "  "FMT
-#define HIGHLIGH_FMT FMT_TYPE" [ color=blue, penwidth=3 ];"
+#define HIGHLIGH_FMT FMT_TYPE"[ color=blue, penwidth=3 ];"
 
 typedef struct tree_node tree_node;
 typedef void (*ptr_action_t)(tree_node*, void*);
@@ -63,6 +64,10 @@ int tree_height(tree_node *tree, int);
 
 int tree_lookup_count(tree_node *tree, char symbol);
 void tree_find_by_first_symbol_all(tree_node *tree, node_t **list, char symbol);
+
+void tree_to_sort_array(tree_node *tree, array_t *arr);
+
+void tree_add_to_list(tree_node *node, void *arg);
 
 
 

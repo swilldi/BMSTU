@@ -12,6 +12,8 @@
 #include "output_func.h"
 #include "input_func.h"
 
+#include "test.h"
+
 
 #define TREE_DOT "tree.dot"
 #define TREE_PNG "tree.png"
@@ -102,11 +104,6 @@ int is_empty_file(FILE *f)
 
 }
 
-int run_tests(void)
-{
-    printf("Представьте, что здесь появилась большая таблица со сложными данными\n");
-    return OK;
-}
 
 int main(void)
 {
@@ -134,8 +131,8 @@ int main(void)
 
     if (cmd == RUN_TESTS)
     {
-        // TODO Сделать тесты для сравнения эффективонсти
-        rc = run_tests();
+        rc = run_test();
+        print_err_msg(rc);
         return rc;
     }
     else if (cmd == EXIT)
@@ -288,7 +285,7 @@ int main(void)
                 tree_export_to_dot(f, tree, point_list);
                 fclose(f);
                 
-                // dot_to_png(TREE_DOT, TREE_PNG);
+                dot_to_png(TREE_DOT, TREE_PNG);
                 
                 destroy_list(point_list);
                 point_list = NULL;
@@ -334,7 +331,12 @@ int main(void)
                 
                 destroy_list(point_list);
                 point_list = NULL;
-                break;                
+                break;   
+            
+            // case PRINT_IN:
+            //     node_t *list = NULL;
+            //     tree_apply_in(tree, );
+            //     print_list();
                 
             case CONTINUE:
             case EXIT:

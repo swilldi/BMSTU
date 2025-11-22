@@ -3,6 +3,7 @@
 #include <string.h>
 
 #include "tree.h"
+#include "array_t.h"
 #include <stdbool.h>
 
 // #define value_t char*
@@ -206,6 +207,28 @@ void tree_find_by_first_symbol_all(tree_node *tree, node_t **list, char symbol)
 
 
 
+void tree_add_to_list(tree_node *node, void *arg)
+{
+    node_t *list = arg;
+    node_t *tmp_node = create_node(node->value);
+    add_node(list, tmp_node);
+}
+
+
+void tree_add_to_arr(tree_node *node, void *arg)
+{
+    array_t *arr = arg;
+    arr->data[arr->len] = node->value;
+    arr->len += 1;
+}
+
+void tree_to_sort_array(tree_node *tree, array_t *arr)
+{
+    tree_apply_in(tree, tree_add_to_arr, arr);
+}
+
+
+
 void print_dot_null(FILE *f, value_t value, int nullcount)
 {
     // fprintf(f, "  null%d;\n", nullcount);
@@ -271,7 +294,7 @@ void tree_export_to_dot(FILE *f, tree_node *tree, node_t *list)
     }
     else if (!tree->left && !tree->right)
     {
-        fprintf(f, "  s;\n");
+        fprintf(f, "  %s;\n", tree->value);
     }
     else
     {

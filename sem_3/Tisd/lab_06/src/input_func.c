@@ -3,22 +3,26 @@
 
 int input_cmd(int *cmd, int max_value)
 {
-
+    int rc = OK;
     #ifndef FUNC_OUT
     printf("Введите команду: ");
     #endif
 
     if (scanf("%d", cmd) != 1)
-        return INVALID_INPUT;
-    if (*cmd < 0 || *cmd >= max_value)
-        return CMD_OUT_OF_RANGE;
-
+    {
+        rc = INVALID_INPUT;
+    }
+    else if (*cmd < 0 || *cmd >= max_value)
+    {
+        rc = CMD_OUT_OF_RANGE;
+    }
+    
     // очищение буффера stdin
     int ch = fgetc(stdin);
     while (ch != '\n' && !feof(stdin))
         ch = fgetc(stdin);
     
-    return OK;
+    return rc;
 }
 
 int input_str(char *str, char *msg)
@@ -55,17 +59,17 @@ int input_str(char *str, char *msg)
 
 int input_char(char *symbol)
 {
-
+    int rc = OK;
     #ifndef FUNC_OUT
     printf("Введите символ: ");
     #endif
 
     if (scanf("%c", symbol) != 1)
-        return INVALID_INPUT;
+        rc = INVALID_INPUT;
 
     int ch = fgetc(stdin);
     while (ch != '\n' && !feof(stdin))
         ch = fgetc(stdin);
     
-    return OK;
+    return rc;
 }
