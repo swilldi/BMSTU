@@ -209,9 +209,9 @@ void tree_find_by_first_symbol_all(tree_node *tree, node_t **list, char symbol)
 
 void tree_add_to_list(tree_node *node, void *arg)
 {
-    node_t *list = arg;
+    node_t **list = arg;
     node_t *tmp_node = create_node(node->value);
-    add_node(list, tmp_node);
+    *list = add_node(*list, tmp_node);
 }
 
 

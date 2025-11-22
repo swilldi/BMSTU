@@ -26,11 +26,6 @@ typedef enum
     CLEAR_EXPORT,
     EXPORT,
 
-    
-    PRINT_IN,
-    PRINT_PRE,
-    PRINT_POST,
-
     MAX_ACTION_CMD,
     CONTINUE
 } action_cmd_t;

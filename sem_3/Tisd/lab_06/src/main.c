@@ -105,6 +105,34 @@ int is_empty_file(FILE *f)
 }
 
 
+void print_in(tree_node *tree)
+{
+    node_t *list = NULL;
+    tree_apply_in(tree, tree_add_to_list, &list);
+    printf("\nИнфиксный вывод\n");
+    print_list(list);
+    destroy_list(list);
+}
+
+void print_post(tree_node *tree)
+{
+    node_t *list = NULL;
+    tree_apply_post(tree, tree_add_to_list, &list);
+    printf("\nПостфиксный вывод\n");
+    print_list(list);
+    destroy_list(list);
+}
+
+void print_pre(tree_node *tree)
+{
+    node_t *list = NULL;
+    tree_apply_pre(tree, tree_add_to_list, &list);
+    printf("\nПрефиксный вывод\n");
+    print_list(list);
+    destroy_list(list);
+}
+
+
 int main(void)
 {
 
@@ -267,6 +295,9 @@ int main(void)
                 tree_export_to_dot(f, tree, NULL);
                 fclose(f);
                 dot_to_png(TREE_DOT, TREE_PNG);
+                print_in(tree);
+                print_pre(tree);
+                print_post(tree);
                 break;
             
             case QUICK_EXPORT:
@@ -286,6 +317,9 @@ int main(void)
                 fclose(f);
                 
                 dot_to_png(TREE_DOT, TREE_PNG);
+                print_in(tree);
+                print_pre(tree);
+                print_post(tree);
                 
                 destroy_list(point_list);
                 point_list = NULL;
@@ -306,6 +340,9 @@ int main(void)
                 tree_export_to_dot(f, tree, NULL);
                 fclose(f);
                 dot_to_png(TREE_DOT, tmp_str);
+                print_in(tree);
+                print_pre(tree);
+                print_post(tree);
                 break;
 
             case EXPORT:
@@ -328,15 +365,18 @@ int main(void)
                 fclose(f);
                 
                 dot_to_png(TREE_DOT, tmp_str);
+
+                
+                print_in(tree);
+                print_pre(tree);
+                print_post(tree);
+
                 
                 destroy_list(point_list);
                 point_list = NULL;
                 break;   
             
-            // case PRINT_IN:
-            //     node_t *list = NULL;
-            //     tree_apply_in(tree, );
-            //     print_list();
+        
                 
             case CONTINUE:
             case EXIT:
