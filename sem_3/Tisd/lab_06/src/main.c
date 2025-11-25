@@ -19,10 +19,11 @@
 #define TREE_PNG "tree.png"
 
 #define PRE_TEST_COUNT 10
-#define TEST_COUNT 100
+#define TEST_COUNT 20
 
 double tree_time_test(FILE *f, char tmp_char)
 {
+    rewind(f);
     clock_t start, end;
     double res = 0;
 
@@ -30,16 +31,13 @@ double tree_time_test(FILE *f, char tmp_char)
     if (!tmp_tree)
         return -1;
 
-    printf("Начались прогревочные тесты\n");
     for (size_t i = 0; i < PRE_TEST_COUNT; i++)
     {
         node_t *tmp_list_point = NULL;
         tree_find_by_first_symbol_all(tmp_tree, &tmp_list_point, tmp_char);
         destroy_list(tmp_list_point);
     }
-    printf("Завершились прогревочные тесты\n");
 
-    printf("Начались основные тесты\n");
     for (size_t i = 0; i < TEST_COUNT; i++)
     {
         node_t *tmp_list_point = NULL;
@@ -49,10 +47,7 @@ double tree_time_test(FILE *f, char tmp_char)
         res += (double)(end - start);
         destroy_list(tmp_list_point);
         
-        if ((i + 1) % 10 == 0)
-            printf("Выполнено %lu тестов\n", i + 1);
     }
-    printf("Заврешились основные тесты\n");
 
     tree_destroy(tmp_tree);
 
@@ -61,20 +56,18 @@ double tree_time_test(FILE *f, char tmp_char)
 
 double file_time_test(FILE *f, char tmp_char)
 {
+    rewind(f);
     node_t *tmp_list = NULL;
     clock_t start, end;
     double res = 0;
 
-    printf("Начались прогревочные тесты\n");
     for (size_t i = 0; i < PRE_TEST_COUNT; i++)
     {
         rewind(f);
         tmp_list = read_from_file_by_letter(f, tmp_char);
         destroy_list(tmp_list);
     }
-    printf("Завершились прогревочные тесты\n");
 
-    printf("Начались основные тесты\n");
     for (size_t i = 0; i < TEST_COUNT; i++)
     {
         rewind(f);
@@ -83,10 +76,7 @@ double file_time_test(FILE *f, char tmp_char)
         end = clock();
         res += (double)(end - start);
         destroy_list(tmp_list);
-        if ((i + 1) % 10 == 0)
-            printf("Выполнено %lu тестов\n", i + 1);
     }
-    printf("Заврешились основные тесты\n");
 
     return res / CLOCKS_PER_SEC / TEST_COUNT;
 }
@@ -104,30 +94,56 @@ int is_empty_file(FILE *f)
 
 }
 
-
-void print_in(tree_node *tree)
+int cmp_tree_files_search_time(char tmp_char)
 {
-    node_t *list = NULL;
-    tree_apply_in(tree, tree_add_to_list, &list);
-    printf("\nИнфиксный вывод\n");
-    print_list(list);
-    destroy_list(list);
+    char *paths[STR_LEN] = 
+    {
+        "./test_tree_cmp_file/test_10.txt",
+        "./test_tree_cmp_file/test_100.txt",
+        "./test_tree_cmp_file/test_500.txt",
+        "./test_tree_cmp_file/test_5000.txt",
+        "./test_tree_cmp_file/test_10000.txt",
+        "./test_tree_cmp_file/test_50000.txt",
+        "./test_tree_cmp_file/test_100000.txt",
+        "./test_tree_cmp_file/test_1000000.txt",
+        "./test_tree_cmp_file/test_3000000.txt"
+    };
+    int elem_count[] = { 10, 100, 500, 5000, 10000, 50000, 100000, 1000000, 3000000 };
+
+    printf(
+        "|------------|-------------------------|--------------------|-----------------|\n"
+        "|   Кол-во   |    Время работы, сек    | Память для дерева, | Дерево быстрее, |\n"
+        "|  элементов |------------|------------|        байт        |  чем файла на   |\n"
+        "|            |   Дерево   |    Файл    |                    |                 |\n"
+        "|------------|------------|------------|--------------------|-----------------|\n"
+    );
+    for (size_t i = 0; i < sizeof(elem_count) / sizeof(int); i++)
+    {
+        FILE *f = fopen(paths[i], "r");
+        if (!f)
+            return OPEN_FILE_ERROR;
+        
+        double file_time = file_time_test(f, tmp_char);
+        double tree_time = tree_time_test(f, tmp_char);
+        double time_percent = (file_time - tree_time) / file_time * 100;
+
+        printf(
+            "| %10d | %10lf | %10lf | %18lu | %14.2lf%% |\n", 
+            elem_count[i], tree_time, file_time, sizeof(tree_node) * elem_count[i], time_percent
+        );
+        fclose(f);
+    }
+    printf("|------------|------------|------------|--------------------|-----------------|\n");
+    return OK;
 }
 
-void print_post(tree_node *tree)
-{
-    node_t *list = NULL;
-    tree_apply_post(tree, tree_add_to_list, &list);
-    printf("\nПостфиксный вывод\n");
-    print_list(list);
-    destroy_list(list);
-}
 
-void print_pre(tree_node *tree)
+
+void print_tree_node(tree_node *tree, void(*tree_apply)(tree_node*, ptr_action_t, void*), char *msg)
 {
     node_t *list = NULL;
-    tree_apply_pre(tree, tree_add_to_list, &list);
-    printf("\nПрефиксный вывод\n");
+    tree_apply(tree, tree_add_to_list, &list);
+    printf("\n%s\n", msg);
     print_list(list);
     destroy_list(list);
 }
@@ -136,7 +152,7 @@ void print_pre(tree_node *tree)
 int main(void)
 {
 
-    int rc;
+    int rc = OK;
     int cmd;
 
     tree_node *tree = NULL;
@@ -162,6 +178,23 @@ int main(void)
         rc = run_test();
         print_err_msg(rc);
         return rc;
+    }
+    else if (cmd == TEST_TREE_FILES)
+    {
+        rc = input_char(&tmp_char); 
+        if (rc != OK)
+        {
+            print_err_msg(rc);
+            return rc;
+        }
+        rc = cmp_tree_files_search_time(tmp_char);
+        if (rc != OK)
+        {
+            print_err_msg(rc);
+            return rc;
+        }
+        return rc;
+                
     }
     else if (cmd == EXIT)
     {
@@ -295,9 +328,9 @@ int main(void)
                 tree_export_to_dot(f, tree, NULL);
                 fclose(f);
                 dot_to_png(TREE_DOT, TREE_PNG);
-                print_in(tree);
-                print_pre(tree);
-                print_post(tree);
+                print_tree_node(tree, tree_apply_in, "Инфиксный обход");
+                print_tree_node(tree, tree_apply_pre, "Префиксный обход");
+                print_tree_node(tree, tree_apply_post, "Постфиксный обход");
                 break;
             
             case QUICK_EXPORT:
@@ -317,9 +350,9 @@ int main(void)
                 fclose(f);
                 
                 dot_to_png(TREE_DOT, TREE_PNG);
-                print_in(tree);
-                print_pre(tree);
-                print_post(tree);
+                print_tree_node(tree, tree_apply_in, "Инфиксный обход");
+                print_tree_node(tree, tree_apply_pre, "Префиксный обход");
+                print_tree_node(tree, tree_apply_post, "Постфиксный обход");
                 
                 destroy_list(point_list);
                 point_list = NULL;
@@ -340,9 +373,9 @@ int main(void)
                 tree_export_to_dot(f, tree, NULL);
                 fclose(f);
                 dot_to_png(TREE_DOT, tmp_str);
-                print_in(tree);
-                print_pre(tree);
-                print_post(tree);
+                print_tree_node(tree, tree_apply_in, "Инфиксный обход");
+                print_tree_node(tree, tree_apply_pre, "Префиксный обход");
+                print_tree_node(tree, tree_apply_post, "Постфиксный обход");
                 break;
 
             case EXPORT:
@@ -366,17 +399,14 @@ int main(void)
                 
                 dot_to_png(TREE_DOT, tmp_str);
 
-                
-                print_in(tree);
-                print_pre(tree);
-                print_post(tree);
-
+                print_tree_node(tree, tree_apply_in, "Инфиксный обход");
+                print_tree_node(tree, tree_apply_pre, "Префиксный обход");
+                print_tree_node(tree, tree_apply_post, "Постфиксный обход");
                 
                 destroy_list(point_list);
                 point_list = NULL;
                 break;   
-            
-        
+             
                 
             case CONTINUE:
             case EXIT:

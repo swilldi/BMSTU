@@ -5,6 +5,7 @@ typedef enum
 {
     TREE_EMULATE = 1,
     RUN_TESTS = 2,
+    TEST_TREE_FILES = 3,
 
     MAX_PROG_MODE
 } prog_mode_t;

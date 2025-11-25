@@ -23,7 +23,7 @@ unit_tests.exe: $(UNIT_OBJS)
 	$(CC) $^ $(LDFLAGS) -o $@
 
 # релизная сборка
-release: CFLAGS += -g0
+release: CFLAGS += -g0 -O3
 release: app.exe
 # сборка для дебага
 debug: CFLAGS += -g3
