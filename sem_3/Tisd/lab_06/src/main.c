@@ -102,13 +102,9 @@ int cmp_tree_files_search_time(char tmp_char)
         "./test_tree_cmp_file/test_100.txt",
         "./test_tree_cmp_file/test_500.txt",
         "./test_tree_cmp_file/test_5000.txt",
-        "./test_tree_cmp_file/test_10000.txt",
-        "./test_tree_cmp_file/test_50000.txt",
-        "./test_tree_cmp_file/test_100000.txt",
-        "./test_tree_cmp_file/test_1000000.txt",
-        "./test_tree_cmp_file/test_3000000.txt"
+        "./test_tree_cmp_file/test_10000.txt"
     };
-    int elem_count[] = { 10, 100, 500, 5000, 10000, 50000, 100000, 1000000, 3000000 };
+    int elem_count[] = { 10, 100, 500, 5000, 10000 };
 
     printf(
         "|------------|-------------------------|--------------------|-----------------|\n"
