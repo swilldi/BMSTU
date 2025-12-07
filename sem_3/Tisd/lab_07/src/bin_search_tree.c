@@ -3,12 +3,12 @@
 
 struct tree_node
 {
+    // хранимые данные
+    void *value;
+
     // Дочерние ноды
     tree_node *left;
     tree_node *right;
-
-    // хранимые данные
-    void *value;
 };
 
 // === Выделение и освобождение памяти ===
@@ -175,4 +175,21 @@ tree_node *tree_pop_min(tree_node **tree)
         *tree = NULL;
 
     return cur;
+}
+
+
+// === Доступ к данным ===
+void *tree_value(tree_node *node)
+{
+    return node->value;
+}
+
+tree_node *tree_left_child(tree_node *node)
+{
+    return node->left;
+}
+
+tree_node *tree_right_child(tree_node *node)
+{
+    return node->right;
 }

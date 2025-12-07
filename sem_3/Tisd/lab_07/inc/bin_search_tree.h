@@ -30,4 +30,10 @@ tree_node *tree_lookup(tree_node *tree, void *value, compare_func cmp_func);
 tree_node *tree_lookup_parent(tree_node *tree, tree_node *node, compare_func cmp_func);
 tree_node *tree_pop_min(tree_node **tree);
 
+
+// === Доступ к данным ===
+void *tree_value(tree_node *node);
+tree_node *tree_left_child(tree_node *node);
+tree_node *tree_right_child(tree_node *node);
+
 #endif
