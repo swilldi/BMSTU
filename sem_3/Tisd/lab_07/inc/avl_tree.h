@@ -49,7 +49,7 @@ avl_tree_node *avl_tree_pop_min(avl_tree_node **avl_tree);
 void *avl_tree_value(avl_tree_node *node);
 avl_tree_node *avl_tree_left_child(avl_tree_node *node);
 avl_tree_node *avl_tree_right_child(avl_tree_node *node);
-avl_tree_node *avl_tree_height(avl_tree_node *node);
+int avl_tree_height(avl_tree_node *node);
 
 
 // === Балансировка ===

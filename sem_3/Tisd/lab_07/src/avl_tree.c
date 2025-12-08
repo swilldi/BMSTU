@@ -30,6 +30,7 @@ avl_tree_node *avl_tree_node_create(char *value)
     if (node)
     {
         node->left = node->right = NULL;
+        node->height = 0;
         strcpy(node->value, value);
     }
     return node;
@@ -54,8 +55,8 @@ void avl_tree_destroy(avl_tree_node *avl_tree)
     if (!avl_tree)
         return;
 
-    // Очищение содержимого дерева
-    avl_tree_apple_post(avl_tree, avl_tree_free_node_content, NULL);
+    // // // Очищение содержимого дерева
+    // // avl_tree_apple_post(avl_tree, avl_tree_free_node_content, NULL);
     // Освобождение памяти узлов дерева
     avl_tree_apple_post(avl_tree, avl_tree_node_destroy, NULL);
 }
@@ -104,12 +105,12 @@ avl_tree_node *avl_tree_insert(avl_tree_node *avl_tree, avl_tree_node *node, com
     if (cmp > 0)
     {
         avl_tree->left = avl_tree_insert(avl_tree->left, node, cmp_func);
-        avl_tree->left = avl_tree_balanace(avl_tree->left);
+        avl_tree = avl_tree_balanace(avl_tree);
     }
     else if (cmp < 0)
     {
         avl_tree->right = avl_tree_insert(avl_tree->right, node, cmp_func);
-        avl_tree->right = avl_tree_balanace(avl_tree->right);
+        avl_tree = avl_tree_balanace(avl_tree);
     }
     return avl_tree;
 }
@@ -122,28 +123,22 @@ avl_tree_node *avl_tree_remove(avl_tree_node *avl_tree, char *value, compare_fun
 
     int cmp = cmp_func(avl_tree->value, value);
     if (cmp > 0)
-    {
         avl_tree->left = avl_tree_remove(avl_tree->left, value, cmp_func);
-        avl_tree->left = avl_tree_balanace(avl_tree->left);
-    }
     else if (cmp < 0)
-    {
         avl_tree->right = avl_tree_remove(avl_tree->right, value, cmp_func);
-        avl_tree->right = avl_tree_balanace(avl_tree->right);
-    }
     else
     {
         if (avl_tree->left == NULL)
         {
             avl_tree_node *temp_node = avl_tree->right;
             free(avl_tree);
-            return temp_node;
+            avl_tree = temp_node;
         }
         else if (avl_tree->right == NULL)
         {
             avl_tree_node *temp_node = avl_tree->left;
             free(avl_tree);
-            return temp_node;
+            avl_tree = temp_node;
         }
         else
         {
@@ -151,9 +146,11 @@ avl_tree_node *avl_tree_remove(avl_tree_node *avl_tree, char *value, compare_fun
             min_node->left = avl_tree->left;
             min_node->right = avl_tree->right;
             free(avl_tree);
-            return min_node;
+            avl_tree =  min_node;
         }
     }
+
+    avl_tree = avl_tree_balanace(avl_tree);
 
     return avl_tree;
 }
@@ -233,22 +230,19 @@ avl_tree_node *avl_tree_right_child(avl_tree_node *node)
     return node->right;
 }
 
-avl_tree_node *avl_tree_height(avl_tree_node *node)
+int avl_tree_height(avl_tree_node *node)
 {
-    return node ? node->height : 0;
+    return node ? node->height : -1;
 }
 
 // === Балансировка ===
 // Изменение состояние балансировки
 void avl_tree_set_height(avl_tree_node *node)
 {
-    if (!node)
-        return 0;
+    int lh = avl_tree_height((node->left));;
+    int rh = avl_tree_height((node->right));
 
-    int lh = avl_tree_height((node->left));
-    int lr = avl_tree_height((node->right));
-
-    return (lh > lr ? lh : lr) + 1;
+    node->height = (lh > rh ? lh : rh) + 1;
 }
 
 // Состояние баналанса
@@ -280,6 +274,9 @@ avl_tree_node *avl_tree_rotate_left(avl_tree_node *node)
 
 avl_tree_node *avl_tree_balanace(avl_tree_node *node)
 {
+    if (!node)
+        return NULL;
+
     avl_tree_set_height(node);
 
     // расбалансированно справа
