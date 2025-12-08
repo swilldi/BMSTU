@@ -1,12 +1,10 @@
 #ifndef BIN_SEARCH_TREE_H__
 #define BIN_SEARCH_TREE_H__
 
-#define TREE_STR_LEN 128
+#include "common_define.h"
 
 typedef struct tree_node tree_node;
 typedef void (*tree_apply_func)(tree_node *node, void *param);
-
-typedef int (*compare_func)(void *, void *);
 
 // === Выделение и освобождение памяти ===
 // Создание дерева
@@ -15,7 +13,6 @@ tree_node *tree_create(void);
 tree_node *tree_node_create(char *value);
 // освобождение памяти узла дерева
 void tree_node_destroy(tree_node *node, void *param);
-void tree_free_node_content(tree_node *node, void *param);
 // освобождение памяти всего дерева
 void tree_destroy(tree_node *tree);
 

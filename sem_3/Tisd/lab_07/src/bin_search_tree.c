@@ -38,12 +38,6 @@ void tree_node_destroy(tree_node *node, void *param)
     free(node);
 }
 
-void tree_free_node_content(tree_node *node, void *param)
-{   
-    (void)param;
-    free(node->value);
-}
-
 // освобождение памяти всего дерева
 // void tree_destroy(tree_node *tree, tree_apply_func free_func)
 void tree_destroy(tree_node *tree)
@@ -51,8 +45,6 @@ void tree_destroy(tree_node *tree)
     if (!tree)
         return;
 
-    // Очищение содержимого дерева
-    tree_apple_post(tree, tree_free_node_content, NULL);
     // Освобождение памяти узлов дерева
     tree_apple_post(tree, tree_node_destroy, NULL);
 }
