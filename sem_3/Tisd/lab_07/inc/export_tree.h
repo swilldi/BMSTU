@@ -5,5 +5,6 @@
 #include <stdio.h>
 
 void export_tree_to_dot(void *tree, FILE *dot_file);
+void export_avl_tree_to_dot(void *tree, FILE *dot_file);
 
 #endif

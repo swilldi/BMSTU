@@ -7,3 +7,4 @@
 
 // TODO сделать чтение универсальным
 tree_node *file_to_tree(FILE *f);
+avl_tree_node *file_to_avl_tree(FILE *f);
