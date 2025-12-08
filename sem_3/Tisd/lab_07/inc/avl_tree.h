@@ -14,7 +14,6 @@ avl_tree_node *avl_tree_create(void);
 avl_tree_node *avl_tree_node_create(char *value);
 // освобождение памяти узла дерева
 void avl_tree_node_destroy(avl_tree_node *node, void *param);
-void avl_tree_free_node_content(avl_tree_node *node, void *param);
 
 // освобождение памяти всего дерева
 // void avl_tree_destroy(avl_tree_node *avl_tree, avl_tree_apply_func free_func)
@@ -49,7 +48,21 @@ avl_tree_node *avl_tree_pop_min(avl_tree_node **avl_tree);
 // === Доступ к данным ===
 void *avl_tree_value(avl_tree_node *node);
 avl_tree_node *avl_tree_left_child(avl_tree_node *node);
-
 avl_tree_node *avl_tree_right_child(avl_tree_node *node);
+avl_tree_node *avl_tree_height(avl_tree_node *node);
+
+
+// === Балансировка ===
+// Изменение состояние балансировки
+void avl_tree_set_height(avl_tree_node *node);
+// Состояние баналанса
+int avl_tree_balance_factor(avl_tree_node *node);
+// Левый поворот
+avl_tree_node *avl_tree_rotate_right(avl_tree_node *node);
+// Правый поворот
+avl_tree_node *avl_tree_rotate_left(avl_tree_node *node);
+// Балансировка дерева
+avl_tree_node *avl_tree_balanace(avl_tree_node *node);
+
 
 #endif
