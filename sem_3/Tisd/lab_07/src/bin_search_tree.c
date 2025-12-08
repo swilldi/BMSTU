@@ -1,10 +1,12 @@
 #include <stdlib.h>
+#include <string.h>
+
 #include "bin_search_tree.h"
 
 struct tree_node
 {
     // хранимые данные
-    void *value;
+    char value[TREE_STR_LEN];
 
     // Дочерние ноды
     tree_node *left;
@@ -12,34 +14,47 @@ struct tree_node
 };
 
 // === Выделение и освобождение памяти ===
+// Создание дерева
+tree_node *tree_create(void)
+{
+    return NULL;
+}
+
 // выделение памяти для узла дерева
-tree_node *tree_node_create(void *value)
+tree_node *tree_node_create(char *value)
 {
     tree_node *node = malloc(sizeof(tree_node));
     if (node)
     {
         node->left = node->right = NULL;
-        node->value = value;
+        strcpy(node->value, value);
     }
     return node;
 }
 // освобождение памяти узла дерева
-void tree_node_destroy(tree_node *node, free_func func)
-{
-    if (!node)
-        return;
-
-    func(node);
+void tree_node_destroy(tree_node *node, void *param)
+{   
+    (void)param;
     free(node);
 }
 
+void tree_free_node_content(tree_node *node, void *param)
+{   
+    (void)param;
+    free(node->value);
+}
+
 // освобождение памяти всего дерева
-void tree_destroy(tree_node *tree, free_func func)
+// void tree_destroy(tree_node *tree, tree_apply_func free_func)
+void tree_destroy(tree_node *tree)
 {
     if (!tree)
         return;
 
-    tree_apple_post(tree, tree_node_destroy, func);
+    // Очищение содержимого дерева
+    tree_apple_post(tree, tree_free_node_content, NULL);
+    // Освобождение памяти узлов дерева
+    tree_apple_post(tree, tree_node_destroy, NULL);
 }
 
 
@@ -85,18 +100,23 @@ tree_node *tree_insert(tree_node *tree, tree_node *node, compare_func cmp_func)
     int cmp = cmp_func(tree->value, node->value);
     if (cmp > 0)
         tree->left = tree_insert(tree->left, node, cmp_func);
-    else
+    else if (cmp < 0)
         tree->right = tree_insert(tree->right, node, cmp_func);
+
+    return tree;
 }
 
 // Удаление узла со значением value
-tree_node *tree_remove(tree_node *tree, void *value, compare_func cmp_func)
+tree_node *tree_remove(tree_node *tree, char *value, compare_func cmp_func)
 {
+    if (!tree)
+        return NULL;
+
     int cmp = cmp_func(tree->value, value);
     if (cmp > 0)
-        tree->left = tree_remove_internal(tree->left, value, cmp_func);
+        tree->left = tree_remove(tree->left, value, cmp_func);
     else if (cmp < 0)
-        tree->left = tree_remove_internal(tree->left, value, cmp_func);
+        tree->right = tree_remove(tree->right, value, cmp_func);
     else
     {
         if (tree->left == NULL)
@@ -114,16 +134,20 @@ tree_node *tree_remove(tree_node *tree, void *value, compare_func cmp_func)
         else
         {
             tree_node *min_node = tree_pop_min(&tree->right);
+            min_node->left = tree->left;
+            min_node->right = tree->right;
+            free(tree);
             return min_node;
         }
     }
+
+    return tree;
 }
 
 // === Поиск элементов ===
 // Поиск узла со значеним value
-tree_node *tree_lookup(tree_node *tree, void *value, compare_func cmp_func)
+tree_node *tree_lookup(tree_node *tree, char *value, compare_func cmp_func)
 {
-    tree_node *cur = tree;
     int cmp;
 
     while (tree != NULL)
@@ -142,7 +166,6 @@ tree_node *tree_lookup(tree_node *tree, void *value, compare_func cmp_func)
 // Поиск родителя узла node
 tree_node *tree_lookup_parent(tree_node *tree, tree_node *node, compare_func cmp_func)
 {
-    tree_node *cur = tree;
     int cmp;
 
     while (tree != NULL)
@@ -173,7 +196,9 @@ tree_node *tree_pop_min(tree_node **tree)
     
     if (!prev)
         *tree = NULL;
-
+    else
+        prev->left = NULL;
+    
     return cur;
 }
 
