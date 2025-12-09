@@ -41,19 +41,16 @@ int get_min_prime_num(int num)
 
 hash_table_open *hash_table_open_create(size_t len)
 {
-    len = get_min_prime_num(len);
+    if (!is_prime_num(len))
+        len = get_min_prime_num(len);
     
     hash_table_open *hash_table = malloc(sizeof(hash_table_open));
     if (hash_table)
     {
-        hash_table->arr = malloc(len * list_node_size());
+        hash_table->arr = calloc(len, list_node_size());
         if (hash_table->arr)
         {
             hash_table->len = len;
-            hash_table->elem_count = 0;
-            hash_table->cmp_count = 0;
-            for (size_t i = 0; i < len; i++)
-                hash_table->arr[i] = list_create();
         }
         else
         {
@@ -91,7 +88,7 @@ int hash_table_open_add(hash_table_open *hash_table, char *value)
     
     hash_table->arr[index] = list_add_end(cell, new_node);
 
-    hash_table->cmp_count = (int)len_list(cell) > hash_table->cmp_count ? len_list(cell) : hash_table->cmp_count;
+    hash_table->cmp_count = (int)len_list(hash_table->arr[index]) > hash_table->cmp_count ? len_list(hash_table->arr[index]) : hash_table->cmp_count;
     hash_table->elem_count += 1;
 
     // TODO обработка ошибки
