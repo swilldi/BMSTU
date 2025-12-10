@@ -167,6 +167,77 @@ bool hash_table_close_contain(hash_table_close *hash_table, char *value)
     return false;
 }
 
+// Подсчет количества сравнений при поиске одного элемента
+int hash_table_close_cmp_count(hash_table_close *hash_table, char *value)
+{
+    if (!hash_table || !value)
+        return 0;
+
+    hash_t start_index = get_str_hash(value) % hash_table->len;
+    int cmp_count = 0;
+
+    for (size_t step = 0; step < hash_table->len; step++)
+    {
+        size_t index = (start_index + step) % hash_table->len;
+        table_cell *cell = &hash_table->arr[index];
+
+        if (cell->status == EMPTY)
+        {
+            // Пустая ячейка разрывает цепочку — элемента нет
+            break;
+        }
+
+        if (cell->status == SETED)
+        {
+            cmp_count++;
+            if (strcmp(cell->value, value) == 0)
+                break;
+        }
+
+        // DELETED или SETED с другим значением — продолжаем пробирование
+    }
+
+    return cmp_count;
+}
+
+// Подсчет среднего количества сравнений для всех элементов таблицы (один прогон)
+double hash_table_close_avg_cmp_signle_run(hash_table_close *hash_table)
+{
+    if (!hash_table || hash_table->elem_count == 0)
+        return 0.0;
+
+    long long total_cmp = 0;
+    int elem_count = 0;
+
+    for (size_t i = 0; i < hash_table->len; i++)
+    {
+        table_cell *cell = &hash_table->arr[i];
+        if (cell->status == SETED)
+        {
+            total_cmp += hash_table_close_cmp_count(hash_table, cell->value);
+            elem_count++;
+        }
+    }
+
+    if (elem_count == 0)
+        return 0.0;
+
+    return (double)total_cmp / elem_count;
+}
+
+// Усреднение по нескольким прогонам
+double hash_table_close_avg_cmp(hash_table_close *hash_table, int runs)
+{
+    if (!hash_table || runs <= 0)
+        return 0.0;
+
+    double sum = 0.0;
+
+    for (int i = 0; i < runs; i++)
+        sum += hash_table_close_avg_cmp_signle_run(hash_table);
+
+    return sum / runs;
+}
 
 void hash_table_close_print(hash_table_close *hash_table)
 {

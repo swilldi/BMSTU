@@ -23,5 +23,6 @@ size_t len_list(node_t *head);
 bool list_contain(node_t *node, char *value);
 size_t list_node_size(void);
 int list_apply(node_t *list, list_apply_func func, void *param);
+node_t *list_next(node_t *node);
 
 #endif

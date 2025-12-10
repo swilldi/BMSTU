@@ -7,6 +7,7 @@
 #define OPEN_HASH_TABLE_K 0.7
 #define CLOSE_HASH_TABLE_K 1.2
 #define EXTAND_K 1.2
+#define TEST_COUNT_FOR_AVG_CMP 10
 
 typedef int (*compare_func)(void *, void *);
 

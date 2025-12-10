@@ -25,5 +25,8 @@ int list_add_to_hash_table_open(node_t *node, void *table_ptr);
 
 double hash_table_open_load_factor(hash_table_open *table);
 
+int hash_table_open_cmp_count(hash_table_open *hash_table, char *value);
+double hash_table_open_avg_cmp_single_run(hash_table_open *hash_table);
+double hash_table_open_avg_cmp(hash_table_open *hash_table, int runs);
 
 #endif

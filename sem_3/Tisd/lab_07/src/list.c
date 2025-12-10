@@ -111,6 +111,11 @@ void *list_data(node_t *node)
     return node->data;
 }
 
+node_t *list_next(node_t *node)
+{
+    return node->next;
+}
+
 size_t len_list(node_t *head)
 {
     size_t count = 0;

@@ -129,6 +129,68 @@ void hash_table_open_print(hash_table_open *hash_table)
     }
 }
 
+// Подсчет количества сравнений при поиске одного элемента
+int hash_table_open_cmp_count(hash_table_open *hash_table, char *value)
+{
+    if (!hash_table || !value)
+        return 0;
+
+    hash_t index = get_str_hash(value) % hash_table->len;
+    node_t *cur = hash_table->arr[index];
+    int cmp_count = 0;
+
+    while (cur)
+    {
+        cmp_count++;
+        if (cmp_str(list_data(cur), value) == 0)
+            break;
+
+        cur = list_next(cur);
+    }
+
+    return cmp_count;
+}
+
+// Подсчет среднего количества сравнений для всех элементов таблицы (один прогон)
+double hash_table_open_avg_cmp_single_run(hash_table_open *hash_table)
+{
+    if (!hash_table || hash_table->len == 0)
+        return 0.0;
+
+    long long total_cmp = 0;
+    int elem_count = 0;
+
+    for (size_t i = 0; i < hash_table->len; i++)
+    {
+        node_t *cur = hash_table->arr[i];
+        while (cur)
+        {
+            total_cmp += hash_table_open_cmp_count(hash_table, (char *)list_data(cur));
+            elem_count++;
+            cur = list_next(cur);
+        }
+    }
+
+    if (elem_count == 0)
+        return 0.0;
+
+    return (double)total_cmp / elem_count;
+}
+
+// Усреднение по нескольким прогонам
+double hash_table_open_avg_cmp(hash_table_open *hash_table, int runs)
+{
+    if (!hash_table || runs <= 0)
+        return 0.0;
+
+    double sum = 0.0;
+
+    for (int i = 0; i < runs; i++)
+        sum += hash_table_open_avg_cmp_single_run(hash_table);
+
+    return sum / runs;
+}
+
 // TODO реструктуризация таблицы
 int hash_table_open_restructuring(hash_table_open **table_ptr)
 {
@@ -156,4 +218,3 @@ int list_add_to_hash_table_open(node_t *node, void *table_ptr)
     hash_table_open *table = table_ptr;
     return hash_table_open_add_raw(table, list_data(node));
 }
-

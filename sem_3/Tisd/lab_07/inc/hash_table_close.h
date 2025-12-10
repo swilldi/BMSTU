@@ -24,5 +24,8 @@ int hash_table_close_restructuring(hash_table_close **table_ptr);
 int list_add_to_hash_table_close(node_t *node, void *table_ptr);
 
 double hash_table_close_load_factor(hash_table_close *table);
+int hash_table_close_cmp_count(hash_table_close *hash_table, char *value);
+double hash_table_close_avg_cmp_signle_run(hash_table_close *hash_table);
+double hash_table_close_avg_cmp(hash_table_close *hash_table, int runs);
 
 #endif

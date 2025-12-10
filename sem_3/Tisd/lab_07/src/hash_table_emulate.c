@@ -15,6 +15,8 @@ typedef enum
     ADD_VALUE,
     REMOVE_VALUE,
     PRINT_TABLE,
+    CMP_COUNT_FOR_VALUE,
+    AVG_CMP_COUNT,
     IMPORT_DATA_FROM_FILE,
     
     CONTINUE,
@@ -139,6 +141,54 @@ hash_table_t *table_from_file(hash_mode mode, FILE *f)
     return t;
 }
 
+// количество сравнений для элемента
+int hash_table_cmp_count(hash_table_t *t, char *value, int *cmp_count_ptr)
+{
+    int cmp_count = -1;
+    
+    if (t->mode == OPEN_HASH)
+    {
+        if (!hash_table_open_contain(t->table, value))
+            return VALUE_NOT_EXITS;
+
+        cmp_count = hash_table_open_cmp_count(t->table, value);
+    }
+    else if (t->mode == CLOSE_HASH)
+    {
+        if (!hash_table_close_contain(t->table, value))
+            return VALUE_NOT_EXITS;
+
+        cmp_count = hash_table_close_cmp_count(t->table, value);
+    }
+
+    if (cmp_count == -1)
+        return 1;
+
+    *cmp_count_ptr = cmp_count;
+    return OK;
+}
+
+// среднее количество сравнений для таблицы
+int hash_table_avg_cmp(hash_table_t *t, double *avg_count_ptr)
+{
+    double avg_count = -1;
+    
+    if (t->mode == OPEN_HASH)
+    {
+        avg_count = hash_table_open_avg_cmp(t->table, TEST_COUNT_FOR_AVG_CMP);
+    }
+    else if (t->mode == CLOSE_HASH)
+    {
+        avg_count = hash_table_close_avg_cmp(t->table, TEST_COUNT_FOR_AVG_CMP);
+    }
+
+    if (avg_count < 0)
+        return 1;
+
+    *avg_count_ptr = avg_count;
+    return OK;
+}
+
 
 int run_emulate_hash_table(void)
 {
@@ -146,8 +196,11 @@ int run_emulate_hash_table(void)
         "1. Добавить элемент\n"
         "2. Удалить элемент\n"
         "3. Вывести таблицы\n"
-        "4. Прочитать данные из файла\n"
+        "4. Количество сравнений для поиска элемента\n"
+        "5. Среднее количество сравнений для поиска в таблице\n"
+        "6. Прочитать данные из файла\n"
         "0. Выйти\n"
+        "-------------------------------\n"
     );
 
     
@@ -169,6 +222,7 @@ int run_emulate_hash_table(void)
         rc = input_pos_int(&cmd, MAX_CMD_ACTION_HASH_TABLE);
         if (rc != OK)
             cmd = CONTINUE;
+
 
         switch (cmd)
         {
@@ -206,19 +260,66 @@ int run_emulate_hash_table(void)
             case PRINT_TABLE:
                 // TODO написать норм названия
                 printf(
-                    "\nТаблица с закрытым хэшированием\n"
+                    "\nТаблица с открытым хэшированием\n"
                       "===============================\n"
                 );
                 hash_table_print(open_table);
+                printf("===============================\n");
 
                 printf(
                     "\nТаблица с закрытым хэшированием\n"
                       "===============================\n"
                     );
                 hash_table_print(close_table);
+                printf("===============================\n");
                 
                 printf("\n");
                 break;
+            case CMP_COUNT_FOR_VALUE:
+                // Ввод удаляемого значения
+                printf("Введите строку: ");
+                rc = input_str(temp_str, STR_LEN);
+                if (rc != OK)
+                {
+                    cmd = EXIT;
+                    break;
+                }
+
+                int open_count, close_count;
+                rc = hash_table_cmp_count(open_table, temp_str, &open_count);
+                if (rc != OK)
+                    break;
+
+                rc = hash_table_cmp_count(close_table, temp_str, &close_count);
+                if (rc != OK)
+                    break;
+
+                printf(
+                    "Количество сравнений для поиска: %s\n"
+                    "Таблица с открытым хэшированием: %d\n"
+                    "Таблица с закрытым хэшированием: %d\n", 
+                    temp_str, open_count, close_count
+                );
+
+                break;
+            case AVG_CMP_COUNT:
+                printf("");
+                double open_avg_count, close_avg_count;
+                rc = hash_table_avg_cmp(open_table, &open_avg_count);
+                if (rc != OK)
+                    break;
+
+                rc = hash_table_avg_cmp(close_table, &close_avg_count);
+                if (rc != OK)
+                    break;
+
+                printf(
+                    "Среднее количество сравнений для поиска в таблице\n"
+                    "Таблица с открытым хэшированием: %.4lf\n"
+                    "Таблица с закрытым хэшированием: %.4lf\n", 
+                    open_avg_count, close_avg_count
+                );
+                    break;
             case IMPORT_DATA_FROM_FILE:
                 // Ввод файла
                 printf("Введите строку: ");
@@ -251,11 +352,14 @@ int run_emulate_hash_table(void)
                 break;
         }
 
+        printf("-------------------------------\n");
         if (rc != OK)
         {
             print_err_msg(rc);
             rc = OK;
+            printf("-------------------------------\n");
         }
+        
         
     }
 
