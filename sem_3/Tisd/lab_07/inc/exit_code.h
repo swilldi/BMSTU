@@ -9,6 +9,7 @@ typedef enum
     STR_EMPTY,
     VALUE_EXITS,
     VALUE_NOT_EXITS,
+    MEMORY_ERROR,
 } error;
 
 #endif

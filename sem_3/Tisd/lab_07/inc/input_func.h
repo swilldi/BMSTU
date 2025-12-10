@@ -7,6 +7,8 @@
 #include "exit_code.h"
 
 #define TEMP_STR_LEN 256
+int read_str(char *str, int max_len, FILE *f);
+
 int input_str(char *str, int max_len);
 
 #endif

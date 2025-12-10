@@ -6,7 +6,7 @@
 #include <stdio.h>
 #include "exit_code.h"
 
-#define MAX_LOAD_FACTOR 0.7
+
 #define MAX_CMP_COUNT 3
 
 struct hash_table_open
@@ -14,30 +14,8 @@ struct hash_table_open
     node_t **arr;
     size_t len;
 
-    int elem_count;
     int cmp_count; 
 };
-
-
-#include <math.h>
-bool is_prime_num(int num)
-{
-    for (int i = 2; i < sqrt(num) + 1; i++)
-    {
-        if (num % i == 0)
-            return false;
-    }
-    return true;
-}
-
-int get_min_prime_num(int num)
-{
-    num += 1;
-    while (!is_prime_num(num))
-        num += 1;
-
-    return num;
-}
 
 hash_table_open *hash_table_open_create(size_t len)
 {
@@ -47,10 +25,11 @@ hash_table_open *hash_table_open_create(size_t len)
     hash_table_open *hash_table = malloc(sizeof(hash_table_open));
     if (hash_table)
     {
-        hash_table->arr = calloc(len, list_node_size());
+        hash_table->arr = calloc(len, sizeof(node_t *));
         if (hash_table->arr)
         {
             hash_table->len = len;
+            hash_table->cmp_count = 0;
         }
         else
         {
@@ -64,13 +43,17 @@ hash_table_open *hash_table_open_create(size_t len)
 
 void hash_table_open_destroy(hash_table_open *hash_table)
 {
+    if (!hash_table)
+        return;
+
     for (size_t i = 0; i < hash_table->len; i++)
         list_destroy(hash_table->arr[i]);
     
+    free(hash_table->arr);
     free(hash_table);
 }
 
-int hash_table_open_add(hash_table_open *hash_table, char *value)
+static int hash_table_open_add_raw(hash_table_open *hash_table, char *value)
 {
     hash_t index = get_str_hash(value) % hash_table->len;
     node_t *cell = hash_table->arr[index];
@@ -85,18 +68,27 @@ int hash_table_open_add(hash_table_open *hash_table, char *value)
         return MEMORY_ERROR;
     }
 
-    
     hash_table->arr[index] = list_add_end(cell, new_node);
 
-    hash_table->cmp_count = (int)len_list(hash_table->arr[index]) > hash_table->cmp_count ? len_list(hash_table->arr[index]) : hash_table->cmp_count;
-    hash_table->elem_count += 1;
+    int len = (int)len_list(hash_table->arr[index]);
+    if (len > hash_table->cmp_count)
+        hash_table->cmp_count = len;
 
-    // TODO обработка ошибки
-    // printf("%lf\n", hash_table_open_load_factor(hash_table));
-    int rc;
-    if (hash_table_open_load_factor(hash_table) > MAX_LOAD_FACTOR || hash_table->cmp_count > MAX_CMP_COUNT)
+
+    return OK;
+}
+
+int hash_table_open_add(hash_table_open **hash_table_ptr, char *value)
+{
+    hash_table_open *hash_table = *hash_table_ptr;
+
+    int rc = hash_table_open_add_raw(hash_table, value);
+    if (rc != OK)
+        return rc;
+
+    if (hash_table->cmp_count > MAX_CMP_COUNT)
     {
-        rc = hash_table_open_restructuring(&hash_table);
+        rc = hash_table_open_restructuring(hash_table_ptr);
         if (rc != OK)
             return rc;
     }
@@ -113,7 +105,7 @@ int hash_table_open_del(hash_table_open *hash_table, char *value)
         return VALUE_NOT_EXITS;
 
     hash_table->arr[index] = list_del_by_valuet(cell, value, cmp_str);
-    hash_table->elem_count -= 1;
+    hash_table->cmp_count = (int)len_list(hash_table->arr[index]) > hash_table->cmp_count ? len_list(hash_table->arr[index]) : hash_table->cmp_count;
     return OK;
 }
 
@@ -140,11 +132,13 @@ void hash_table_open_print(hash_table_open *hash_table)
 // TODO реструктуризация таблицы
 int hash_table_open_restructuring(hash_table_open **table_ptr)
 {
-    int new_len = get_min_prime_num((*table_ptr)->len);
+    int new_len = get_min_prime_num((*table_ptr)->len * EXTAND_K);
     
     hash_table_open *table = hash_table_open_create(new_len);
+    if (!table)
+        return MEMORY_ERROR;
 
-    for (size_t i = 0; i < table->len; i++)
+    for (size_t i = 0; i < (*table_ptr)->len; i++)
     {
         // TODO обработка ошибок
         if ((*table_ptr)->arr[i])
@@ -160,13 +154,6 @@ int hash_table_open_restructuring(hash_table_open **table_ptr)
 int list_add_to_hash_table_open(node_t *node, void *table_ptr)
 {
     hash_table_open *table = table_ptr;
-    if (!hash_table_open_add(table, list_data(node)))
-        return MEMORY_ERROR;
-    else
-        return OK;
+    return hash_table_open_add_raw(table, list_data(node));
 }
 
-double hash_table_open_load_factor(hash_table_open *table)
-{
-    return (double)table->elem_count / table->len;
-}

@@ -6,7 +6,7 @@
 struct avl_tree_node
 {
     // хранимые данные
-    char value[TREE_STR_LEN];
+    char value[STR_LEN];
 
     // Дочерние ноды
     avl_tree_node *left;

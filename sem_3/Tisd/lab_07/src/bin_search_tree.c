@@ -6,7 +6,7 @@
 struct tree_node
 {
     // хранимые данные
-    char value[TREE_STR_LEN];
+    char value[STR_LEN];
 
     // Дочерние ноды
     tree_node *left;

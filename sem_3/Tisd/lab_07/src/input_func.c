@@ -1,13 +1,15 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "common_define.h"
 #include "exit_code.h"
 
-#define TEMP_STR_LEN 256
-int input_str(char *str, int max_len)
+
+
+int read_str(char *str, int max_len, FILE *f)
 {
     char temp_str[TEMP_STR_LEN];
-    if (fgets(temp_str, TEMP_STR_LEN, stdin) == NULL)
+    if (fgets(temp_str, TEMP_STR_LEN, f) == NULL)
         return INVALID_INPUT;
     
     int len = strlen(temp_str);
@@ -26,4 +28,9 @@ int input_str(char *str, int max_len)
     
     return OK;
     
+}
+
+int input_str(char *str, int max_len)
+{
+    return read_str(str, max_len, stdin);
 }

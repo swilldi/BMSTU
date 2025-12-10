@@ -11,7 +11,7 @@ typedef struct hash_table_open hash_table_open;
 hash_table_open *hash_table_open_create(size_t len);
 void hash_table_open_destroy(hash_table_open *hash_table);
 
-int hash_table_open_add(hash_table_open *hash_table, char *value);
+int hash_table_open_add(hash_table_open **hash_table_ptr, char *value);
 
 int hash_table_open_del(hash_table_open *hash_table, char *value);
 
