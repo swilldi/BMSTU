@@ -25,4 +25,5 @@ int list_add_to_hash_table_open(node_t *node, void *table_ptr);
 
 double hash_table_open_load_factor(hash_table_open *table);
 
+
 #endif

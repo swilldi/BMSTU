@@ -1,4 +1,4 @@
-#define GNU_SOURCE_
+#define _GNU_SOURCE
 #include <string.h>
 #include <stdio.h>
 
@@ -9,7 +9,7 @@
 #include "compare_func.h"
 
 // TODO сделать чтение универсальным
-tree_node *file_to_tree(FILE *f);
+bin_tree_node *file_to_bin_tree(FILE *f);
 avl_tree_node *file_to_avl_tree(FILE *f);
 size_t count_lines_in_file(FILE *f);
 hash_table_open *file_to_hash_table_open(FILE *f);

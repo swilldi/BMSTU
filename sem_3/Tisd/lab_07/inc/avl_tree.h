@@ -34,6 +34,8 @@ avl_tree_node *avl_tree_insert(avl_tree_node *avl_tree, avl_tree_node *node, com
 
 // Удаление узла со значением value
 avl_tree_node *avl_tree_remove(avl_tree_node *avl_tree, char *value, compare_func cmp_func);
+// Удаление всех букв по первой букве 
+avl_tree_node *avl_tree_remove_by_first_symbol(avl_tree_node *tree, char symbol);
 
 // === Поиск элементов ===
 // Поиск узла со значеним value

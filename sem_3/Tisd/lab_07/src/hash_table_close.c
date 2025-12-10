@@ -10,7 +10,6 @@
 
 #define MAX_LOAD_FACTOR 0.7
 
-
 typedef enum
 {
     EMPTY,
@@ -185,7 +184,7 @@ void hash_table_close_print(hash_table_close *hash_table)
 // Увеличиваем массив в 2 раза
 int hash_table_close_restructuring(hash_table_close **table_ptr)
 {
-    int new_len = get_min_prime_num((*table_ptr)->len * EXTAND_K);
+    int new_len = get_min_prime_num((*table_ptr)->len);
     
     hash_table_close *table = hash_table_close_create(new_len);
     if (!table)

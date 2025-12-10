@@ -10,6 +10,9 @@ typedef enum
     VALUE_EXITS,
     VALUE_NOT_EXITS,
     MEMORY_ERROR,
+    INVALID_CMD,
+    
+    OPEN_FILE_ERR,
 } error;
 
 #endif

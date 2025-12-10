@@ -11,4 +11,10 @@ int read_str(char *str, int max_len, FILE *f);
 
 int input_str(char *str, int max_len);
 
+int input_pos_int(int *num, int max_num);
+
+int input_char(char *c);
+
+void print_err_msg(int rc);
+
 #endif

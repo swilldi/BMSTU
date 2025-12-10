@@ -1,6 +1,7 @@
-#define GNU_SOURCE_
+#define _GNU_SOURCE
 #include <string.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 #include "exit_code.h"
 #include "import_data.h"
@@ -13,9 +14,10 @@
 #include <math.h>
 
 // TODO сделать чтение универсальным
-tree_node *file_to_tree(FILE *f)
+bin_tree_node *file_to_bin_tree(FILE *f)
 {
-    tree_node *tree = tree_create();
+    rewind(f);
+    bin_tree_node *tree = bin_tree_create();
 
     char *str = NULL;
     size_t len = 0;
@@ -27,9 +29,10 @@ tree_node *file_to_tree(FILE *f)
             *end_str = '\0';
         
         // printf("len: %ld | %s\n", s, str);
-        tree = tree_insert(tree, tree_node_create(str), cmp_str);
+        tree = bin_tree_insert(tree, bin_tree_node_create(str), cmp_str);
         s = getline(&str, &len, f);
     }
+    free(str);
 
     return tree;
 }
@@ -37,6 +40,7 @@ tree_node *file_to_tree(FILE *f)
 // TODO сделать чтение универсальным
 avl_tree_node *file_to_avl_tree(FILE *f)
 {
+    rewind(f);
     avl_tree_node *tree = avl_tree_create();
 
     char *str = NULL;
@@ -52,7 +56,8 @@ avl_tree_node *file_to_avl_tree(FILE *f)
         tree = avl_tree_insert(tree, avl_tree_node_create(str), cmp_str);
         s = getline(&str, &len, f);
     }
-
+    free(str);
+    
     return tree;
 }
 
@@ -69,6 +74,7 @@ size_t count_lines_in_file(FILE *f)
 
 hash_table_open *file_to_hash_table_open(FILE *f)
 {
+    rewind(f);
     int rc;
     size_t word_count = count_lines_in_file(f);
     hash_table_open *table = hash_table_open_create((int)ceil(word_count * OPEN_HASH_TABLE_K));
@@ -97,6 +103,7 @@ hash_table_open *file_to_hash_table_open(FILE *f)
 
 hash_table_close *file_to_hash_table_close(FILE *f)
 {
+    rewind(f);
     int rc;
     size_t word_count = count_lines_in_file(f);
     hash_table_close *table = hash_table_close_create((int)ceil(word_count * CLOSE_HASH_TABLE_K));

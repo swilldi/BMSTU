@@ -5,7 +5,7 @@
 #include "hash_table_open.h"
 #include <stdio.h>
 #include "exit_code.h"
-
+#include "math_func.h"
 
 #define MAX_CMP_COUNT 3
 
@@ -105,7 +105,7 @@ int hash_table_open_del(hash_table_open *hash_table, char *value)
         return VALUE_NOT_EXITS;
 
     hash_table->arr[index] = list_del_by_valuet(cell, value, cmp_str);
-    hash_table->cmp_count = (int)len_list(hash_table->arr[index]) > hash_table->cmp_count ? len_list(hash_table->arr[index]) : hash_table->cmp_count;
+    hash_table->cmp_count = (int)len_list(hash_table->arr[index]) > hash_table->cmp_count ? (int)len_list(hash_table->arr[index]) : hash_table->cmp_count;
     return OK;
 }
 
@@ -132,7 +132,7 @@ void hash_table_open_print(hash_table_open *hash_table)
 // TODO реструктуризация таблицы
 int hash_table_open_restructuring(hash_table_open **table_ptr)
 {
-    int new_len = get_min_prime_num((*table_ptr)->len * EXTAND_K);
+    int new_len = get_min_prime_num((*table_ptr)->len);
     
     hash_table_open *table = hash_table_open_create(new_len);
     if (!table)

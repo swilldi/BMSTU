@@ -2,6 +2,7 @@
 #include <string.h>
 
 #include "avl_tree.h"
+#include "compare_func.h"
 
 struct avl_tree_node
 {
@@ -153,6 +154,21 @@ avl_tree_node *avl_tree_remove(avl_tree_node *avl_tree, char *value, compare_fun
     avl_tree = avl_tree_balanace(avl_tree);
 
     return avl_tree;
+}
+
+// Удаление всех букв по первой букве 
+avl_tree_node *avl_tree_remove_by_first_symbol(avl_tree_node *tree, char symbol)
+{
+    if (!tree)
+        return NULL;
+    
+    tree->left = avl_tree_remove_by_first_symbol(tree->left, symbol);
+    tree->right = avl_tree_remove_by_first_symbol(tree->right, symbol);
+
+    if (tree->value[0] == symbol)
+        tree = avl_tree_remove(tree, tree->value, cmp_str);
+
+    return tree;
 }
 
 // === Поиск элементов ===

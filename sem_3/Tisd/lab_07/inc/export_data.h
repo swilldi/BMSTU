@@ -4,7 +4,7 @@
 #include "bin_search_tree.h"
 #include <stdio.h>
 
-void export_tree_to_dot(void *tree, FILE *dot_file);
+void export_bin_tree_to_dot(void *tree, FILE *dot_file);
 void export_avl_tree_to_dot(void *tree, FILE *dot_file);
 
 #endif
