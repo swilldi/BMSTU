@@ -29,4 +29,8 @@ int hash_table_open_cmp_count(hash_table_open *hash_table, char *value);
 double hash_table_open_avg_cmp_single_run(hash_table_open *hash_table);
 double hash_table_open_avg_cmp(hash_table_open *hash_table, int runs);
 
+int hash_table_open_add_simple(hash_table_open **hash_table_ptr, char *value);
+size_t hash_table_open_size(hash_table_open *hash_table);
+bool hash_table_open_contain_simple(hash_table_open *hash_table, char *value);
+
 #endif

@@ -217,3 +217,77 @@ int list_add_to_hash_table_open(node_t *node, void *table_ptr)
     hash_table_open *table = table_ptr;
     return hash_table_open_add_raw(table, list_data(node));
 }
+
+size_t hash_table_open_size(hash_table_open *hash_table)
+{
+    if (!hash_table || hash_table->len == 0)
+        return 0;
+
+    size_t elem_count = 0;
+
+    for (size_t i = 0; i < hash_table->len; i++)
+    {
+        node_t *cur = hash_table->arr[i];
+        while (cur)
+        {
+            elem_count++;
+            cur = list_next(cur);
+        }
+    }
+
+    return elem_count;
+}
+
+
+
+
+static int hash_table_open_add_raw_simple(hash_table_open *hash_table, char *value)
+{
+    hash_t index = get_str_hash_simple(value) % hash_table->len;
+    node_t *cell = hash_table->arr[index];
+
+    if (list_contain(cell, value))
+        return VALUE_EXITS;
+    
+    node_t *new_node = list_create_node(value);
+    if (!new_node)
+    {
+        // TODO почистить память
+        return MEMORY_ERROR;
+    }
+
+    hash_table->arr[index] = list_add_end(cell, new_node);
+
+    int len = (int)len_list(hash_table->arr[index]);
+    if (len > hash_table->cmp_count)
+        hash_table->cmp_count = len;
+
+
+    return OK;
+}
+
+int hash_table_open_add_simple(hash_table_open **hash_table_ptr, char *value)
+{
+    hash_table_open *hash_table = *hash_table_ptr;
+
+    int rc = hash_table_open_add_raw_simple(hash_table, value);
+    if (rc != OK)
+        return rc;
+
+    if (hash_table->cmp_count > MAX_CMP_COUNT)
+    {
+        rc = hash_table_open_restructuring(hash_table_ptr);
+        if (rc != OK)
+            return rc;
+    }
+
+    return OK;
+}
+
+bool hash_table_open_contain_simple(hash_table_open *hash_table, char *value)
+{
+    hash_t index = get_str_hash_simple(value) % hash_table->len;
+    node_t *cell = hash_table->arr[index];
+
+    return list_contain(cell, value);
+}

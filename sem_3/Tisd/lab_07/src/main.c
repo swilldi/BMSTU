@@ -18,7 +18,8 @@ typedef enum
     HASH_TABLE_EMULATE,
     AVG_CMP_COUNT,
     COMPARE_TIME_TO_DEL,
-    COMPARE_AVL_TREE_AND_HASH_TABLE,
+    COMPARE_TIME_TO_SEARCH,
+    COMPARE_COLLISION_PERCENT,
     
     MAX_CMD_ACTION_TREE,
     CONTINUE,
@@ -36,8 +37,8 @@ int main(void)
         "-------------------------------\n"
         "3. Среднее кол-во сравнений для деревьев и хэш-таблиц\n"
         "4. Сравнение эффективности по памяти и времени для удаления элемента\n"
-        "5. Сравнение времени, объема памяти и кол-ва сравнений\n"
-        "   в сбалансированном дереве и хэш-таблице\n"
+        "5. Сравнение эффективности по памяти и времени для поиска элемента\n"
+        "6. Сравнение открытого и закрытого хэширования с разным процентом коллизий\n"
         "-------------------------------\n"
         "0. Выйти\n"
         "-------------------------------\n"
@@ -67,9 +68,13 @@ int main(void)
                 test_avg_cmp();
                 break;
             case COMPARE_TIME_TO_DEL:
-                test_time_efficiency(); 
+                test_time_del(); 
                 break;
-            case COMPARE_AVL_TREE_AND_HASH_TABLE:
+            case COMPARE_TIME_TO_SEARCH:
+                test_time_search();
+                break;
+            case COMPARE_COLLISION_PERCENT:
+                test_hash_efficiency_collision();
                 break;
             case EXIT:
                 break;

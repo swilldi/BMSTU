@@ -15,3 +15,14 @@ hash_t get_str_hash(char *str)
 
      return hash;
 }
+
+// Простая хэш-функция: сумма кодов символов
+hash_t get_str_hash_simple(char *str)
+{
+    hash_t hash = 0;
+    
+    for (size_t i = 0; str[i] != '\0'; i++)
+        hash += (unsigned char)str[i];
+    
+    return hash;
+}

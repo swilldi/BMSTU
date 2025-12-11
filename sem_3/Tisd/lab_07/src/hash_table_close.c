@@ -289,3 +289,90 @@ double hash_table_close_load_factor(hash_table_close *table)
 {
     return (double)table->elem_count / table->len;
 }
+
+size_t hash_table_close_size(hash_table_close *hash_table)
+{
+    if (!hash_table)
+        return 0;
+    return hash_table->elem_count;
+}
+
+
+
+
+static int hash_table_close_add_raw_simple(hash_table_close *hash_table, char *value)
+{
+    hash_t start_index = get_str_hash_simple(value) % hash_table->len;
+
+    int cmp_count = 0;
+    for (size_t step = 0; step < hash_table->len; step++)
+    {
+        size_t index = (start_index + step) % hash_table->len;
+        table_cell *cell = &hash_table->arr[index];
+        cmp_count += 1;
+        
+
+        if (cell->status == SETED)
+        {
+            // занято — продолжаем пробирование
+            continue;
+        }
+
+        // EMPTY или DELETED — трактуем как свободные при вставке
+        strcpy(cell->value, value);
+        cell->status = SETED;
+        hash_table->elem_count += 1;
+        if (cmp_count > hash_table->cmp_count)
+                hash_table->cmp_count = cmp_count;
+        return OK;
+    }
+
+    // Таблица полностью занята (все SETED) — в нормальной работе
+    // сюда доходить не должны, так как реструктуризацию делаем заранее.
+    return MEMORY_ERROR;
+}
+
+int hash_table_close_add_simple(hash_table_close **hash_table_ptr, char *value)
+{
+    hash_table_close *hash_table = *hash_table_ptr;
+
+    int rc = hash_table_close_add_raw_simple(hash_table, value);
+    if (rc != OK)
+        return rc;
+
+    if (hash_table_close_load_factor(hash_table) > MAX_LOAD_FACTOR || hash_table->cmp_count > MAX_CMP_COUNT)
+    {
+        rc = hash_table_close_restructuring(hash_table_ptr);
+        if (rc != OK)
+            return rc;
+    }
+
+    return OK;
+}
+
+bool hash_table_close_contain_simple(hash_table_close *hash_table, char *value)
+{
+    hash_t start_index = get_str_hash_simple(value) % hash_table->len;
+
+    for (size_t step = 0; step < hash_table->len; step++)
+    {
+        size_t index = (start_index + step) % hash_table->len;
+        table_cell *cell = &hash_table->arr[index];
+
+        if (cell->status == EMPTY)
+        {
+            // Пустая ячейка разрывает цепочку — элемента нет
+            return false;
+        }
+
+        if (cell->status == SETED && strcmp(cell->value, value) == 0)
+        {
+            return true;
+        }
+
+        // DELETED или SETED с другим значением — продолжаем поиск
+    }
+
+    return false;
+}
+

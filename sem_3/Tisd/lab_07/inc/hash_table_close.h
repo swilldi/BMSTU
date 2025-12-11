@@ -27,5 +27,8 @@ double hash_table_close_load_factor(hash_table_close *table);
 int hash_table_close_cmp_count(hash_table_close *hash_table, char *value);
 double hash_table_close_avg_cmp_signle_run(hash_table_close *hash_table);
 double hash_table_close_avg_cmp(hash_table_close *hash_table, int runs);
+int hash_table_close_add_simple(hash_table_close **hash_table_ptr, char *value);
+size_t hash_table_close_size(hash_table_close *hash_table);
+bool hash_table_close_contain_simple(hash_table_close *hash_table, char *value);
 
 #endif
