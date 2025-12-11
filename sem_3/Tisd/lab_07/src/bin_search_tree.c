@@ -171,6 +171,76 @@ bin_tree_node *bin_tree_lookup(bin_tree_node *tree, char *value, compare_func cm
 
     return NULL;
 }
+
+// Подсчет количества сравнений при поиске одного элемента
+int bin_tree_lookup_cmp_count(bin_tree_node *tree, char *value)
+{
+    int cmp;
+    int cmp_count = 0;
+
+    while (tree != NULL)
+    {
+        cmp = cmp_str(tree->value, value);
+        cmp_count++;
+
+        if (cmp > 0)
+            tree = tree->left;
+        else if (cmp < 0)
+            tree = tree->right;
+        else
+            break;
+    }
+
+    return cmp_count;
+}
+
+typedef struct
+{
+    bin_tree_node *root;
+    long long total_cmp;
+    int elem_count;
+} bin_tree_cmp_ctx;
+
+static void bin_tree_collect_cmp(bin_tree_node *node, void *param)
+{
+    bin_tree_cmp_ctx *ctx = param;
+    ctx->total_cmp += bin_tree_lookup_cmp_count(ctx->root, node->value);
+    ctx->elem_count++;
+}
+
+// Подсчет среднего количества сравнений для всех элементов дерева (один прогон)
+double bin_tree_avg_cmp_single_run(bin_tree_node *tree)
+{
+    if (!tree)
+        return 0.0;
+
+    bin_tree_cmp_ctx ctx;
+    ctx.root = tree;
+    ctx.total_cmp = 0;
+    ctx.elem_count = 0;
+
+    bin_tree_apple_in(tree, bin_tree_collect_cmp, &ctx);
+
+    if (ctx.elem_count == 0)
+        return 0.0;
+
+    return (double)ctx.total_cmp / ctx.elem_count;
+}
+
+// Усреднение по нескольким прогонам
+double bin_tree_avg_cmp(bin_tree_node *tree, int runs)
+{
+    if (!tree || runs <= 0)
+        return 0.0;
+
+    double sum = 0.0;
+
+    for (int i = 0; i < runs; i++)
+        sum += bin_tree_avg_cmp_single_run(tree);
+
+    return sum / runs;
+}
+
 // Поиск родителя узла node
 bin_tree_node *bin_tree_lookup_parent(bin_tree_node *tree, bin_tree_node *node, compare_func cmp_func)
 {

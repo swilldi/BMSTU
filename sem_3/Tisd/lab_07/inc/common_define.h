@@ -9,6 +9,9 @@
 #define EXTAND_K 1.2
 #define TEST_COUNT_FOR_AVG_CMP 10
 
+#define MAX_LOAD_FACTOR 0.7
+#define MAX_CMP_COUNT 3
+
 typedef int (*compare_func)(void *, void *);
 
 #endif

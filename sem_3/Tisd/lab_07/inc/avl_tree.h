@@ -67,4 +67,7 @@ avl_tree_node *avl_tree_rotate_left(avl_tree_node *node);
 avl_tree_node *avl_tree_balanace(avl_tree_node *node);
 
 
+int avl_tree_lookup_cmp_count(avl_tree_node *avl_tree, char *value);
+double avl_tree_avg_cmp(avl_tree_node *avl_tree, int runs);
+
 #endif

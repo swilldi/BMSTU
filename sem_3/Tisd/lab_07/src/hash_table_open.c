@@ -7,7 +7,6 @@
 #include "exit_code.h"
 #include "math_func.h"
 
-#define MAX_CMP_COUNT 3
 
 struct hash_table_open
 {

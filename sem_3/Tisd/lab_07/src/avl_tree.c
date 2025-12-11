@@ -190,6 +190,76 @@ avl_tree_node *avl_tree_lookup(avl_tree_node *avl_tree, char *value, compare_fun
 
     return NULL;
 }
+
+// Подсчет количества сравнений при поиске одного элемента
+int avl_tree_lookup_cmp_count(avl_tree_node *avl_tree, char *value)
+{
+    int cmp;
+    int cmp_count = 0;
+
+    while (avl_tree != NULL)
+    {
+        cmp = cmp_str(avl_tree->value, value);
+        cmp_count++;
+
+        if (cmp > 0)
+            avl_tree = avl_tree->left;
+        else if (cmp < 0)
+            avl_tree = avl_tree->right;
+        else
+            break;
+    }
+
+    return cmp_count;
+}
+
+typedef struct
+{
+    avl_tree_node *root;
+    long long total_cmp;
+    int elem_count;
+} avl_tree_cmp_ctx;
+
+static void avl_tree_collect_cmp(avl_tree_node *node, void *param)
+{
+    avl_tree_cmp_ctx *ctx = param;
+    ctx->total_cmp += avl_tree_lookup_cmp_count(ctx->root, node->value);
+    ctx->elem_count++;
+}
+
+// Подсчет среднего количества сравнений для всех элементов дерева (один прогон)
+double avl_tree_avg_cmp_single_run(avl_tree_node *avl_tree)
+{
+    if (!avl_tree)
+        return 0.0;
+
+    avl_tree_cmp_ctx ctx;
+    ctx.root = avl_tree;
+    ctx.total_cmp = 0;
+    ctx.elem_count = 0;
+
+    avl_tree_apple_in(avl_tree, avl_tree_collect_cmp, &ctx);
+
+    if (ctx.elem_count == 0)
+        return 0.0;
+
+    return (double)ctx.total_cmp / ctx.elem_count;
+}
+
+// Усреднение по нескольким прогонам
+double avl_tree_avg_cmp(avl_tree_node *avl_tree, int runs)
+{
+    if (!avl_tree || runs <= 0)
+        return 0.0;
+
+    double sum = 0.0;
+
+    for (int i = 0; i < runs; i++)
+        sum += avl_tree_avg_cmp_single_run(avl_tree);
+
+    return sum / runs;
+}
+
 // Поиск родителя узла node
 avl_tree_node *avl_tree_lookup_parent(avl_tree_node *avl_tree, avl_tree_node *node, compare_func cmp_func)
 {

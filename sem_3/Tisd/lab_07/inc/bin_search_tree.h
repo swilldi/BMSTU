@@ -38,4 +38,8 @@ void *bin_tree_value(bin_tree_node *node);
 bin_tree_node *bin_tree_left_child(bin_tree_node *node);
 bin_tree_node *bin_tree_right_child(bin_tree_node *node);
 
+int bin_tree_lookup_cmp_count(bin_tree_node *tree, char *value);
+double bin_tree_avg_cmp(bin_tree_node *tree, int runs);
+
+
 #endif

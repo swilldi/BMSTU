@@ -17,6 +17,8 @@ typedef enum
     ADD_TREE_NODE,
     REMOVE_TREE_NODE,
     DELL_BY_SYMBOL,
+    CMP_COUNT_FOR_VALUE,
+    AVG_CMP,
     IMPORT_TREE_FROM_FILE,
     
     CONTINUE,
@@ -194,9 +196,53 @@ void create_tree_png(tree_t *t, char *dot_file_name)
 
     snprintf(cmd_str, CMD_STR_LEN, "dot -Tpng %s -o %s.png", dot_file_name, t->mode == AVL ? "avl" : "bst");
     system(cmd_str);
-
-    
 }
+
+
+int tree_lookup_cmp_count(tree_t *t, char *value, int *cmp_count_ptr)
+{
+    int cmp_count = -1;
+    if (t->mode == BST)
+    {
+        if (bin_tree_lookup(t->tree, value, cmp_str) == NULL)
+            return VALUE_NOT_EXITS;
+        
+        cmp_count = bin_tree_lookup_cmp_count(t->tree, value);
+    }
+    else if (t->mode == AVL)
+    {
+        if (avl_tree_lookup(t->tree, value, cmp_str) == NULL)
+            return VALUE_NOT_EXITS;
+        
+        cmp_count = avl_tree_lookup_cmp_count(t->tree, value);
+    }
+
+    if (cmp_count == -1)
+        return 1;
+
+    *cmp_count_ptr = cmp_count;
+    return OK;
+}
+
+int tree_avg_cmp(tree_t *t, double *avg_cmp_ptr)
+{
+    double avg_cmp = -1;
+    if (t->mode == BST)
+    {   
+        avg_cmp = bin_tree_avg_cmp(t->tree, TEST_COUNT_FOR_AVG_CMP);
+    }
+    else if (t->mode == AVL)
+    {   
+        avg_cmp = avl_tree_avg_cmp(t->tree, TEST_COUNT_FOR_AVG_CMP);
+    }
+
+    if (avg_cmp < -1)
+        return 1;
+
+    *avg_cmp_ptr = avg_cmp;
+    return OK;
+}
+
 
 int run_emulate_tree(void)
 {
@@ -204,8 +250,11 @@ int run_emulate_tree(void)
         "1. Добавить узел\n"
         "2. Удалить узел\n"
         "3. Удалить по первому символу\n"
-        "4. Прочитать дерево из файла\n"
+        "4. Количества сравнения для поиска по значению\n"
+        "5. Среднее количество значения для поиска\n"
+        "6. Прочитать дерево из файла\n"
         "0. Выйти\n"
+        "-------------------------------\n"
     );
 
     // Создание деревьев
@@ -309,6 +358,49 @@ int run_emulate_tree(void)
                 tree_from_file(avl_tree, f);
                 fclose(f);
                 break;
+            case CMP_COUNT_FOR_VALUE:
+                // Ввод значения
+                printf("Введите строку: ");
+                rc = input_str(temp_str, STR_LEN);
+                if (rc != OK)
+                {
+                    cmd = EXIT;
+                    break;
+                }
+                
+                int bin_count, avl_count;
+                rc = tree_lookup_cmp_count(bin_tree, temp_str, &bin_count);
+                if (rc != OK)
+                    break;
+                rc = tree_lookup_cmp_count(avl_tree, temp_str, &avl_count);
+                if (rc != OK)
+                    break;
+
+                printf(
+                    "Количество сравнений для поиска: %s\n"
+                    "Бинарное дерево поиска: %d\n"
+                    "            АВЛ дерево: %d\n",
+                    temp_str, bin_count, avl_count
+                );
+
+                break;
+            case AVG_CMP:
+                printf("");
+                double bin_avg, avl_avg;
+                rc = tree_avg_cmp(bin_tree, &bin_avg);
+                if (rc != OK)
+                    break;
+                rc = tree_avg_cmp(avl_tree, &avl_avg);
+                if (rc != OK)
+                    break;
+
+                printf(
+                    "Среднеее количество сравнений\n"
+                    "Бинарное дерево поиска: %.4lf\n"
+                    "            АВЛ дерево: %.4lf\n",
+                    bin_avg, avl_avg
+                );
+                break;
             case EXIT:
                 break;
             default:
@@ -316,10 +408,12 @@ int run_emulate_tree(void)
                 break;
         }
 
+        printf("-------------------------------\n");
         if (rc != OK)
         {
             print_err_msg(rc);
             rc = OK;
+            printf("-------------------------------\n");
         }
         
         // Обновление картинок деревьев

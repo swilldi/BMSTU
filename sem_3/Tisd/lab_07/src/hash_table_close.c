@@ -8,7 +8,7 @@
 #include "math_func.h"
 #include <string.h>
 
-#define MAX_LOAD_FACTOR 0.7
+
 
 typedef enum
 {
@@ -28,6 +28,7 @@ struct hash_table_close
     table_cell *arr;
     size_t len;
     int elem_count;
+    int cmp_count;
 };
 
 hash_table_close *hash_table_close_create(size_t len)
@@ -70,10 +71,13 @@ static int hash_table_close_add_raw(hash_table_close *hash_table, char *value)
 {
     hash_t start_index = get_str_hash(value) % hash_table->len;
 
+    int cmp_count = 0;
     for (size_t step = 0; step < hash_table->len; step++)
     {
         size_t index = (start_index + step) % hash_table->len;
         table_cell *cell = &hash_table->arr[index];
+        cmp_count += 1;
+        
 
         if (cell->status == SETED)
         {
@@ -85,6 +89,8 @@ static int hash_table_close_add_raw(hash_table_close *hash_table, char *value)
         strcpy(cell->value, value);
         cell->status = SETED;
         hash_table->elem_count += 1;
+        if (cmp_count > hash_table->cmp_count)
+                hash_table->cmp_count = cmp_count;
         return OK;
     }
 
@@ -101,7 +107,7 @@ int hash_table_close_add(hash_table_close **hash_table_ptr, char *value)
     if (rc != OK)
         return rc;
 
-    if (hash_table_close_load_factor(hash_table) > MAX_LOAD_FACTOR)
+    if (hash_table_close_load_factor(hash_table) > MAX_LOAD_FACTOR || hash_table->cmp_count > MAX_CMP_COUNT)
     {
         rc = hash_table_close_restructuring(hash_table_ptr);
         if (rc != OK)
@@ -116,10 +122,12 @@ int hash_table_close_del(hash_table_close *hash_table, char *value)
 {
     hash_t start_index = get_str_hash(value) % hash_table->len;
 
+    int cmp_count = 0;
     for (size_t step = 0; step < hash_table->len; step++)
     {
         size_t index = (start_index + step) % hash_table->len;
         table_cell *cell = &hash_table->arr[index];
+        cmp_count += 1;
 
         if (cell->status == EMPTY)
         {
@@ -131,6 +139,8 @@ int hash_table_close_del(hash_table_close *hash_table, char *value)
         {
             cell->status = DELETED;
             hash_table->elem_count -= 1;
+            if (cmp_count > hash_table->cmp_count)
+                hash_table->cmp_count = cmp_count;
             return OK;
         }
 

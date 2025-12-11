@@ -9,43 +9,81 @@
 #include "hash_type.h"
 #include "hash_table_emulate.h"
 #include "tree_emulate.h"
+#include "test.h"
 
-int main(void)
+typedef enum 
 {
-    // run_emulate_tree();
-    run_emulate_hash_table();
-}
-
-
-#if 0
-int main(void)
-{
-    // hash_table_open *table = hash_table_open_create(10);
-    // table = hash_table_open_add(table, "123");
-    // table = hash_table_open_add(table, "420");
-    // table = hash_table_open_add(table, "060");
-    // table = hash_table_open_add(table, "163");
-    // table = hash_table_open_add(table, "543");
-    // table = hash_table_open_add(table, "6578");
-    // table = hash_table_open_add(table, "xcvcv");
-    // hash_table_open_print(table);
-    // printf("\n");
-    // table = hash_table_open_add(table, "asdere");
-    // hash_table_open_print(table);
-    // printf("\n");
-    // table = hash_table_open_add(table, "sdf");
-
-    // // hash_table_open_restructuring(&table);
+    EXIT = 0,
+    TREE_EMULATE,
+    HASH_TABLE_EMULATE,
+    AVG_CMP_COUNT,
+    COMPARE_TIME_TO_DEL,
+    COMPARE_AVL_TREE_AND_HASH_TABLE,
     
-    FILE *f = fopen("test.txt", "r");
-    // int rc;
-    hash_table_close *table = file_to_hash_table_close(f);
-    hash_table_close_print(table);
-    printf("\n");
+    MAX_CMD_ACTION_TREE,
+    CONTINUE,
+} cmd_action_tree;
 
-    hash_table_close_add(&table, "123");
-    hash_table_close_print(table);
-    printf("\n");
+int main(void)
+{
+    printf(
+        "Исследуему типы данных:\n"
+        "   - Двоичное дерево поиска\n  - Сбалансированнное дерево\n"
+        "   - Хэш-таблица с открытым хэшированием\n   - Хэш-таблица с закрытым хэшированием\n"
+        "-------------------------------\n"
+        "1. Эмуляция деревьев\n"
+        "2. Эмуляция хэш-таблиц\n"
+        "-------------------------------\n"
+        "3. Среднее кол-во сравнений для деревьев и хэш-таблиц\n"
+        "4. Сравнение эффективности по памяти и времени для удаления элемента\n"
+        "5. Сравнение времени, объема памяти и кол-ва сравнений\n"
+        "   в сбалансированном дереве и хэш-таблице\n"
+        "-------------------------------\n"
+        "0. Выйти\n"
+        "-------------------------------\n"
+    );
 
+    int cmd = CONTINUE;
+    int rc;
+    
+    while (cmd != EXIT)
+    {
+
+        // Чтение команды
+        printf("Введите команду: ");
+        rc = input_pos_int(&cmd, MAX_CMD_ACTION_TREE);
+        if (rc != OK)
+            cmd = CONTINUE;
+
+        switch (cmd)
+        {
+            case TREE_EMULATE:
+                rc = run_emulate_tree();
+                break;
+            case HASH_TABLE_EMULATE:
+                rc = run_emulate_hash_table();
+                break;
+            case AVG_CMP_COUNT:
+                test_avg_cmp();
+                break;
+            case COMPARE_TIME_TO_DEL:
+                break;
+            case COMPARE_AVL_TREE_AND_HASH_TABLE:
+                break;
+            case EXIT:
+                break;
+            default:
+                rc = INVALID_CMD;
+                break;
+        }
+
+        printf("-------------------------------\n");
+        if (rc != OK)
+        {
+            print_err_msg(rc);
+            rc = OK;
+            printf("-------------------------------\n");
+        }
+    }
 }
-#endif
+
