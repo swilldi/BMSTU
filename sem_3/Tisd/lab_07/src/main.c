@@ -67,6 +67,7 @@ int main(void)
                 test_avg_cmp();
                 break;
             case COMPARE_TIME_TO_DEL:
+                test_time_efficiency(); 
                 break;
             case COMPARE_AVL_TREE_AND_HASH_TABLE:
                 break;
