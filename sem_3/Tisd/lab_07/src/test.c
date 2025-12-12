@@ -160,7 +160,7 @@ int test_avg_cmp(void)
 
     printf(
         "-------------------------------------------------------------------------------------------------------------\n"
-        "| Кол-во элементов| Соотношение BST |     BST   |    AVL    |  Open + R | Open - R  | Close + R | Close + R |\n"
+        "| Кол-во элементов| Соотношение BST |    BST    |    AVL    |  Open + R | Open - R  | Close + R | Close - R |\n"
         "-------------------------------------------------------------------------------------------------------------\n"
     );
     for (size_t i = 0; i < sizeof(bst_test_file_path) / sizeof(bst_test_file_path[0]); i++)
@@ -181,7 +181,8 @@ int test_avg_cmp(void)
         hash_table_close *close_table_no_rest = file_to_hash_table_close_no_rest(f, get_str_hash);
         fclose(f);
 
-        if (!bin_tree || !avl_tree || !open_table || !close_table)
+        if (!bin_tree || !avl_tree || !open_table || !close_table ||
+            !open_table_no_rest || !close_table_no_rest)
         {
             bin_tree_destroy(bin_tree);
             avl_tree_destroy(avl_tree);
@@ -213,8 +214,8 @@ int test_avg_cmp(void)
             "| %15d | %11d/%3d | %9.2lf | %9.2lf | %9.2lf | %9.2lf | %9.2lf | %9.2lf |\n",
             n, l, r, 
             avg_cmp_bin_tree, avg_cmp_avl_tree, 
-            avg_cmp_open_hash, avg_cmp_close_hash,        
-            avg_cmp_open_hash_no_rest , avg_cmp_close_hash_no_rest
+            avg_cmp_open_hash, avg_cmp_open_hash_no_rest,
+            avg_cmp_close_hash, avg_cmp_close_hash_no_rest
         );
     }
     printf("-------------------------------------------------------------------------------------------------------------\n");
@@ -675,8 +676,14 @@ int test_hash_efficiency_collision(void)
         hash_table_open *open_table = file_to_hash_table_open_no_rest(f, get_str_hash_simple);
         hash_table_close *close_table = file_to_hash_table_close_no_rest(f, get_str_hash_simple);
         fclose(f);
-    
-        
+
+        if (!open_table || !close_table)
+        {
+            hash_table_open_destroy(open_table);
+            hash_table_close_destroy(close_table);
+            continue;
+        }
+
         double avg_count_open = hash_table_open_avg_cmp(open_table);
         double avg_count_close = hash_table_close_avg_cmp(close_table);
 
