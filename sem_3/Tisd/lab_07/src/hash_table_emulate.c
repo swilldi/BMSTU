@@ -130,12 +130,14 @@ hash_table_t *table_from_file(hash_mode mode, FILE *f)
     if (mode == OPEN_HASH)
     {
         // Чтение данных
-         t->table = file_to_hash_table_open(f);
+        //  t->table = file_to_hash_table_open(f, get_str_hash);
+         t->table = file_to_hash_table_open_no_rest(f, get_str_hash_simple);
     }
     else if (mode == CLOSE_HASH)
     {
         // Чтение данных
-        t->table = file_to_hash_table_close(f);
+        // t->table = file_to_hash_table_close(f, get_str_hash);
+        t->table = file_to_hash_table_close_no_rest(f, get_str_hash_simple);
     }
 
     return t;
@@ -175,11 +177,11 @@ int hash_table_avg_cmp(hash_table_t *t, double *avg_count_ptr)
     
     if (t->mode == OPEN_HASH)
     {
-        avg_count = hash_table_open_avg_cmp(t->table, TEST_COUNT_FOR_AVG_CMP);
+        avg_count = hash_table_open_avg_cmp(t->table);
     }
     else if (t->mode == CLOSE_HASH)
     {
-        avg_count = hash_table_close_avg_cmp(t->table, TEST_COUNT_FOR_AVG_CMP);
+        avg_count = hash_table_close_avg_cmp(t->table);
     }
 
     if (avg_count < 0)

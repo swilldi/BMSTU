@@ -27,11 +27,12 @@ struct hash_table_close
 {
     table_cell *arr;
     size_t len;
+    hash_func_ptr hash;
     int elem_count;
     int cmp_count;
 };
 
-hash_table_close *hash_table_close_create(size_t len)
+hash_table_close *hash_table_close_create(size_t len, hash_func_ptr hash)
 {
     if (!is_prime_num(len))
         len = get_min_prime_num(len);
@@ -46,6 +47,8 @@ hash_table_close *hash_table_close_create(size_t len)
             for (size_t i = 0; i < len; i++)
                 hash_table->arr[i].status = EMPTY;
             hash_table->elem_count = 0;
+            hash_table->cmp_count = 0;
+            hash_table->hash = hash;
         }
         else
         {
@@ -67,9 +70,9 @@ void hash_table_close_destroy(hash_table_close *hash_table)
 }
 
 // TODO Изменить добавление без реструктуризации
-static int hash_table_close_add_raw(hash_table_close *hash_table, char *value)
+int hash_table_close_add_raw(hash_table_close *hash_table, char *value)
 {
-    hash_t start_index = get_str_hash(value) % hash_table->len;
+    hash_t start_index =  hash_table->hash(value) % hash_table->len;
 
     int cmp_count = 0;
     for (size_t step = 0; step < hash_table->len; step++)
@@ -81,6 +84,8 @@ static int hash_table_close_add_raw(hash_table_close *hash_table, char *value)
 
         if (cell->status == SETED)
         {
+            if (strcmp(cell->value, value) == 0)
+                return VALUE_EXITS;
             // занято — продолжаем пробирование
             continue;
         }
@@ -120,7 +125,7 @@ int hash_table_close_add(hash_table_close **hash_table_ptr, char *value)
 // TODO Изменить удаление
 int hash_table_close_del(hash_table_close *hash_table, char *value)
 {
-    hash_t start_index = get_str_hash(value) % hash_table->len;
+    hash_t start_index = hash_table->hash(value) % hash_table->len;
 
     int cmp_count = 0;
     for (size_t step = 0; step < hash_table->len; step++)
@@ -153,7 +158,7 @@ int hash_table_close_del(hash_table_close *hash_table, char *value)
 // TODO Изменить поиск
 bool hash_table_close_contain(hash_table_close *hash_table, char *value)
 {
-    hash_t start_index = get_str_hash(value) % hash_table->len;
+    hash_t start_index = hash_table->hash(value) % hash_table->len;
 
     for (size_t step = 0; step < hash_table->len; step++)
     {
@@ -183,7 +188,7 @@ int hash_table_close_cmp_count(hash_table_close *hash_table, char *value)
     if (!hash_table || !value)
         return 0;
 
-    hash_t start_index = get_str_hash(value) % hash_table->len;
+    hash_t start_index = hash_table->hash(value) % hash_table->len;
     int cmp_count = 0;
 
     for (size_t step = 0; step < hash_table->len; step++)
@@ -191,18 +196,15 @@ int hash_table_close_cmp_count(hash_table_close *hash_table, char *value)
         size_t index = (start_index + step) % hash_table->len;
         table_cell *cell = &hash_table->arr[index];
 
+        cmp_count++;
         if (cell->status == EMPTY)
         {
             // Пустая ячейка разрывает цепочку — элемента нет
             break;
         }
 
-        if (cell->status == SETED)
-        {
-            cmp_count++;
-            if (strcmp(cell->value, value) == 0)
-                break;
-        }
+        if (cell->status == SETED && strcmp(cell->value, value) == 0)
+            break;
 
         // DELETED или SETED с другим значением — продолжаем пробирование
     }
@@ -236,17 +238,17 @@ double hash_table_close_avg_cmp_signle_run(hash_table_close *hash_table)
 }
 
 // Усреднение по нескольким прогонам
-double hash_table_close_avg_cmp(hash_table_close *hash_table, int runs)
+double hash_table_close_avg_cmp(hash_table_close *hash_table)
 {
-    if (!hash_table || runs <= 0)
+    if (!hash_table || TEST_COUNT_FOR_AVG_CMP <= 0)
         return 0.0;
 
     double sum = 0.0;
 
-    for (int i = 0; i < runs; i++)
+    for (int i = 0; i < TEST_COUNT_FOR_AVG_CMP; i++)
         sum += hash_table_close_avg_cmp_signle_run(hash_table);
 
-    return sum / runs;
+    return sum / TEST_COUNT_FOR_AVG_CMP;
 }
 
 void hash_table_close_print(hash_table_close *hash_table)
@@ -256,18 +258,33 @@ void hash_table_close_print(hash_table_close *hash_table)
         table_cell cell = hash_table->arr[i];
         printf("[%lu]: ", i);
         if (cell.status == SETED)
-            printf("%s (%lld | %lld)", cell.value, get_str_hash(cell.value), get_str_hash(cell.value) % hash_table->len);
+            printf("%s (%lld | %lld)", cell.value, hash_table->hash(cell.value), hash_table->hash(cell.value) % hash_table->len);
         
         printf("\n");
     }
 }
 
-// Увеличиваем массив в 2 раза
+static int hash_table_close_calc_max_cmp(hash_table_close *hash_table)
+{
+    int max = 0;
+    for (size_t i = 0; i < hash_table->len; i++)
+    {
+        table_cell *cell = &hash_table->arr[i];
+        if (cell->status == SETED)
+        {
+            int cur = hash_table_close_cmp_count(hash_table, cell->value);
+            if (cur > max)
+                max = cur;
+        }
+    }
+    return max;
+}
+
 int hash_table_close_restructuring(hash_table_close **table_ptr)
 {
-    int new_len = get_min_prime_num((*table_ptr)->len);
+    int new_len = get_min_prime_num((int)ceil((*table_ptr)->len * EXTAND_K));
     
-    hash_table_close *table = hash_table_close_create(new_len);
+    hash_table_close *table = hash_table_close_create(new_len, (*table_ptr)->hash);
     if (!table)
         return MEMORY_ERROR;
 
@@ -278,6 +295,8 @@ int hash_table_close_restructuring(hash_table_close **table_ptr)
         if (cell.status == SETED)
             hash_table_close_add_raw(table, cell.value);
     }
+
+    table->cmp_count = hash_table_close_calc_max_cmp(table);
 
     hash_table_close_destroy(*table_ptr);
     *table_ptr = table;
@@ -297,82 +316,12 @@ size_t hash_table_close_size(hash_table_close *hash_table)
     return hash_table->elem_count;
 }
 
-
-
-
-static int hash_table_close_add_raw_simple(hash_table_close *hash_table, char *value)
+size_t hash_table_close_capacity(hash_table_close *hash_table)
 {
-    hash_t start_index = get_str_hash_simple(value) % hash_table->len;
-
-    int cmp_count = 0;
-    for (size_t step = 0; step < hash_table->len; step++)
-    {
-        size_t index = (start_index + step) % hash_table->len;
-        table_cell *cell = &hash_table->arr[index];
-        cmp_count += 1;
-        
-
-        if (cell->status == SETED)
-        {
-            // занято — продолжаем пробирование
-            continue;
-        }
-
-        // EMPTY или DELETED — трактуем как свободные при вставке
-        strcpy(cell->value, value);
-        cell->status = SETED;
-        hash_table->elem_count += 1;
-        if (cmp_count > hash_table->cmp_count)
-                hash_table->cmp_count = cmp_count;
-        return OK;
-    }
-
-    // Таблица полностью занята (все SETED) — в нормальной работе
-    // сюда доходить не должны, так как реструктуризацию делаем заранее.
-    return MEMORY_ERROR;
+    return hash_table ? hash_table->len : 0;
 }
 
-int hash_table_close_add_simple(hash_table_close **hash_table_ptr, char *value)
+size_t hash_table_close_cell_size(void)
 {
-    hash_table_close *hash_table = *hash_table_ptr;
-
-    int rc = hash_table_close_add_raw_simple(hash_table, value);
-    if (rc != OK)
-        return rc;
-
-    if (hash_table_close_load_factor(hash_table) > MAX_LOAD_FACTOR || hash_table->cmp_count > MAX_CMP_COUNT)
-    {
-        rc = hash_table_close_restructuring(hash_table_ptr);
-        if (rc != OK)
-            return rc;
-    }
-
-    return OK;
+    return sizeof(table_cell);
 }
-
-bool hash_table_close_contain_simple(hash_table_close *hash_table, char *value)
-{
-    hash_t start_index = get_str_hash_simple(value) % hash_table->len;
-
-    for (size_t step = 0; step < hash_table->len; step++)
-    {
-        size_t index = (start_index + step) % hash_table->len;
-        table_cell *cell = &hash_table->arr[index];
-
-        if (cell->status == EMPTY)
-        {
-            // Пустая ячейка разрывает цепочку — элемента нет
-            return false;
-        }
-
-        if (cell->status == SETED && strcmp(cell->value, value) == 0)
-        {
-            return true;
-        }
-
-        // DELETED или SETED с другим значением — продолжаем поиск
-    }
-
-    return false;
-}
-

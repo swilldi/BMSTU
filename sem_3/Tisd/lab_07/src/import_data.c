@@ -72,12 +72,12 @@ size_t count_lines_in_file(FILE *f)
     return count;
 }
 
-hash_table_open *file_to_hash_table_open(FILE *f)
+hash_table_open *file_to_hash_table_open(FILE *f, hash_func_ptr hash)
 {
     rewind(f);
     int rc;
     size_t word_count = count_lines_in_file(f);
-    hash_table_open *table = hash_table_open_create((int)ceil(word_count * OPEN_HASH_TABLE_K));
+    hash_table_open *table = hash_table_open_create((int)ceil(word_count * OPEN_HASH_TABLE_K), hash);
 
     char *str = NULL;
     size_t len = 0;
@@ -101,12 +101,12 @@ hash_table_open *file_to_hash_table_open(FILE *f)
     return table;
 }
 
-hash_table_close *file_to_hash_table_close(FILE *f)
+hash_table_close *file_to_hash_table_close(FILE *f, hash_func_ptr hash)
 {
     rewind(f);
     int rc;
     size_t word_count = count_lines_in_file(f);
-    hash_table_close *table = hash_table_close_create((int)ceil(word_count * CLOSE_HASH_TABLE_K));
+    hash_table_close *table = hash_table_close_create((int)ceil(word_count * CLOSE_HASH_TABLE_K), hash);
 
     char *str = NULL;
     size_t len = 0;
@@ -130,20 +130,17 @@ hash_table_close *file_to_hash_table_close(FILE *f)
     return table;
 }
 
-// ============================================================================
-// Функции для работы с простой хэш-функцией (сумма кодов символов)
-// Используем существующие структуры, но модифицируем поиск/добавление
-// ============================================================================
 
-// Обёртка для добавления с простой хэш-функцией
-// Просто читаем файл и добавляем элементы - они будут использовать стандартную хэш-функцию
-// но при тестировании мы будем использовать простую функцию
-hash_table_open *file_to_hash_table_open_simple(FILE *f)
+
+
+
+
+hash_table_open *file_to_hash_table_open_no_rest(FILE *f, hash_func_ptr hash)
 {
     rewind(f);
     int rc;
     size_t word_count = count_lines_in_file(f);
-    hash_table_open *table = hash_table_open_create((int)ceil(word_count * OPEN_HASH_TABLE_K));
+    hash_table_open *table = hash_table_open_create((int)ceil(word_count * OPEN_HASH_TABLE_K), hash);
 
     char *str = NULL;
     size_t len = 0;
@@ -154,7 +151,8 @@ hash_table_open *file_to_hash_table_open_simple(FILE *f)
         if (end_str)
             *end_str = '\0';
         
-        rc = hash_table_open_add_simple(&table, str);
+        // printf("len: %ld | %s\n", s, str);
+        rc = hash_table_open_add_raw(table, str);
         if (rc != OK)
         {
             hash_table_open_destroy(table);
@@ -162,17 +160,16 @@ hash_table_open *file_to_hash_table_open_simple(FILE *f)
         }
         s = getline(&str, &len, f);
     }
-    free(str);
 
     return table;
 }
 
-hash_table_close *file_to_hash_table_close_simple(FILE *f)
+hash_table_close *file_to_hash_table_close_no_rest(FILE *f, hash_func_ptr hash)
 {
     rewind(f);
     int rc;
     size_t word_count = count_lines_in_file(f);
-    hash_table_close *table = hash_table_close_create((int)ceil(word_count * CLOSE_HASH_TABLE_K));
+    hash_table_close *table = hash_table_close_create((int)ceil(word_count * CLOSE_HASH_TABLE_K), hash);
 
     char *str = NULL;
     size_t len = 0;
@@ -183,7 +180,8 @@ hash_table_close *file_to_hash_table_close_simple(FILE *f)
         if (end_str)
             *end_str = '\0';
         
-        rc = hash_table_close_add_simple(&table, str);
+        // printf("len: %ld | %s\n", s, str);
+        rc = hash_table_close_add_raw(table, str);
         if (rc != OK)
         {
             hash_table_close_destroy(table);
@@ -191,7 +189,7 @@ hash_table_close *file_to_hash_table_close_simple(FILE *f)
         }
         s = getline(&str, &len, f);
     }
-    free(str);
 
     return table;
 }
+

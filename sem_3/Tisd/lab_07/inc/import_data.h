@@ -12,9 +12,8 @@
 bin_tree_node *file_to_bin_tree(FILE *f);
 avl_tree_node *file_to_avl_tree(FILE *f);
 size_t count_lines_in_file(FILE *f);
-hash_table_open *file_to_hash_table_open(FILE *f);
-hash_table_close *file_to_hash_table_close(FILE *f);
+hash_table_open *file_to_hash_table_open(FILE *f, hash_func_ptr hash);
+hash_table_close *file_to_hash_table_close(FILE *f, hash_func_ptr hash);
+hash_table_open *file_to_hash_table_open_no_rest(FILE *f, hash_func_ptr hash);
+hash_table_close *file_to_hash_table_close_no_rest(FILE *f, hash_func_ptr hash);
 
-// Функции для работы с простой хэш-функцией (сумма кодов)
-hash_table_open *file_to_hash_table_open_simple(FILE *f);
-hash_table_close *file_to_hash_table_close_simple(FILE *f);

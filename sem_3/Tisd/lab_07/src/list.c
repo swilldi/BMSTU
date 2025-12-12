@@ -90,11 +90,11 @@ node_t *list_del_by_valuet(node_t *head, void *value, func_cmp_ptr fcmp)
     return head;
 }
 
-void list_print(node_t *head)
+void list_print(node_t *head, hash_func_ptr hash)
 {
     while (head)
     {
-        printf("%s (%lld)", head->data, get_str_hash(head->data));
+        printf("%s (%lld)", head->data, hash(head->data));
 
         if (head->next)
             printf(" -> ");
