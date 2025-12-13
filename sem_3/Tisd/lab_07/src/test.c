@@ -714,17 +714,44 @@ int test_hash_efficiency_collision(void)
         hash_table_close *close_table_no_rest = file_to_hash_table_close_no_rest(f, get_str_hash);
         fclose(f);  
 
-        (void) close_table_no_rest;
 
-        printf("Среднее кол-во сравнений: %lf\nРазмер: %lu", hash_table_open_avg_cmp(open_table_no_rest), hash_table_open_capacity(open_table_no_rest)); 
+        printf(
+            "Открытое хэширование:\n"
+            "Среднее кол-во сравнений: %lf\n"
+            "Размер: %lu\n", 
+            hash_table_open_avg_cmp(open_table_no_rest), 
+            hash_table_open_capacity(open_table_no_rest)
+        ); 
 
         hash_table_open_restructuring(&open_table_no_rest);
         hash_table_open_restructuring(&open_table_no_rest);
 
-        printf("\n");
         // hash_table_open_print(open_table_no_rest);
 
-        printf("Среднее кол-во сравнений: %lf\nРазмер: %lu\n", hash_table_open_avg_cmp(open_table_no_rest), hash_table_open_capacity(open_table_no_rest)); 
+        printf(
+            "Среднее кол-во сравнений: %lf\n"
+            "Размер: %lu\n\n",
+            hash_table_open_avg_cmp(open_table_no_rest), hash_table_open_capacity(open_table_no_rest)
+        ); 
+
+        printf(
+            "Закрытое хэширование:\n"
+            "Среднее кол-во сравнений: %lf\n"
+            "Размер: %lu\n", 
+            hash_table_close_avg_cmp(close_table_no_rest), 
+            hash_table_close_capacity(close_table_no_rest)
+        ); 
+
+        hash_table_close_restructuring(&close_table_no_rest);
+        hash_table_close_restructuring(&close_table_no_rest);
+
+        // hash_table_open_print(open_table_no_rest);
+
+        printf(
+            "Среднее кол-во сравнений: %lf\n"
+            "Размер: %lu\n",
+            hash_table_close_avg_cmp(close_table_no_rest), hash_table_close_capacity(close_table_no_rest)
+        ); 
 
 
         printf("");
