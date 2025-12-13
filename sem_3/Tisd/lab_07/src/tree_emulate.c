@@ -296,7 +296,6 @@ int run_emulate_tree(void)
                 rc = input_str(temp_str, STR_LEN);
                 if (rc != OK)
                 {
-                    cmd = EXIT;
                     break;
                 }
                 // Добавление элемента
@@ -311,7 +310,6 @@ int run_emulate_tree(void)
                 rc = input_str(temp_str, STR_LEN);
                 if (rc != OK)
                 {
-                    cmd = EXIT;
                     break;
                 }
                 
@@ -351,6 +349,11 @@ int run_emulate_tree(void)
                 if (!f)
                 {
                     rc = OPEN_FILE_ERR;
+                    break;
+                }
+                if (file_is_empty(f))
+                {
+                    rc = EMPTY_FILE;
                     break;
                 }
 

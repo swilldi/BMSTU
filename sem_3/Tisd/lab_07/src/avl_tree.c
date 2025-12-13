@@ -9,11 +9,11 @@ struct avl_tree_node
     // хранимые данные
     char value[STR_LEN];
 
-    // Дочерние ноды
+    // потомки узла
     avl_tree_node *left;
     avl_tree_node *right;
 
-    // Парамет сбалансированности
+    // Парамет высоты узла
     int height;
 };
 

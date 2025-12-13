@@ -105,13 +105,52 @@ int hash_table_open_add(hash_table_open **hash_table_ptr, char *value)
     if (rc != OK)
         return rc;
 
+
+    if (hash_table->max_chain_len > MAX_CMP_COUNT)
+    {
+        printf("\n\nОТКРЫТОЕ ХЭШИРОВАНИЕ\n");
+        printf("\nТАБЛИЦА ДО РЕСТРУКТУРИЗАЦИИ\n");
+        hash_table_open_print(*hash_table_ptr);
+    }
+
     int attempts = 0;
     while (hash_table->max_chain_len > MAX_CMP_COUNT && attempts < MAX_RESTRUCT_ATTEMPTS)
     {
         rc = hash_table_open_restructuring(hash_table_ptr);
         if (rc != OK)
             return rc;
+            
+        hash_table = *hash_table_ptr;
+        attempts++;
+    }
 
+    if (attempts != 0)
+    {
+        printf("\nТАБЛИЦА ПОСЛЕ РЕСТРУКТУРИЗАЦИИ\n");
+        hash_table_open_print(*hash_table_ptr);
+    }
+
+    return OK;
+}
+
+int hash_table_open_add_test(hash_table_open **hash_table_ptr, char *value)
+{
+    hash_table_open *hash_table = *hash_table_ptr;
+
+    int rc = hash_table_open_add_raw(hash_table, value);
+    if (rc != OK)
+        return rc;
+
+
+
+
+    int attempts = 0;
+    while (hash_table->max_chain_len > MAX_CMP_COUNT && attempts < MAX_RESTRUCT_ATTEMPTS)
+    {
+        rc = hash_table_open_restructuring(hash_table_ptr);
+        if (rc != OK)
+            return rc;
+            
         hash_table = *hash_table_ptr;
         attempts++;
     }

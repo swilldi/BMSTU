@@ -9,7 +9,7 @@ struct bin_tree_node
     // хранимые данные
     char value[STR_LEN];
 
-    // Дочерние ноды
+    // потомки узла
     bin_tree_node *left;
     bin_tree_node *right;
 };

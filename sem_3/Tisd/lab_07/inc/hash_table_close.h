@@ -31,6 +31,7 @@ size_t hash_table_close_size(hash_table_close *hash_table);
 size_t hash_table_close_capacity(hash_table_close *hash_table);
 size_t hash_table_close_cell_size(void);
 int hash_table_close_add_raw(hash_table_close *hash_table, char *value);
+int hash_table_close_add_test(hash_table_close **hash_table_ptr, char *value);
 
 
 #endif

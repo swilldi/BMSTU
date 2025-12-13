@@ -42,7 +42,9 @@ int input_pos_int(int *num, int max_num)
     if (scanf("%d", num) != 1 || *num >= max_num)
         rc = INVALID_INPUT;
     
-    while (fgetc(stdin) != '\n');
+    int ch = fgetc(stdin);
+    while (ch != '\n' && !feof(stdin))
+        ch = fgetc(stdin);
 
     return rc;
 }
@@ -53,7 +55,9 @@ int input_char(char *c)
     if (scanf("%c", c) != 1)
         rc =  INVALID_INPUT;
     
-    while (fgetc(stdin) != '\n');
+    int ch = fgetc(stdin);
+    while (ch != '\n' && !feof(stdin))
+        ch = fgetc(stdin);
 
     return rc;
 }
@@ -82,6 +86,9 @@ void print_err_msg(int rc)
             break;
         case INVALID_CMD:
             printf("Некоректная команда");
+            break;
+        case EMPTY_FILE:
+            printf("Файл пустой");
             break;
         // case :
         //     printf("");

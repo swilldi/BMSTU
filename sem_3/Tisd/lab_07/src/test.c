@@ -64,60 +64,10 @@ char *bst_test_file_path[] =
 
 char *hash_collision_test_file_path[] =
 {
-    "hash_data_collision/10_0.txt",
-    "hash_data_collision/10_10.txt",
-    "hash_data_collision/10_30.txt",
-    "hash_data_collision/10_50.txt",
-    "hash_data_collision/10_70.txt",
-    "hash_data_collision/10_90.txt",
-    "hash_data_collision/20_0.txt",
-    "hash_data_collision/20_10.txt",
-    "hash_data_collision/20_30.txt",
-    "hash_data_collision/20_50.txt",
-    "hash_data_collision/20_70.txt",
-    "hash_data_collision/20_90.txt",
-    "hash_data_collision/50_0.txt",
-    "hash_data_collision/50_10.txt",
-    "hash_data_collision/50_30.txt",
-    "hash_data_collision/50_50.txt",
-    "hash_data_collision/50_70.txt",
-    "hash_data_collision/50_90.txt",
-    "hash_data_collision/100_0.txt",
-    "hash_data_collision/100_10.txt",
-    "hash_data_collision/100_30.txt",
-    "hash_data_collision/100_50.txt",
-    "hash_data_collision/100_70.txt",
-    "hash_data_collision/100_90.txt",
-    "hash_data_collision/200_0.txt",
-    "hash_data_collision/200_10.txt",
-    "hash_data_collision/200_30.txt",
-    "hash_data_collision/200_50.txt",
-    "hash_data_collision/200_70.txt",
-    "hash_data_collision/200_90.txt",
-    "hash_data_collision/500_0.txt",
-    "hash_data_collision/500_10.txt",
-    "hash_data_collision/500_30.txt",
-    "hash_data_collision/500_50.txt",
-    "hash_data_collision/500_70.txt",
-    "hash_data_collision/500_90.txt",
-    "hash_data_collision/1000_0.txt",
-    "hash_data_collision/1000_10.txt",
-    "hash_data_collision/1000_30.txt",
-    "hash_data_collision/1000_50.txt",
-    "hash_data_collision/1000_70.txt",
-    "hash_data_collision/1000_90.txt",
-    "hash_data_collision/5000_0.txt",
-    "hash_data_collision/5000_10.txt",
-    "hash_data_collision/5000_30.txt",
-    "hash_data_collision/5000_50.txt",
-    "hash_data_collision/5000_70.txt",
-    "hash_data_collision/5000_90.txt",
-    "hash_data_collision/10000_0.txt",
-    "hash_data_collision/10000_10.txt",
-    "hash_data_collision/10000_30.txt",
-    "hash_data_collision/10000_50.txt",
-    "hash_data_collision/10000_70.txt",
-    "hash_data_collision/10000_90.txt",
+    "collision_data/words_100_0.txt",
+    "collision_data/words_100_10.txt",
+    "collision_data/words_100_50.txt",
+    "collision_data/words_100_100.txt",
 };
 
 void get_file_info(char *filename, int *n, int *l, int *r)
@@ -175,8 +125,8 @@ int test_avg_cmp(void)
         // создание данных
         bin_tree_node *bin_tree = file_to_bin_tree(f);
         avl_tree_node *avl_tree = file_to_avl_tree(f);
-        hash_table_open *open_table = file_to_hash_table_open(f, get_str_hash);
-        hash_table_close *close_table = file_to_hash_table_close(f, get_str_hash);
+        hash_table_open *open_table = file_to_hash_table_open_test(f, get_str_hash);
+        hash_table_close *close_table = file_to_hash_table_close_test(f, get_str_hash);
         hash_table_open *open_table_no_rest = file_to_hash_table_open_no_rest(f, get_str_hash);
         hash_table_close *close_table_no_rest = file_to_hash_table_close_no_rest(f, get_str_hash);
         fclose(f);
@@ -421,7 +371,7 @@ int test_time_del(void)
             if (!f)
                 continue;
 
-            hash_table_open *open_table = file_to_hash_table_open(f, get_str_hash);
+            hash_table_open *open_table = file_to_hash_table_open_test(f, get_str_hash);
             fclose(f);
             if (!open_table)
                 continue;
@@ -444,7 +394,7 @@ int test_time_del(void)
             if (!f)
                 continue;
 
-            hash_table_close *close_table = file_to_hash_table_close(f, get_str_hash);
+            hash_table_close *close_table = file_to_hash_table_close_test(f, get_str_hash);
             fclose(f);
             if (!close_table)
                 continue;
@@ -577,7 +527,7 @@ int test_time_search(void)
             if (!f)
                 continue;
 
-            hash_table_open *open_table = file_to_hash_table_open(f, get_str_hash);
+            hash_table_open *open_table = file_to_hash_table_open_test(f, get_str_hash);
             fclose(f);
             if (!open_table)
                 continue;
@@ -600,7 +550,7 @@ int test_time_search(void)
             if (!f)
                 continue;
 
-            hash_table_close *close_table = file_to_hash_table_close(f, get_str_hash);
+            hash_table_close *close_table = file_to_hash_table_close_test(f, get_str_hash);
             fclose(f);
             if (!close_table)
                 continue;
@@ -647,11 +597,11 @@ int test_hash_efficiency_collision(void)
     static char words[MAX_TEST_WORDS][STR_LEN];
 
     printf(
-        "---------------------------------------------------------------------------------------\n"
-        "|  Количество     |  Процент    |   Количество сравнений   |     Время работы, мкс    |\n"
-        "|  элементов      |  данных     |-----------------------------------------------------|\n"
-        "|                 |  коллизий   |    Open    |    Close    |    Open    |    Close    |\n"
-        "=======================================================================================\n"
+        "--------------------------------------------------------------------------------------------------------------------------------------------\n"
+        "|  Количество     |  Процент    |                            Количество сравнений     |                    Время работы, мкс                |\n"
+        "|  элементов      |  данных     |-----------------------------------------------------------------------------------------------------------|\n"
+        "|                 |  коллизий   |  Open + R  |  Open - R  |  Close + R  |  Close - R  |  Open + R  |  Open - R  |  Close + R  |  Close - R  |"
+        "=============================================================================================================================================\n"
     );
 
     size_t files_count = sizeof(hash_collision_test_file_path) / sizeof(hash_collision_test_file_path[0]);
@@ -659,9 +609,6 @@ int test_hash_efficiency_collision(void)
 
     for (size_t i = 0; i < files_count; i++)
     {
-        if (i != 0 && i % 6 == 0)
-            printf("---------------------------------------------------------------------------------------\n");
-
         get_collision_file_info(hash_collision_test_file_path[i], &n, &percent);
 
         size_t word_count = load_words_from_file(hash_collision_test_file_path[i],
@@ -670,22 +617,30 @@ int test_hash_efficiency_collision(void)
             continue;
 
         double avg_time_open = 0.0;
+        double avg_time_open_no_rest = 0.0;
         double avg_time_close = 0.0;
+        double avg_time_close_no_rest = 0.0;
 
         f = fopen(hash_collision_test_file_path[i], "r");
-        hash_table_open *open_table = file_to_hash_table_open_no_rest(f, get_str_hash_simple);
-        hash_table_close *close_table = file_to_hash_table_close_no_rest(f, get_str_hash_simple);
+        hash_table_open *open_table = file_to_hash_table_open_test(f, get_str_hash);
+        hash_table_close *close_table = file_to_hash_table_close_test(f, get_str_hash);
+        hash_table_open *open_table_no_rest = file_to_hash_table_open_no_rest(f, get_str_hash);
+        hash_table_close *close_table_no_rest = file_to_hash_table_close_no_rest(f, get_str_hash);
         fclose(f);
 
         if (!open_table || !close_table)
         {
             hash_table_open_destroy(open_table);
+            hash_table_open_destroy(open_table_no_rest);
             hash_table_close_destroy(close_table);
+            hash_table_close_destroy(close_table_no_rest);
             continue;
         }
 
         double avg_count_open = hash_table_open_avg_cmp(open_table);
+        double avg_count_open_no_rest = hash_table_open_avg_cmp(open_table_no_rest);
         double avg_count_close = hash_table_close_avg_cmp(close_table);
+        double avg_count_close_no_rest = hash_table_close_avg_cmp(close_table_no_rest);
 
         clock_t start, end;
         for (int run = 0; run < WARMUP_RUNS + MEASURE_RUNS; run++)
@@ -702,6 +657,16 @@ int test_hash_efficiency_collision(void)
                 avg_time_open += ticks_to_us(start, end);
 
 
+            // ------------- Hash table (open) no rest -------------
+            start = clock();
+            for (size_t k = 0; k < word_count; k++)
+                (void)hash_table_open_contain(open_table_no_rest, words[k]);
+            end = clock();
+
+            if (do_measure)
+                avg_time_open_no_rest += ticks_to_us(start, end);
+
+
             // ------------- Hash table (close) -------------
              start = clock();
             for (size_t k = 0; k < word_count; k++)
@@ -711,21 +676,39 @@ int test_hash_efficiency_collision(void)
             if (do_measure)
                 avg_time_close += ticks_to_us(start, end);
 
+            // ------------- Hash table (close) no rest -------------
+             start = clock();
+            for (size_t k = 0; k < word_count; k++)
+                (void)hash_table_close_contain(close_table_no_rest, words[k]);
+            end = clock();
+
+            if (do_measure)
+                avg_time_close_no_rest += ticks_to_us(start, end);
+
         }
 
         hash_table_open_destroy(open_table);
+        hash_table_open_destroy(open_table_no_rest);
         hash_table_close_destroy(close_table);
+        hash_table_close_destroy(close_table_no_rest);
 
         avg_time_open  = (avg_time_open  / MEASURE_RUNS) / word_count;
+        avg_time_open_no_rest  = (avg_time_open_no_rest  / MEASURE_RUNS) / word_count;
         avg_time_close = (avg_time_close / MEASURE_RUNS) / word_count;
+        avg_time_close_no_rest = (avg_time_close_no_rest / MEASURE_RUNS) / word_count;
 
         printf(
-            "| %15d | %11d%% | %10.2lf | %10.2lf | %10.2lf | %10.2lf |\n",
-            n, percent, avg_count_open, avg_count_close, avg_time_open, avg_time_close
+            "| %15d | %11d%% | %10.2lf | %10.2lf | %11.2lf | %11.2lf | %10.2lf | %10.2lf | %11.2lf | %11.2lf |\n",
+            n, percent, 
+            avg_count_open, avg_count_open_no_rest,
+            avg_count_close, avg_count_close_no_rest, 
+            avg_time_open, avg_time_open_no_rest, 
+            avg_time_close, avg_time_close_no_rest
         );
     }
 
-    printf("---------------------------------------------------------------------------------------\n");
+    printf("--------------------------------------------------------------------------------------------------------------------------------------------\n");
 
     return OK;
 }
+

@@ -5,14 +5,18 @@ typedef enum
 {
     OK,
     INVALID_INPUT,
+    INVALID_CMD,
+
     STR_OVERFLOW,
     STR_EMPTY,
+    MEMORY_ERROR,
+    OPEN_FILE_ERR,
+    EMPTY_FILE,
+
     VALUE_EXITS,
     VALUE_NOT_EXITS,
-    MEMORY_ERROR,
-    INVALID_CMD,
     
-    OPEN_FILE_ERR,
+    
 } error;
 
 #endif

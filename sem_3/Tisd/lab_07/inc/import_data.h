@@ -16,4 +16,7 @@ hash_table_open *file_to_hash_table_open(FILE *f, hash_func_ptr hash);
 hash_table_close *file_to_hash_table_close(FILE *f, hash_func_ptr hash);
 hash_table_open *file_to_hash_table_open_no_rest(FILE *f, hash_func_ptr hash);
 hash_table_close *file_to_hash_table_close_no_rest(FILE *f, hash_func_ptr hash);
+bool file_is_empty(FILE *f);
+hash_table_open *file_to_hash_table_open_test(FILE *f, hash_func_ptr hash);
+hash_table_close *file_to_hash_table_close_test(FILE *f, hash_func_ptr hash);
 

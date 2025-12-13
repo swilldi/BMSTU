@@ -114,6 +114,32 @@ int hash_table_close_add(hash_table_close **hash_table_ptr, char *value)
 
     if (hash_table_close_load_factor(hash_table) > MAX_LOAD_FACTOR || hash_table->cmp_count > MAX_CMP_COUNT)
     {
+        printf("\n\nЗАКРЫТОЕ ХЭШИРОВАНИЕ\n");
+        printf("\nТАБЛИЦА ДО РЕСТРУКТУРИЗАЦИИ\n");
+        hash_table_close_print(*hash_table_ptr);
+
+        rc = hash_table_close_restructuring(hash_table_ptr);
+        if (rc != OK)
+            return rc;
+
+        printf("\nТАБЛИЦА ПОСЛЕ РЕСТРУКТУРИЗАЦИИ\n");
+        hash_table_close_print(*hash_table_ptr);
+    }
+
+    return OK;
+}
+
+int hash_table_close_add_test(hash_table_close **hash_table_ptr, char *value)
+{
+    hash_table_close *hash_table = *hash_table_ptr;
+
+    int rc = hash_table_close_add_raw(hash_table, value);
+    if (rc != OK)
+        return rc;
+
+    if (hash_table_close_load_factor(hash_table) > MAX_LOAD_FACTOR || hash_table->cmp_count > MAX_CMP_COUNT)
+    {
+
         rc = hash_table_close_restructuring(hash_table_ptr);
         if (rc != OK)
             return rc;

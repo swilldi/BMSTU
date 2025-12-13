@@ -130,14 +130,14 @@ hash_table_t *table_from_file(hash_mode mode, FILE *f)
     if (mode == OPEN_HASH)
     {
         // Чтение данных
-        //  t->table = file_to_hash_table_open(f, get_str_hash);
-         t->table = file_to_hash_table_open_no_rest(f, get_str_hash_simple);
+         t->table = file_to_hash_table_open(f, get_str_hash);
+        //  t->table = file_to_hash_table_open_no_rest(f, get_str_hash);
     }
     else if (mode == CLOSE_HASH)
     {
         // Чтение данных
-        // t->table = file_to_hash_table_close(f, get_str_hash);
-        t->table = file_to_hash_table_close_no_rest(f, get_str_hash_simple);
+        t->table = file_to_hash_table_close(f, get_str_hash);
+        // t->table = file_to_hash_table_close_no_rest(f, get_str_hash);
     }
 
     return t;
@@ -249,7 +249,6 @@ int run_emulate_hash_table(void)
                 rc = input_str(temp_str, STR_LEN);
                 if (rc != OK)
                 {
-                    cmd = EXIT;
                     break;
                 }
                 
@@ -283,7 +282,6 @@ int run_emulate_hash_table(void)
                 rc = input_str(temp_str, STR_LEN);
                 if (rc != OK)
                 {
-                    cmd = EXIT;
                     break;
                 }
 
@@ -328,7 +326,6 @@ int run_emulate_hash_table(void)
                 rc = input_str(temp_str, STR_LEN);
                 if (rc != OK)
                 {
-                    cmd = EXIT;
                     break;
                 }
 
@@ -337,6 +334,11 @@ int run_emulate_hash_table(void)
                 if (!f)
                 {
                     rc = OPEN_FILE_ERR;
+                    break;
+                }
+                if (file_is_empty(f))
+                {
+                    rc = EMPTY_FILE;
                     break;
                 }
 
