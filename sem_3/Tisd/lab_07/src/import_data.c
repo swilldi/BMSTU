@@ -149,7 +149,7 @@ hash_table_open *file_to_hash_table_open_no_rest(FILE *f, hash_func_ptr hash)
     rewind(f);
     int rc;
     size_t word_count = count_lines_in_file(f);
-    hash_table_open *table = hash_table_open_create((int)ceil(word_count * CLOSE_HASH_TABLE_K), hash);
+    hash_table_open *table = hash_table_open_create((int)ceil(word_count * OPEN_HASH_TABLE_K), hash);
 
     char *str = NULL;
     size_t len = 0;

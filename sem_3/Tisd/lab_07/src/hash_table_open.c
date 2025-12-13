@@ -319,3 +319,8 @@ size_t hash_table_open_capacity(hash_table_open *hash_table)
 {
     return hash_table ? hash_table->len : 0;
 }
+
+size_t get_open_max_chain(hash_table_open *hash_table)
+{
+    return hash_table->max_chain_len;   
+}

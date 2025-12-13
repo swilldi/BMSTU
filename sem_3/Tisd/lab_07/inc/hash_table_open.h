@@ -35,5 +35,6 @@ size_t hash_table_open_capacity(hash_table_open *hash_table);
 int hash_table_open_add_raw(hash_table_open *hash_table, char *value);
 
 int hash_table_open_add_test(hash_table_open **hash_table_ptr, char *value);
+size_t get_open_max_chain(hash_table_open *hash_table);
 
 #endif

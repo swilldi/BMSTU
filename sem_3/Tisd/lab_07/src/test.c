@@ -590,125 +590,143 @@ int test_time_search(void)
 // 3) Тест эффективности с разными процентами коллизий (простая хэш-функция)
 // ============================================================================
 
-// TODO 
+// int test_hash_efficiency_collision(void)
+// {
+//     int n, percent;
+//     static char words[MAX_TEST_WORDS][STR_LEN];
+
+//     printf(
+//         "--------------------------------------------------------------------------------------------------------------------------------------------\n"
+//         "|  Количество     |  Процент    |                            Количество сравнений     |                    Время работы, мкс                |\n"
+//         "|  элементов      |  данных     |-----------------------------------------------------------------------------------------------------------|\n"
+//         "|                 |  коллизий   |  Open + R  |  Open - R  |  Close + R  |  Close - R  |  Open + R  |  Open - R  |  Close + R  |  Close - R  |\n"
+//         "=============================================================================================================================================\n"
+//     );
+
+//     size_t files_count = sizeof(hash_collision_test_file_path) / sizeof(hash_collision_test_file_path[0]);
+
+//     for (size_t i = 0; i < files_count; i++)
+//     {
+//         get_collision_file_info(hash_collision_test_file_path[i], &n, &percent);
+
+//         size_t word_count = load_words_from_file(hash_collision_test_file_path[i], words, MAX_TEST_WORDS);
+//         if (word_count == 0)
+//             continue;
+
+//         FILE *f = fopen(hash_collision_test_file_path[i], "r");
+//         if (!f)
+//             continue;
+
+//         hash_table_open *open_table = file_to_hash_table_open_test(f, get_str_hash);
+//         hash_table_open *open_table_no_rest = file_to_hash_table_open_no_rest(f, get_str_hash);
+//         hash_table_close *close_table = file_to_hash_table_close_test(f, get_str_hash);
+//         hash_table_close *close_table_no_rest = file_to_hash_table_close_no_rest(f, get_str_hash);
+//         fclose(f);
+
+//         if (!open_table || !open_table_no_rest || !close_table || !close_table_no_rest)
+//         {
+//             hash_table_open_destroy(open_table);
+//             hash_table_open_destroy(open_table_no_rest);
+//             hash_table_close_destroy(close_table);
+//             hash_table_close_destroy(close_table_no_rest);
+//             continue;
+//         }
+
+//         double avg_count_open = hash_table_open_avg_cmp(open_table);
+//         double avg_count_open_no_rest = hash_table_open_avg_cmp(open_table_no_rest);
+//         double avg_count_close = hash_table_close_avg_cmp(close_table);
+//         double avg_count_close_no_rest = hash_table_close_avg_cmp(close_table_no_rest);
+
+//         double avg_time_open = 0.0;
+//         double avg_time_open_no_rest = 0.0;
+//         double avg_time_close = 0.0;
+//         double avg_time_close_no_rest = 0.0;
+
+//         for (int run = 0; run < WARMUP_RUNS + MEASURE_RUNS; run++)
+//         {
+//             int do_measure = (run >= WARMUP_RUNS);
+//             clock_t start, end;
+
+//             start = clock();
+//             for (size_t k = 0; k < word_count; k++)
+//                 (void)hash_table_open_contain(open_table, words[k]);
+//             end = clock();
+//             if (do_measure)
+//                 avg_time_open += ticks_to_us(start, end);
+
+//             start = clock();
+//             for (size_t k = 0; k < word_count; k++)
+//                 (void)hash_table_open_contain(open_table_no_rest, words[k]);
+//             end = clock();
+//             if (do_measure)
+//                 avg_time_open_no_rest += ticks_to_us(start, end);
+
+//             start = clock();
+//             for (size_t k = 0; k < word_count; k++)
+//                 (void)hash_table_close_contain(close_table, words[k]);
+//             end = clock();
+//             if (do_measure)
+//                 avg_time_close += ticks_to_us(start, end);
+
+//             start = clock();
+//             for (size_t k = 0; k < word_count; k++)
+//                 (void)hash_table_close_contain(close_table_no_rest, words[k]);
+//             end = clock();
+//             if (do_measure)
+//                 avg_time_close_no_rest += ticks_to_us(start, end);
+//         }
+
+//         avg_time_open = (avg_time_open / MEASURE_RUNS) / word_count;
+//         avg_time_open_no_rest = (avg_time_open_no_rest / MEASURE_RUNS) / word_count;
+//         avg_time_close = (avg_time_close / MEASURE_RUNS) / word_count;
+//         avg_time_close_no_rest = (avg_time_close_no_rest / MEASURE_RUNS) / word_count;
+
+//         printf(
+//             "| %15d | %11d%% | %10.2lf | %10.2lf | %11.2lf | %11.2lf | %10.2lf | %10.2lf | %11.2lf | %11.2lf |\n",
+//             n, percent,
+//             avg_count_open, avg_count_open_no_rest,
+//             avg_count_close, avg_count_close_no_rest,
+//             avg_time_open, avg_time_open_no_rest,
+//             avg_time_close, avg_time_close_no_rest
+//         );
+
+//         hash_table_open_destroy(open_table);
+//         hash_table_open_destroy(open_table_no_rest);
+//         hash_table_close_destroy(close_table);
+//         hash_table_close_destroy(close_table_no_rest);
+//     }
+
+//     printf("--------------------------------------------------------------------------------------------------------------------------------------------\n");
+
+//     return OK;
+// }
+
 int test_hash_efficiency_collision(void)
 {
-    int n, percent;
-    static char words[MAX_TEST_WORDS][STR_LEN];
-
-    printf(
-        "--------------------------------------------------------------------------------------------------------------------------------------------\n"
-        "|  Количество     |  Процент    |                            Количество сравнений     |                    Время работы, мкс                |\n"
-        "|  элементов      |  данных     |-----------------------------------------------------------------------------------------------------------|\n"
-        "|                 |  коллизий   |  Open + R  |  Open - R  |  Close + R  |  Close - R  |  Open + R  |  Open - R  |  Close + R  |  Close - R  |"
-        "=============================================================================================================================================\n"
-    );
-
-    size_t files_count = sizeof(hash_collision_test_file_path) / sizeof(hash_collision_test_file_path[0]);
-    FILE *f;
-
-    for (size_t i = 0; i < files_count; i++)
-    {
-        get_collision_file_info(hash_collision_test_file_path[i], &n, &percent);
-
-        size_t word_count = load_words_from_file(hash_collision_test_file_path[i],
-                                                 words, MAX_TEST_WORDS);
+        char words[MAX_TEST_WORDS][STR_LEN];
+        char *filepath = "/Users/dmitriy/BMSTU/sem_3/Tisd/lab_07/collision_data/words_100_50.txt";
+        size_t word_count = load_words_from_file(filepath, words, MAX_TEST_WORDS);
         if (word_count == 0)
-            continue;
+            return 1;
 
-        double avg_time_open = 0.0;
-        double avg_time_open_no_rest = 0.0;
-        double avg_time_close = 0.0;
-        double avg_time_close_no_rest = 0.0;
-
-        f = fopen(hash_collision_test_file_path[i], "r");
-        hash_table_open *open_table = file_to_hash_table_open_test(f, get_str_hash);
-        hash_table_close *close_table = file_to_hash_table_close_test(f, get_str_hash);
+        FILE *f = fopen(filepath, "r");
         hash_table_open *open_table_no_rest = file_to_hash_table_open_no_rest(f, get_str_hash);
         hash_table_close *close_table_no_rest = file_to_hash_table_close_no_rest(f, get_str_hash);
-        fclose(f);
+        fclose(f);  
 
-        if (!open_table || !close_table)
-        {
-            hash_table_open_destroy(open_table);
-            hash_table_open_destroy(open_table_no_rest);
-            hash_table_close_destroy(close_table);
-            hash_table_close_destroy(close_table_no_rest);
-            continue;
-        }
+        (void) close_table_no_rest;
 
-        double avg_count_open = hash_table_open_avg_cmp(open_table);
-        double avg_count_open_no_rest = hash_table_open_avg_cmp(open_table_no_rest);
-        double avg_count_close = hash_table_close_avg_cmp(close_table);
-        double avg_count_close_no_rest = hash_table_close_avg_cmp(close_table_no_rest);
+        printf("Среднее кол-во сравнений: %lf\nРазмер: %lu", hash_table_open_avg_cmp(open_table_no_rest), hash_table_open_capacity(open_table_no_rest)); 
 
-        clock_t start, end;
-        for (int run = 0; run < WARMUP_RUNS + MEASURE_RUNS; run++)
-        {
-            int do_measure = (run >= WARMUP_RUNS);
+        hash_table_open_restructuring(&open_table_no_rest);
+        hash_table_open_restructuring(&open_table_no_rest);
 
-            // ------------- Hash table (open) -------------
-            start = clock();
-            for (size_t k = 0; k < word_count; k++)
-                (void)hash_table_open_contain(open_table, words[k]);
-            end = clock();
+        printf("\n");
+        // hash_table_open_print(open_table_no_rest);
 
-            if (do_measure)
-                avg_time_open += ticks_to_us(start, end);
+        printf("Среднее кол-во сравнений: %lf\nРазмер: %lu\n", hash_table_open_avg_cmp(open_table_no_rest), hash_table_open_capacity(open_table_no_rest)); 
 
 
-            // ------------- Hash table (open) no rest -------------
-            start = clock();
-            for (size_t k = 0; k < word_count; k++)
-                (void)hash_table_open_contain(open_table_no_rest, words[k]);
-            end = clock();
-
-            if (do_measure)
-                avg_time_open_no_rest += ticks_to_us(start, end);
-
-
-            // ------------- Hash table (close) -------------
-             start = clock();
-            for (size_t k = 0; k < word_count; k++)
-                (void)hash_table_close_contain(close_table, words[k]);
-            end = clock();
-
-            if (do_measure)
-                avg_time_close += ticks_to_us(start, end);
-
-            // ------------- Hash table (close) no rest -------------
-             start = clock();
-            for (size_t k = 0; k < word_count; k++)
-                (void)hash_table_close_contain(close_table_no_rest, words[k]);
-            end = clock();
-
-            if (do_measure)
-                avg_time_close_no_rest += ticks_to_us(start, end);
-
-        }
-
-        hash_table_open_destroy(open_table);
-        hash_table_open_destroy(open_table_no_rest);
-        hash_table_close_destroy(close_table);
-        hash_table_close_destroy(close_table_no_rest);
-
-        avg_time_open  = (avg_time_open  / MEASURE_RUNS) / word_count;
-        avg_time_open_no_rest  = (avg_time_open_no_rest  / MEASURE_RUNS) / word_count;
-        avg_time_close = (avg_time_close / MEASURE_RUNS) / word_count;
-        avg_time_close_no_rest = (avg_time_close_no_rest / MEASURE_RUNS) / word_count;
-
-        printf(
-            "| %15d | %11d%% | %10.2lf | %10.2lf | %11.2lf | %11.2lf | %10.2lf | %10.2lf | %11.2lf | %11.2lf |\n",
-            n, percent, 
-            avg_count_open, avg_count_open_no_rest,
-            avg_count_close, avg_count_close_no_rest, 
-            avg_time_open, avg_time_open_no_rest, 
-            avg_time_close, avg_time_close_no_rest
-        );
-    }
-
-    printf("--------------------------------------------------------------------------------------------------------------------------------------------\n");
-
-    return OK;
+        printf("");
+        return 1;
 }
-
