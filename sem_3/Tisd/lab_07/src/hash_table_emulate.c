@@ -234,7 +234,6 @@ int run_emulate_hash_table(void)
                 rc = input_str(temp_str, STR_LEN);
                 if (rc != OK)
                 {
-                    cmd = EXIT;
                     break;
                 }
                 // Добавление элемента
