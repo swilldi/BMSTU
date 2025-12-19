@@ -219,14 +219,20 @@ size_t graph_list_memory_capacity(graph_list_t *graph)
         return 0;
     size_t mem = sizeof(*graph);
     mem += sizeof(edge_t*) * graph->vertices_count;
+
+    // int nodes = 0;
     for (int i = 0; i < graph->vertices_count; ++i)
     {
         edge_t *curr = graph->adj_lists[i];
         while (curr)
         {
+            // nodes++;
             mem += sizeof(edge_t);
             curr = curr->next;
         }
     }
+
+    // printf("nodes: %d\n", nodes);
+    
     return mem;
 }

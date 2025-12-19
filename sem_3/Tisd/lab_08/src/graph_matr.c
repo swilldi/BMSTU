@@ -8,6 +8,8 @@
 #include "exit_code.h"
 
 #include "common_def.h"
+#include "io_func.h"
+
 
 struct graph_matr_t 
 {
@@ -134,48 +136,7 @@ int max_pos_num_in_file(FILE *f, int *max_num_ptr)
     return max_num == 0 ? INVALID_DATA : OK;
 }
 
-int read_vertices(char *str, int *from_vert, int *to_vert, int *value)
-{
-    if (sscanf(str, "%d%d%d", from_vert, to_vert, value) != 3)
-        return READ_ERROR;
 
-    if (*from_vert < 0 || *to_vert < 0 || *value < 0)
-        return INVALID_RANGE;
-
-    return OK;
-
-}
-
-int intput_vertices(int *from_vert, int *to_vert, int *value)
-{
-    printf("Ввод в формате: <исходная_вершина> <конечная_вершина> <стоимость_перехода>\n");
-    if (scanf("%d%d%d", from_vert, to_vert, value) != 3)
-        return READ_ERROR;
-
-    if (*from_vert <= 0 || *to_vert <= 0 || *value < 0)
-        return INVALID_RANGE;
-
-    *from_vert -= 1;
-    *to_vert -= 1;
-
-    return OK;
-
-}
-
-int intput_vertices_no_value(int *from_vert, int *to_vert)
-{
-    printf("Ввод в формате: <исходная_вершина> <конечная_вершина>\n");
-    if (scanf("%d%d", from_vert, to_vert) != 2)
-        return READ_ERROR;
-
-    if (*from_vert < 0 || *to_vert < 0)
-        return INVALID_RANGE;
-
-
-    *from_vert -= 1;
-    *to_vert -= 1;
-    return OK;
-}
 
 bool graph_not_edge(graph_matr_t *graph, int from_vert, int to_vert)
 {

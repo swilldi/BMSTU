@@ -18,7 +18,7 @@ double get_time_sec(void)
 }
 
 // Тестирование матричной реализации
-double test_matrix(graph_matr_t *g1, int n, int m)
+void test_matrix(graph_matr_t *g1, int n, int m, double *time, long *mem)
 {
     srand(42);
     for (int e = 0; e < m; ++e)
@@ -29,15 +29,16 @@ double test_matrix(graph_matr_t *g1, int n, int m)
         int w = 1 + rand() % 100;
         graph_add_edge(g1, from, to, w);
     }
+    *mem = graph_memory_capacity(g1);
     double t1 = get_time_sec();
     matrix_t dist1 = graph_shortest_paths(g1);
     double t2 = get_time_sec();
     matrix_destoy(dist1, n);
-    return t2 - t1;
+    *time = t2 - t1;
 }
 
 // Тестирование списочной реализации
-double test_list(graph_list_t *g2, int n, int m)
+void test_list(graph_list_t *g2, int n, int m, double *time, long *mem)
 {
     srand(42);
     for (int e = 0; e < m; ++e)
@@ -48,11 +49,12 @@ double test_list(graph_list_t *g2, int n, int m)
         int w = 1 + rand() % 100;
         graph_list_add_edge(g2, from, to, w);
     }
+    *mem = graph_list_memory_capacity(g2);
     double t3 = get_time_sec();
     matrix_t dist2 = graph_list_shortest_paths(g2);
     double t4 = get_time_sec();
     matrix_destoy(dist2, n);
-    return t4 - t3;
+    *time = t4 - t3;
 }
 
 
@@ -82,14 +84,15 @@ void run_test(void)
             // == Тест матрицы ==
             // память
             graph_matr_t *g1 = graph_create(n);
-            long mem1 = graph_memory_capacity(g1);
+            long mem1;
             graph_destroy(g1);
             // время выполнения
             double time1 = 0;
             for (size_t i = 0; i < PRE_TEST_COUNT + TEST_COUNT; i++)
             {
+                double res;
                 g1 = graph_create(n);
-                double res = test_matrix(g1, n, m);
+                test_matrix(g1, n, m, &res, &mem1);
                 if (i >= PRE_TEST_COUNT)
                     time1 += res;
                 graph_destroy(g1);
@@ -100,16 +103,17 @@ void run_test(void)
             // == Тест списка ==
             // память
             graph_list_t *g2 = graph_list_create(n);
-            long mem2 = graph_list_memory_capacity(g2);
+            long mem2;
             graph_list_destroy(g2);
             // время выполенения
             double time2 = 0;
             for (size_t i = 0; i < PRE_TEST_COUNT + TEST_COUNT; i++)
             {
+                double res;
                 g2 = graph_list_create(n);            
-                double res = test_list(g2, n, m);
+                test_list(g2, n, m, &res, &mem2);
                 if (i >= PRE_TEST_COUNT)
-                    time1 += res;
+                    time2 += res;
                 graph_list_destroy(g2);
             }
             time2 /= TEST_COUNT;
