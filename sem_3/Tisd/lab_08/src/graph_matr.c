@@ -7,9 +7,7 @@
 #include "matrix.h"
 #include "exit_code.h"
 
-#include <limits.h>
-#define INF UINT32_MAX
-
+#include "common_def.h"
 
 struct graph_matr_t 
 {
@@ -37,6 +35,12 @@ graph_matr_t *graph_create(int vertices_count)
     }
 
     return graph;
+}
+
+void graph_destroy(graph_matr_t *graph)
+{
+    matrix_destoy(graph->vertices, graph->vertices_count);
+    free(graph);
 }
 
 // Добавление ребра
@@ -319,4 +323,9 @@ matrix_t graph_shortest_paths(graph_matr_t *graph)
     }
 
     return dist;
+}
+
+size_t graph_memory_capacity(graph_matr_t *graph)
+{
+    return sizeof(graph) + sizeof(int) * graph->vertices_count * graph->vertices_count;
 }

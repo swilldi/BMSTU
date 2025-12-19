@@ -1,3 +1,42 @@
+#include "common_def.h"
+#include "graph_list.h"
+#include "matrix.h"
+
+// Матрица кратчайших расстояний (Флойд–Уоршелл для списков)
+matrix_t graph_list_shortest_paths(graph_list_t *graph)
+{
+    int n = graph->vertices_count;
+    matrix_t dist = matrix_create(n, n);
+    for (int i = 0; i < n; i++)
+    {
+        dist[i] = malloc(n * sizeof(unsigned int));
+        for (int j = 0; j < n; j++)
+            dist[i][j] = INF;
+    }
+    // Заполнение по спискам смежности
+    for (int i = 0; i < n; i++)
+    {
+        for (edge_t *e = graph->adj_lists[i]; e; e = e->next)
+            dist[i][e->to] = e->weight;
+
+        dist[i][i] = 0;
+    }
+    // Флойд–Уоршелл
+    for (int k = 0; k < n; k++)
+        for (int i = 0; i < n; i++)
+        {
+            if (dist[i][k] == INF) continue;
+            for (int j = 0; j < n; j++)
+            {
+                if (dist[k][j] == INF) continue;
+                if (dist[i][k] > INF - dist[k][j]) continue;
+                if (dist[i][j] > dist[i][k] + dist[k][j])
+                    dist[i][j] = dist[i][k] + dist[k][j];
+            }
+        }
+    return dist;
+}
+
 #include "graph_list.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -79,7 +118,7 @@ bool graph_list_not_edge(graph_list_t *graph, int from, int to)
 }
 
 // Освобождение памяти
-def void graph_list_destroy(graph_list_t *graph)
+void graph_list_destroy(graph_list_t *graph)
 {
     if (!graph)
         return;
@@ -171,4 +210,23 @@ int export_graph_list_to_dot(graph_list_t *graph, char *filename_dot)
     fprintf(f, "}\n");
     fclose(f);
     return 0;
+}
+
+// Оценка занимаемой памяти списочным графом
+size_t graph_list_memory_capacity(graph_list_t *graph)
+{
+    if (!graph)
+        return 0;
+    size_t mem = sizeof(*graph);
+    mem += sizeof(edge_t*) * graph->vertices_count;
+    for (int i = 0; i < graph->vertices_count; ++i)
+    {
+        edge_t *curr = graph->adj_lists[i];
+        while (curr)
+        {
+            mem += sizeof(edge_t);
+            curr = curr->next;
+        }
+    }
+    return mem;
 }

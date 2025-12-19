@@ -21,5 +21,7 @@ int intput_vertices_no_value(int *from_vert, int *to_vert);
 int graph_extend_matrix(graph_matr_t *graph, int new_count);
 int graph_path_value(graph_matr_t *graph, int from_vect, int to_vect);
 matrix_t graph_shortest_paths(graph_matr_t *graph);
+void graph_destroy(graph_matr_t *graph);
+size_t graph_memory_capacity(graph_matr_t *graph);
 
 #endif

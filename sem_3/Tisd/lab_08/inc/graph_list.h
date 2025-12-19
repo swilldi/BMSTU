@@ -25,6 +25,8 @@ bool graph_list_not_edge(graph_list_t *graph, int from, int to);
 void graph_list_destroy(graph_list_t *graph);
 int graph_list_vertices_count(graph_list_t *graph);
 int graph_list_path_value(graph_list_t *graph, int from, int to);
+unsigned int **graph_list_shortest_paths(graph_list_t *graph);
+size_t graph_list_memory_capacity(graph_list_t *graph);
 int graph_list_read_from_file(FILE *f, graph_list_t **graph_ptr);
 int export_graph_list_to_dot(graph_list_t *graph, char *filename_dot);
 
