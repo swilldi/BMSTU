@@ -2,6 +2,7 @@
 #include "io_func.h"
 #include "exit_code.h"
 #include "cmd_action.h"
+#include <string.h>
 
 void free_buff(FILE *f)
 {
@@ -16,6 +17,9 @@ void print_err_msg(int rc)
     {
         case INVALID_PARAM:
             printf("Некоректные переданные параметры");
+            break;
+        case INVALID_RANGE:
+            printf("Некоректные диапазон значений");
             break;
         case READ_ERROR:
             printf("Ошибка чтения");
@@ -38,7 +42,20 @@ void print_err_msg(int rc)
         case INVALID_INPUT:
             printf("Некоректный ввод");
             break;
+        case EMPTY_FILE:
+            printf("Файл пустой");
+            break;
+        case STR_EMPTY:
+            printf("Строка пустой");
+            break;
+        case STR_OVERFLOW:
+            printf("Строка длинее %d символов", STR_LEN - 1);
+        default:
+            printf("Неизвестная ошибка, rc = %d", rc);
+            break;
     }
+
+    printf("\n");
 }
 
 int pos_int_read(FILE *f, int *num, int *max_value)
@@ -52,7 +69,7 @@ int pos_int_read(FILE *f, int *num, int *max_value)
     if ((max_value && *num >= *max_value) || *num < 0)
     {
         free_buff(f);
-        return INVALID_DATA;
+        return INVALID_RANGE;
     }
 
     free_buff(f);
@@ -154,4 +171,36 @@ int intput_vertices_no_value(int *from_vert, int *to_vert)
     *to_vert -= 1;
     free_buff(stdin);
     return OK;
+}
+
+int input_str(char *str, char *msg)
+{
+
+    #ifndef FUNC_OUT
+    if (msg == NULL)
+        printf("Введите строку: ");
+    else
+        printf("%s", msg);
+    #endif
+
+    char tmp_str[STR_LEN + 10];
+    if (fgets(tmp_str, STR_LEN + 10, stdin) == NULL)
+        return READ_ERROR;
+    
+    size_t len = strlen(tmp_str);
+    if (len && tmp_str[len - 1] == '\n')
+    {
+        tmp_str[len - 1] = '\0';
+        len -= 1;
+    }
+
+    if (!len)
+        return STR_EMPTY;
+    if (len > STR_LEN)
+        return STR_OVERFLOW;
+
+    strcpy(str, tmp_str);
+        
+    return OK;
+
 }

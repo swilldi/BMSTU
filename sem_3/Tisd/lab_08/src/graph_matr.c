@@ -123,7 +123,7 @@ int max_pos_num_in_file(FILE *f, int *max_num_ptr)
             return READ_ERROR;
         
         if (temp_num_1 <= 0 || temp_num_2 <= 0)
-            return INVALID_DATA;
+            return INVALID_RANGE;
             
         if (temp_num_1 > max_num)
             max_num = temp_num_1;
@@ -182,7 +182,8 @@ int graph_read_from_file(FILE *f, graph_matr_t **graph_ptr)
         }
     }
 
-    *graph_ptr = graph;
+    if (rc == OK)
+        *graph_ptr = graph;
 
     return rc;
 }

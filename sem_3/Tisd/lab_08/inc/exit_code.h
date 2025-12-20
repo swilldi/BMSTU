@@ -10,10 +10,13 @@ typedef enum
     READ_ERROR,
     MEM_ERROR,
     FILE_OPEN_ERROR,
+    EMPTY_FILE,
     EDGE_NOT_EXITS,
     EDGE_ALREADY_EXITS,
     INVALID_DATA,
     INVALID_INPUT,
+    STR_EMPTY,
+    STR_OVERFLOW,
     
 } errors;
 

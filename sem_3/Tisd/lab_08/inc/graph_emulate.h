@@ -8,6 +8,6 @@ typedef enum {
 } graph_type_t;
 
 // Основная функция эмуляции работы с графом
-int run_emulate(graph_type_t type); 
+int run_emulate(FILE *f, graph_type_t type); 
 
 #endif

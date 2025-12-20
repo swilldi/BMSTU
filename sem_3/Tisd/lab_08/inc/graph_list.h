@@ -29,5 +29,6 @@ unsigned int **graph_list_shortest_paths(graph_list_t *graph);
 size_t graph_list_memory_capacity(graph_list_t *graph);
 int graph_list_read_from_file(FILE *f, graph_list_t **graph_ptr);
 int export_graph_list_to_dot(graph_list_t *graph, char *filename_dot);
+int graph_list_extend(graph_list_t *graph, int new_count);
 
 #endif

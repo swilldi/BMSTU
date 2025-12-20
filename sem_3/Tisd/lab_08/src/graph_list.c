@@ -1,6 +1,8 @@
 #include "common_def.h"
 #include "graph_list.h"
 #include "matrix.h"
+#include "graph_list.h"
+#include "exit_code.h"
 
 // Матрица кратчайших расстояний (Флойд–Уоршелл для списков)
 matrix_t graph_list_shortest_paths(graph_list_t *graph)
@@ -63,18 +65,25 @@ graph_list_t *graph_list_create(int vertices_count)
 // Добавление ребра
 int graph_list_add_edge(graph_list_t *graph, int from, int to, int weight)
 {
-    if (!graph || from < 0 || to < 0 || from >= graph->vertices_count || to >= graph->vertices_count)
+    if (!graph || from < 0 || to < 0)
         return 1;
+    int max_idx = from > to ? from : to;
+    if (max_idx >= graph->vertices_count)
+    {
+        int rc = graph_list_extend(graph, max_idx + 1);
+        if (rc != 0)
+            return rc;
+    }
     edge_t *curr = graph->adj_lists[from];
     while (curr)
     {
         if (curr->to == to)
-            return 2; // EDGE_ALREADY_EXISTS
+            return EDGE_ALREADY_EXITS;
         curr = curr->next;
     }
     edge_t *new_edge = malloc(sizeof(edge_t));
     if (!new_edge)
-        return 3; // MEM_ERROR
+        return MEM_ERROR;
     new_edge->to = to;
     new_edge->weight = weight;
     new_edge->next = graph->adj_lists[from];
@@ -95,11 +104,11 @@ int graph_list_remove_edge(graph_list_t *graph, int from, int to)
             edge_t *to_delete = *curr;
             *curr = (*curr)->next;
             free(to_delete);
-            return 0;
+            return OK;
         }
         curr = &(*curr)->next;
     }
-    return 2; // EDGE_NOT_EXISTS
+    return EDGE_NOT_EXITS;
 }
 
 // Проверка отсутствия ребра
@@ -186,6 +195,11 @@ int graph_list_read_from_file(FILE *f, graph_list_t **graph_ptr)
         {
             graph_list_add_edge(graph, from - 1, to - 1, weight);
         }
+        else
+        {
+            // TODO освободть память
+            return READ_ERROR;
+        }
     }
     *graph_ptr = graph;
     return 0;
@@ -235,4 +249,19 @@ size_t graph_list_memory_capacity(graph_list_t *graph)
     // printf("nodes: %d\n", nodes);
     
     return mem;
+}
+
+// Расширение числа вершин
+int graph_list_extend(graph_list_t *graph, int new_count)
+{
+    if (!graph || new_count <= graph->vertices_count)
+        return 0;
+    edge_t **new_lists = realloc(graph->adj_lists, new_count * sizeof(edge_t*));
+    if (!new_lists)
+        return 1;
+    for (int i = graph->vertices_count; i < new_count; ++i)
+        new_lists[i] = NULL;
+    graph->adj_lists = new_lists;
+    graph->vertices_count = new_count;
+    return 0;
 }

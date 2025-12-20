@@ -97,12 +97,10 @@ int graph_to_png(graph_any_t *g)
     if (g->type == GRAPH_TYPE_MATRIX)
     {
         system("dot -Tpng "GRAPH_DOT_FILE" -o res_matr.png");
-        system("code res_matr.png");
     }
     else
     {
         system("dot -Tpng "GRAPH_DOT_FILE" -o res_list.png");
-        system("code res_list.png");
     }
 
         
@@ -111,12 +109,9 @@ int graph_to_png(graph_any_t *g)
 }
 
 // Основная функция взаимодействия с графом
-int run_emulate(graph_type_t type) 
+int run_emulate(FILE *f, graph_type_t type) 
 {
     int rc;
-    FILE *f = fopen("test.txt", "r");
-    if (!f)
-        return FILE_OPEN_ERROR;
 
     // создание графа
     graph_any_t g = {0};
@@ -125,16 +120,24 @@ int run_emulate(graph_type_t type)
     {
         graph_matr_t *temp_graph = g.graph;
         rc = graph_read_from_file(f, &temp_graph);
+        if (rc != OK)
+            return rc;
         g.graph = temp_graph;
     }
     else
     {
         graph_list_t *temp_graph = g.graph;
         rc = graph_list_read_from_file(f, &temp_graph);
+        if (rc != OK)
+            return rc;
         g.graph = temp_graph;
     }
 
     graph_to_png(&g);
+    if (type == GRAPH_TYPE_MATRIX)
+        system("code res_matr.png");
+    else
+        system("code res_list.png");
 
     int cmd = EMU_START;
     while (cmd != EMU_EXIT) {
