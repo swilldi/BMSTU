@@ -19,6 +19,40 @@ typedef enum {
     EMU_START
 } emulate_cmd_t;
 
+
+
+
+
+int export_matr_to_dot(matrix_t mtr, int size)
+{
+    FILE *f = fopen("mtr_res.dot", "w");
+    if (!f)
+    {
+        return FILE_OPEN_ERROR;
+    }
+
+    fprintf(f, "digraph G {\n");
+
+    for (int i = 0; i < size; i++)
+    {
+        for (int j = 0; j < size; j++)
+        {
+            if (mtr[i][j] != UINT32_MAX && mtr[i][j] != 0)
+            {
+                fprintf(f, "  %d -> %d [label=\"%d\"];\n", i + 1, j + 1, mtr[i][j]);
+            }
+        }
+    }
+    fprintf(f, "}\n");
+
+    fclose(f);
+    return OK;
+}
+
+
+
+
+
 // Универсальный тип графа
 typedef struct {
     graph_type_t type;
@@ -63,9 +97,11 @@ void graph_print_shortest(graph_any_t *g)
     if (g->type == GRAPH_TYPE_MATRIX) {
         matrix_t m = graph_shortest_paths((graph_matr_t*)g->graph);
         matrix_print(m, graph_vertices_count((graph_matr_t*)g->graph));
+        export_matr_to_dot(m, graph_vertices_count(g->graph));
         matrix_destoy(m, graph_vertices_count((graph_matr_t*)g->graph));
     } else {
         matrix_t m = graph_list_shortest_paths((graph_list_t*)g->graph);
+        export_matr_to_dot(m, graph_list_vertices_count(g->graph));
         matrix_print(m, graph_list_vertices_count((graph_list_t*)g->graph));
         matrix_destoy(m, graph_list_vertices_count((graph_list_t*)g->graph));
     }
