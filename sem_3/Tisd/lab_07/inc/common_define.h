@@ -1,0 +1,17 @@
+#ifndef COMMON_DEFINE_H__
+#define COMMON_DEFINE_H__
+
+#define STR_LEN 128
+#define TEMP_STR_LEN 256
+
+#define OPEN_HASH_TABLE_K 0.7
+#define CLOSE_HASH_TABLE_K 1.2
+#define EXTAND_K 1.2
+#define TEST_COUNT_FOR_AVG_CMP 10
+
+#define MAX_LOAD_FACTOR 0.7
+#define MAX_CMP_COUNT 3
+
+typedef int (*compare_func)(void *, void *);
+
+#endif
