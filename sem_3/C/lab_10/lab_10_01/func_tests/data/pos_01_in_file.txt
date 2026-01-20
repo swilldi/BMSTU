@@ -1,0 +1,15 @@
+apple
+1
+1
+ice
+1
+8
+metal
+5
+10
+sword
+500
+1
+watch
+200
+0.2

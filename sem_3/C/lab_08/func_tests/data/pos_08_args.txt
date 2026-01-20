@@ -1,0 +1,2 @@
+o ./func_tests/data/pos_08_in_file_1.txt ./func_tests/data/result.txt
+

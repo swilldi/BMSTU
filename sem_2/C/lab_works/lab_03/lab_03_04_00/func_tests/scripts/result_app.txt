@@ -1,1 +1,0 @@
-Entry size squear matrix: Error: Invalid input

@@ -1,0 +1,103 @@
+#include "arr_func.h"
+#include "check_unit_tests.h"
+#include "exit_code.h"
+#include <check.h>
+#include "dlfcn.h"
+
+typedef int (*key_ptr)(const int*, const int*, int*, int*);
+
+START_TEST(all_negative)
+{
+    void *arr_lib = dlopen("./lib/libarr_func.so", RTLD_NOW);
+    key_ptr key = dlsym(arr_lib, "key");
+    
+    int arr[] = {-1, -2, -3, -4}, *arr_f_b = malloc(sizeof(int) * 4), *arr_f_e = NULL;
+    size_t len = 4;
+    key(arr, arr + len, arr_f_b, arr_f_e);
+
+    int arr_out[] = {-1, -2, -3};
+    for (size_t i = 0; i < 3; i++)
+        ck_assert_int_eq(arr_f_b[i], arr_out[i]);
+    free(arr_f_b);
+    dlclose(arr_lib);
+}
+END_TEST
+
+START_TEST(no_negative)
+{
+    void *arr_lib = dlopen("./lib/libarr_func.so", RTLD_NOW);
+    key_ptr key = dlsym(arr_lib, "key");
+    
+    int arr[] = {1, 2, 3, 4}, *arr_f_b = malloc(sizeof(int) * 4), *arr_f_e = NULL;
+    size_t len = 4;
+    key(arr, arr + len, arr_f_b, arr_f_e);
+
+    int arr_out[] = {1, 2, 3, 4};
+    for (size_t i = 0; i < len; i++)
+        ck_assert_int_eq(arr_f_b[i], arr_out[i]);
+    free(arr_f_b);
+    dlclose(arr_lib);
+}
+END_TEST
+
+START_TEST(first_negative)
+{
+    void *arr_lib = dlopen("./lib/libarr_func.so", RTLD_NOW);
+    key_ptr key = dlsym(arr_lib, "key");
+    
+    int arr[] = {-1, 2, 3, 4}, *arr_f_b = malloc(sizeof(int) * 0), *arr_f_e = arr_f_b;
+    size_t len = 4;
+    int rc = key(arr, arr + len, arr_f_b, arr_f_e);
+
+    ck_assert_int_eq(rc, EMPTY_ARR);
+    free(arr_f_b);
+    dlclose(arr_lib);
+}
+END_TEST
+
+START_TEST(last_negative)
+{
+    void *arr_lib = dlopen("./lib/libarr_func.so", RTLD_NOW);
+    key_ptr key = dlsym(arr_lib, "key");
+    
+    int arr[] = {1, 2, 3, -4}, *arr_f_b = malloc(sizeof(int) * 4), *arr_f_e = NULL;
+    size_t len = 4;
+    key(arr, arr + len, arr_f_b, arr_f_e);
+
+    int arr_out[] = {1, 2, 3};
+    for (size_t i = 0; i < 3; i++)
+        ck_assert_int_eq(arr_f_b[i], arr_out[i]);
+    free(arr_f_b);
+    dlclose(arr_lib);
+}
+END_TEST
+
+START_TEST(any_negative)
+{
+    void *arr_lib = dlopen("./lib/libarr_func.so", RTLD_NOW);
+    key_ptr key = dlsym(arr_lib, "key");
+    
+    int arr[] = {1, 2, -3, 4, 5, -6, 7, 8, 9}, *arr_f_b = malloc(sizeof(int) * 4), *arr_f_e = NULL;
+    size_t len = 9;
+    key(arr, arr + len, arr_f_b, arr_f_e);
+
+    int arr_out[] = {1, 2, -3, 4, 5};
+    for (size_t i = 0; i < 5; i++)
+        ck_assert_int_eq(arr_f_b[i], arr_out[i]);
+    free(arr_f_b);
+    dlclose(arr_lib);
+}
+END_TEST
+
+TCase *key_tcase(void)
+{
+    TCase *tc = tcase_create("key");
+
+    tcase_add_test(tc, all_negative);
+    tcase_add_test(tc, no_negative);
+    tcase_add_test(tc, first_negative);
+    tcase_add_test(tc, last_negative);
+    tcase_add_test(tc, any_negative);
+
+    return tc;
+}

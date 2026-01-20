@@ -1,1 +1,0 @@
-gcc -Wall -Werror -Wextra -Wpedantic -std=c99 -Wfloat-equal -Wfloat-conversion -Wvla -fsanityze=memory -fPIE -pie -fno-omit-frame-pointer -g -o app.exe -lm main.c 

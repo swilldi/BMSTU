@@ -1,0 +1,1 @@
+p ./func_tests/data/neg_14_in_file_1.txt ./func_tests/data/neg_14_in_file_2.txt ./func_tests/data/result.txt

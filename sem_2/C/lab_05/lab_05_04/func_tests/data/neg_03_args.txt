@@ -1,0 +1,1 @@
+st func_tests/data/neg_03_in_file.txt ./work_file.txt

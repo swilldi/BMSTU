@@ -1,1 +1,0 @@
-Entry num and degree: a^n = 32
