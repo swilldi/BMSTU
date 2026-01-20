@@ -1,0 +1,1 @@
+../lab_10_03_common/check_func_max_min.c

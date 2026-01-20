@@ -1,0 +1,7 @@
+watch
+200
+10
+laptope
+10
+20
+book
