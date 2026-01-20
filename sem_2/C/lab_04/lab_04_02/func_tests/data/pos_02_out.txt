@@ -1,0 +1,5 @@
+Result: Mnogo 1
+Result: raznih 1
+Result: slov 1
+Result: ili 1
+Result: net 1

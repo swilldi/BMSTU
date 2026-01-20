@@ -1,0 +1,5 @@
+Result: Voodshem 2
+Result: on 2
+Result: ili 1
+Result: ne 2
+Result: mnogo 1
