@@ -18,6 +18,7 @@ NODEPS := clean
 app.exe: $(OBJS)
 	$(CC) $^ $(LDFLAGS) -o $@
 # сборка модульных тестов
+unit_tests.exe: CFLAGS += -Wno-error=pedantic -Wno-error=gnu-zero-variadic-macro-arguments
 unit_tests.exe: LDFLAGS += -lcheck -lpthread
 unit_tests.exe: $(UNIT_OBJS)
 	echo $(UNIT_OBJS)
@@ -80,7 +81,7 @@ unit: unit_tests.exe
 	$(CC) $(CFLAGS) -MMD -MP -c $< -o $@
 ./out/%.o: ./unit_tests/%.c
 	mkdir -p out
-	$(CC) $(CFLAGS) -MMD -MP -c $< -o $@
+	$(CC) $(CFLAGS) -Wno-gnu-zero-variadic-macro-arguments -MMD -MP -c $< -o $@
 
 ifeq (0, $(words $(findstring $(MAKECMDGOALS), $(NODEPS))))
 	-include $(DEPS)
