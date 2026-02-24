@@ -16,6 +16,7 @@ void model_free(model_t &model)
     points_free(model.points);
 }
 
+// проверка модели на корректность
 error_code model_is_valid(const model_t &model)
 {
     error_code rc = OK;
@@ -29,7 +30,7 @@ error_code model_is_valid(const model_t &model)
 }
 
 
-
+// чтение модели из файла
 error_code model_read_from_file(FILE* const f, model_t &model)
 {
     if (!f)
@@ -56,6 +57,7 @@ error_code model_read_from_file(FILE* const f, model_t &model)
     return rc;
 }
 
+// запись модели в файл
 error_code model_write_to_file(FILE* const f, const model_t &model)
 {
     error_code rc = model_is_valid(model);
@@ -76,7 +78,7 @@ error_code model_write_to_file(FILE* const f, const model_t &model)
     return rc;
 }
 
-
+// перемещение модели
 error_code model_move(model_t &model, const move_data_t &move)
 {
     error_code rc = model_is_valid(model);
@@ -91,6 +93,7 @@ error_code model_move(model_t &model, const move_data_t &move)
     return rc;
 }
 
+// вращение модели
 error_code model_rotate(model_t &model, const rotate_data_t &rotate)
 {
     error_code rc = model_is_valid(model);
@@ -104,6 +107,8 @@ error_code model_rotate(model_t &model, const rotate_data_t &rotate)
     }
     return rc;
 }
+
+// масштабирование модели
 error_code model_scale(model_t &model, const scale_data_t &scale)
 {
     error_code rc = model_is_valid(model);

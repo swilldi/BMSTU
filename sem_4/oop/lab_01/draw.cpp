@@ -1,7 +1,8 @@
-#include "draw.h"
-
 #include <QGraphicsScene>
 #include <QPen>
+
+#include "draw.h"
+
 
 static error_code scene_clear(const draw_scene_t &draw_scene);
 static error_code lines_draw(const draw_scene_t &draw_scene, const points_t &points, const edges_t &edges);

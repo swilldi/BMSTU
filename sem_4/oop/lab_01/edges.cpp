@@ -1,5 +1,6 @@
 #include <cstdlib>
 #include <cstdio>
+
 #include "edges.h"
 
 
@@ -35,6 +36,7 @@ void edges_free(edges_t &edges)
     edges.count = 0;
 }
 
+// проверка корректонсти
 error_code edges_is_valid(edges_t edges)
 {
     if (!edges.data)
@@ -45,6 +47,7 @@ error_code edges_is_valid(edges_t edges)
     return OK;
 }
 
+// чтение количества ребер в файле
 error_code count_edges_read_from_file(FILE* const f, size_t &count)
 {
     if (!f)
@@ -67,6 +70,7 @@ error_code count_edges_read_from_file(FILE* const f, size_t &count)
     return rc;
 }
 
+// чтение точек из которых состоят ребра из файла
 error_code edges_data_read_from_file(FILE* const f, edges_t &edges)
 {
     if (!f)
@@ -89,6 +93,7 @@ error_code edges_data_read_from_file(FILE* const f, edges_t &edges)
     return rc;
 }
 
+// чтение ребер из файла
 error_code edges_read_from_file(FILE* const f, edges_t &edges)
 {
     if (!f)
@@ -111,6 +116,7 @@ error_code edges_read_from_file(FILE* const f, edges_t &edges)
     return rc;
 }
 
+// запись ребер в файл
 error_code edges_write_to_file(FILE* const f, const edges_t &edges)
 {
     if (!f)

@@ -2,6 +2,7 @@
 #include "error_codes.h"
 #include <cmath>
 
+
 void point_init(point_t &point, const double x, const double y, const double z)
 {
     point.x = x;
@@ -13,6 +14,7 @@ void point_default(point_t &point)
     point.x = point.y = point.z = 0;
 }
 
+// чтегие точки из файла
 error_code point_read_from_file(FILE* const f, point_t &point)
 {
     if (!f)
@@ -24,6 +26,8 @@ error_code point_read_from_file(FILE* const f, point_t &point)
 
     return rc;
 }
+
+// запись точку в файл
 error_code point_write_to_file(FILE* const f, const point_t &point)
 {
     if (!f)

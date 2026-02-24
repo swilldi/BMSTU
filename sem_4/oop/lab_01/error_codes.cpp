@@ -2,6 +2,7 @@
 #include <QMessageBox>
 #include <QString>
 
+
 void select_error_message(const error_code rc, QString &qmsg)
 {
     switch (rc)

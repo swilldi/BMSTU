@@ -2,6 +2,7 @@
 #include "error_codes.h"
 #include "points.h"
 
+
 error_code points_data_create(point_t* &points, const size_t count)
 {
     point_t *tmp_arr = (point_t*)malloc(sizeof(point_t) * count);
@@ -26,6 +27,7 @@ void points_init(points_t &points)
     points.data = NULL;
 }
 
+
 error_code points_is_valid(points_t points)
 {
     if (!points.data)
@@ -36,6 +38,7 @@ error_code points_is_valid(points_t points)
     return OK;
 }
 
+// чтение количества точек в файле
 static error_code count_points_read_from_file(FILE* const f, size_t &count)
 {
     if (!f)
@@ -59,6 +62,7 @@ static error_code count_points_read_from_file(FILE* const f, size_t &count)
     return rc;
 }
 
+// чтение координато точек из файла
 error_code points_data_read_from_file(FILE* const f, points_t &points)
 {
     if (!f)
@@ -76,6 +80,7 @@ error_code points_data_read_from_file(FILE* const f, points_t &points)
     return rc;
 }
 
+// чтение точек из файла
 error_code points_read_from_file(FILE* const f, points_t &points)
 {
     if (!f)
@@ -99,6 +104,7 @@ error_code points_read_from_file(FILE* const f, points_t &points)
     return rc;
 }
 
+// запись точек в файл
 error_code points_write_to_file(FILE* const f, const points_t &points)
 {
     error_code rc = OK;
@@ -119,6 +125,7 @@ error_code points_write_to_file(FILE* const f, const points_t &points)
     return rc;
 }
 
+// перемещение точек
 error_code points_move(points_t &points, const move_data_t &move)
 {
     error_code rc = points_is_valid(points);
@@ -132,6 +139,7 @@ error_code points_move(points_t &points, const move_data_t &move)
     return rc;
 }
 
+// вращение точек
 error_code points_rotate(points_t &points, const rotate_data_t &rotate, const point_t center)
 {
     error_code rc = points_is_valid(points);
@@ -144,6 +152,7 @@ error_code points_rotate(points_t &points, const rotate_data_t &rotate, const po
     return rc;
 }
 
+// масштабирование точек
 error_code points_scale(points_t &points, const scale_data_t &scale, const point_t center)
 {
     error_code rc = points_is_valid(points);
@@ -157,6 +166,7 @@ error_code points_scale(points_t &points, const scale_data_t &scale, const point
 }
 
 
+// подсчет центра точек
 error_code points_center(points_t &points, point_t &center)
 {
     error_code rc = points_is_valid(points);

@@ -1,7 +1,6 @@
 #include "request.h"
 
 
-
 error_code complete_request(request_t request)
 {
     error_code rc = OK;
