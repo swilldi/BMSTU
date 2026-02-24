@@ -16,3 +16,4 @@ sem_2/C/lab_works/tamplate_directiry/
 .devcontainer
 !**/data/*.txt
 **/private/**
+**/oop/**/build

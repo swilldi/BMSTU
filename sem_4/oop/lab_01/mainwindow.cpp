@@ -19,7 +19,7 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), ui(new Ui::MainWin
     ui->graphicsView->setScene(scene);
     ui->graphicsView->setRenderHint(QPainter::Antialiasing);
 
-    complete_request({ .action=LOAD, .file_name="/Users/dmitriy/test/untitled/data_3d_figures/cube_in_2d.txt" });
+    complete_request({ .action=LOAD, .file_name="/Users/dmitriy/BMSTU/sem_4/oop/lab_01/figures/cube.txt" });
     draw();
 }
 
