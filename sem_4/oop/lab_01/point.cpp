@@ -13,24 +13,26 @@ void point_default(point_t &point)
     point.x = point.y = point.z = 0;
 }
 
-error_code point_read_from_file(FILE *f, point_t &point)
+error_code point_read_from_file(FILE* const f, point_t &point)
 {
     if (!f)
-        return INVALID_FILE_ERR;
+        return FILE_INVALID;
 
+    error_code rc = OK;
     if (fscanf(f, "%lf %lf %lf", &point.x, &point.y, &point.z) != 3)
-        return INVALID_FILE_DATA;
+        rc = FILE_INVALID_TYPE_DATA;
 
-    return OK;
+    return rc;
 }
-error_code point_write_to_file(FILE *f, const point_t &point)
+error_code point_write_to_file(FILE* const f, const point_t &point)
 {
     if (!f)
-        return INVALID_FILE_ERR;
+        return FILE_INVALID;
 
+    error_code rc = OK;
     fprintf(f, "%lf %lf %lf\n", point.x, point.y, point.z);
 
-    return OK;
+    return rc;
 }
 
 // === Перемещение точки ===
@@ -99,7 +101,6 @@ void point_rotate(point_t &point, const rotate_data_t &rotate, const point_t cen
 }
 
 // === Масштабирование точки ===
-
 static void point_scale(point_t &point, const scale_data_t scale)
 {
     point.x *= scale.x;
@@ -110,9 +111,7 @@ static void point_scale(point_t &point, const scale_data_t scale)
 void point_scale(point_t &point, const scale_data_t &scale, const point_t center)
 {
     point_to_origin(point, center);
-
     point_scale(point, scale);
-
     point_from_origin(point, center);
 }
 

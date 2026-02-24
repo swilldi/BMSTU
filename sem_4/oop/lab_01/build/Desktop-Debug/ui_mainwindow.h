@@ -110,6 +110,8 @@ public:
         sizePolicy.setHeightForWidth(graphicsView->sizePolicy().hasHeightForWidth());
         graphicsView->setSizePolicy(sizePolicy);
         graphicsView->setMinimumSize(QSize(0, 0));
+        graphicsView->setInteractive(true);
+        graphicsView->setResizeAnchor(QGraphicsView::ViewportAnchor::AnchorViewCenter);
 
         horizontalLayout_7->addWidget(graphicsView);
 
@@ -326,7 +328,7 @@ public:
         horizontalLayout_6->setObjectName("horizontalLayout_6");
         scale_x = new QDoubleSpinBox(centralwidget);
         scale_x->setObjectName("scale_x");
-        scale_x->setMinimum(-100.000000000000000);
+        scale_x->setMinimum(0.010000000000000);
         scale_x->setMaximum(100.000000000000000);
         scale_x->setValue(1.000000000000000);
 
@@ -334,7 +336,7 @@ public:
 
         scale_y = new QDoubleSpinBox(centralwidget);
         scale_y->setObjectName("scale_y");
-        scale_y->setMinimum(-100.000000000000000);
+        scale_y->setMinimum(0.010000000000000);
         scale_y->setMaximum(100.000000000000000);
         scale_y->setValue(1.000000000000000);
 
@@ -342,7 +344,7 @@ public:
 
         scale_z = new QDoubleSpinBox(centralwidget);
         scale_z->setObjectName("scale_z");
-        scale_z->setMinimum(-100.000000000000000);
+        scale_z->setMinimum(0.010000000000000);
         scale_z->setMaximum(100.000000000000000);
         scale_z->setValue(1.000000000000000);
 

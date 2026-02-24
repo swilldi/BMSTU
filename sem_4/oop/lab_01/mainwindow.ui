@@ -55,6 +55,12 @@ QLabel#scale_x_label, QLabel#scale_y_label, QLabel#scale_z_label {
         <height>0</height>
        </size>
       </property>
+      <property name="interactive">
+       <bool>true</bool>
+      </property>
+      <property name="resizeAnchor">
+       <enum>QGraphicsView::ViewportAnchor::AnchorViewCenter</enum>
+      </property>
      </widget>
     </item>
     <item>
@@ -396,7 +402,7 @@ QLabel#scale_x_label, QLabel#scale_y_label, QLabel#scale_z_label {
           <item>
            <widget class="QDoubleSpinBox" name="scale_x">
             <property name="minimum">
-             <double>-100.000000000000000</double>
+             <double>0.010000000000000</double>
             </property>
             <property name="maximum">
              <double>100.000000000000000</double>
@@ -409,7 +415,7 @@ QLabel#scale_x_label, QLabel#scale_y_label, QLabel#scale_z_label {
           <item>
            <widget class="QDoubleSpinBox" name="scale_y">
             <property name="minimum">
-             <double>-100.000000000000000</double>
+             <double>0.010000000000000</double>
             </property>
             <property name="maximum">
              <double>100.000000000000000</double>
@@ -422,7 +428,7 @@ QLabel#scale_x_label, QLabel#scale_y_label, QLabel#scale_z_label {
           <item>
            <widget class="QDoubleSpinBox" name="scale_z">
             <property name="minimum">
-             <double>-100.000000000000000</double>
+             <double>0.010000000000000</double>
             </property>
             <property name="maximum">
              <double>100.000000000000000</double>

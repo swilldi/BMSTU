@@ -5,12 +5,19 @@
 
 error_code edges_create(edges_t &edges, size_t count)
 {
-    edges.data = (edge_t*)malloc(sizeof(edge_t) * count);
-    if (!edges.data)
-        return MEMORY_ERR;
+    error_code rc = OK;
 
-    edges.count = count;
-    return OK;
+    edges.data = (edge_t*)malloc(sizeof(edge_t) * count);
+    if (edges.data)
+    {
+        edges.count = count;
+    }
+    else
+    {
+        rc = MEMORY_ERR;
+    }
+
+    return rc;
 }
 
 void edges_init(edges_t &edges)
@@ -23,57 +30,95 @@ void edges_free(edges_t &edges)
 {
     if (edges.data)
         free(edges.data);
+
+    edges.data = NULL;
+    edges.count = 0;
 }
 
-error_code count_edges_read_from_file(FILE *f, size_t &count)
+error_code edges_is_valid(edges_t edges)
 {
-    if (!f)
-        return INVALID_FILE_ERR;
+    if (!edges.data)
+        return EDGES_INVALID;
+    if (edges.count <= 0)
+        return EDGES_EMPTY;
 
-    long tmp_count;
-    if (fscanf(f, "%ld", &tmp_count) != 1)
-        return INVALID_FILE_DATA;
-
-    if (tmp_count <= 0)
-        return INVALID_DATA_RANGE;
-
-    count = tmp_count;
     return OK;
 }
 
-error_code edges_read_from_file(FILE *f, edges_t &edges)
+error_code count_edges_read_from_file(FILE* const f, size_t &count)
 {
     if (!f)
-        return INVALID_FILE_ERR;
+        return FILE_INVALID;
 
-    // чтение количества ребер и выделение памяти
-    size_t edges_count;
-    error_code rc = count_edges_read_from_file(f, edges_count);
-    if (rc != OK)
-        return rc;
+    error_code rc = OK;
+    long tmp_count;
+    if (fscanf(f, "%ld", &tmp_count) == 1)
+    {
+        if (tmp_count <= 0)
+            rc = FILE_DATA_INVALID_RANGE;;
+    }
+    else
+    {
+        rc = FILE_INVALID_TYPE_DATA;
+    }
 
-    rc = edges_create(edges, edges_count);
-    if (rc != OK)
-        return rc;
+
+    count = tmp_count;
+    return rc;
+}
+
+error_code edges_data_read_from_file(FILE* const f, edges_t &edges)
+{
+    if (!f)
+        return FILE_INVALID;
+    if (edges.count <= 0)
+        return EDGES_EMPTY;
 
     // чтение ребер
+    error_code rc = OK;
     for (size_t i = 0; i < edges.count; i++)
     {
         rc = edge_read_from_file(f, edges.data[i]);
         if (rc != OK)
         {
             edges_free(edges);
-            return rc;
+            break;
         }
     }
 
-    return OK;
+    return rc;
 }
 
-error_code edges_write_to_file(FILE *f, const edges_t &edges)
+error_code edges_read_from_file(FILE* const f, edges_t &edges)
 {
     if (!f)
-        return INVALID_FILE_ERR;
+        return FILE_INVALID;
+
+    // чтение количества ребер и выделение памяти
+    size_t edges_count;
+    error_code rc = count_edges_read_from_file(f, edges_count);
+    if (rc == OK)
+    {
+        rc = edges_create(edges, edges_count);
+        if (rc == OK)
+        {
+            rc = edges_data_read_from_file(f, edges);
+            if (rc != OK)
+                edges_free(edges);
+        }
+    }
+
+    return rc;
+}
+
+error_code edges_write_to_file(FILE* const f, const edges_t &edges)
+{
+    if (!f)
+        return FILE_INVALID;
+    if (!edges.data)
+        return EDGES_INVALID;
+    if (edges.count <= 0)
+        return EDGES_EMPTY;
 
     fprintf(f, "%ld\n", edges.count);
     for (size_t i = 0; i < edges.count; i++)

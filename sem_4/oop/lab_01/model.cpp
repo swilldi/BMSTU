@@ -16,71 +16,104 @@ void model_free(model_t &model)
     points_free(model.points);
 }
 
+error_code model_is_valid(const model_t &model)
+{
+    error_code rc = OK;
+    rc = edges_is_valid(model.edges);
+    if (rc == OK)
+    {
+        rc = points_is_valid(model.points);
+    }
 
-error_code model_read_from_file(FILE *f, model_t &model)
+    return rc;
+}
+
+
+
+error_code model_read_from_file(FILE* const f, model_t &model)
 {
     if (!f)
-        return INVALID_FILE_ERR;
+        return FILE_INVALID;
     
-    error_code rc;
+
+    error_code rc = OK;
     // чтение точек
     rc = points_read_from_file(f, model.points);
-    if (rc != OK)
+    if (rc == OK)
     {
-        model_free(model);
-        return rc;
-    }
-    points_center(model.points, model.center);
+        // определение центра модели
+        points_center(model.points, model.center);
 
-    // чтение вершин
-    rc = edges_read_from_file(f, model.edges);
-    if (rc != OK)
-    {
-        model_free(model);
-        return rc;
+        // чтение вершин
+        rc = edges_read_from_file(f, model.edges);
+        if (rc != OK)
+        {
+            model_free(model);
+        }
+
     }
 
-    return OK;
+    return rc;
 }
-error_code model_write_to_file(FILE *f, const model_t &model)
+
+error_code model_write_to_file(FILE* const f, const model_t &model)
 {
+    error_code rc = model_is_valid(model);
+    if (rc != OK)
+        return rc;
     if (!f)
-        return INVALID_FILE_ERR;
+        return FILE_INVALID;
+
     
-    error_code rc;
     // запись точек
     rc = points_write_to_file(f, model.points);
-    if (rc != OK)
-        return rc;
+    if (rc == OK)
+    {
+        // запись вершин
+        rc = edges_write_to_file(f, model.edges);
+    }
 
-    // запись вершин
-    rc = edges_write_to_file(f, model.edges);
-    if (rc != OK)
-        return rc;
-
-    return OK;
+    return rc;
 }
+
 
 error_code model_move(model_t &model, const move_data_t &move)
 {
-    error_code rc = OK;
+    error_code rc = model_is_valid(model);
+    if (rc != OK)
+        return rc;
+
     rc = points_move(model.points, move);
-
+    if (rc == OK)
+    {
+        rc = points_center(model.points, model.center);
+    }
     return rc;
-
 }
 
 error_code model_rotate(model_t &model, const rotate_data_t &rotate)
 {
-    error_code rc = OK;
-    rc = points_rotate(model.points, rotate, model.center);
+    error_code rc = model_is_valid(model);
+    if (rc != OK)
+        return rc;
 
+    rc = points_rotate(model.points, rotate, model.center);
+    if (rc == OK)
+    {
+        rc = points_center(model.points, model.center);
+    }
     return rc;
 }
 error_code model_scale(model_t &model, const scale_data_t &scale)
 {
-    error_code rc = OK;
-    points_scale(model.points, scale, model.center);
+    error_code rc = model_is_valid(model);
+    if (rc != OK)
+        return rc;
 
+    rc = points_scale(model.points, scale, model.center);
+    if (rc == OK)
+    {
+        rc = points_center(model.points, model.center);
+    }
     return rc;
 }

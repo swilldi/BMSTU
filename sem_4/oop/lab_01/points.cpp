@@ -26,56 +26,87 @@ void points_init(points_t &points)
     points.data = NULL;
 }
 
-
-static error_code count_points_read_from_file(FILE *f, size_t &count)
+error_code points_is_valid(points_t points)
 {
-    if (!f)
-        return INVALID_FILE_ERR;
+    if (!points.data)
+        return POINTS_INVALID;
+    if (points.count <= 0)
+        return POINTS_EMPTY;
 
-    long long tmp_count;
-    if (fscanf(f, "%lld", &tmp_count) != 1)
-        return INVALID_FILE_DATA;
-    if (tmp_count <= 0)
-        return INVALID_DATA_RANGE;
-
-    count = tmp_count;
     return OK;
 }
 
-error_code points_read_from_file(FILE *f, points_t &points)
+static error_code count_points_read_from_file(FILE* const f, size_t &count)
 {
     if (!f)
-        return INVALID_FILE_ERR;
+        return FILE_INVALID;
 
-    // количество точек
-    error_code rc = count_points_read_from_file(f, points.count);
-    if (rc != OK)
-        return rc;
 
-    // выделение памяти под точки
-    rc = points_data_create(points.data, points.count);
-    if (rc != OK)
-        return rc;
+    error_code rc = OK;
+    long tmp_count;
+    if (fscanf(f, "%ld", &tmp_count) == 1)
+    {
+        if (tmp_count <= 0)
+            rc = FILE_DATA_INVALID_RANGE;
+        else
+            count = tmp_count;
+    }
+    else
+    {
+        rc = FILE_INVALID_TYPE_DATA;
+    }
 
-    // чтение точек
+    return rc;
+}
+
+error_code points_data_read_from_file(FILE* const f, points_t &points)
+{
+    if (!f)
+        return FILE_INVALID;
+    if (points.count <= 0)
+        return POINTS_EMPTY;
+
+    error_code rc = OK;
     for (size_t i = 0; i < points.count; i++)
     {
         rc = point_read_from_file(f, points.data[i]);
         if (rc != OK)
+            break;
+    }
+    return rc;
+}
+
+error_code points_read_from_file(FILE* const f, points_t &points)
+{
+    if (!f)
+        return FILE_INVALID;
+
+    // количество точек
+    error_code rc = count_points_read_from_file(f, points.count);
+    if (rc == OK)
+    {
+        // выделение памяти под точки
+        rc = points_data_create(points.data, points.count);
+        if (rc == OK)
         {
-            points_free(points);
-            return rc;
+            // чтение точек
+            rc = points_data_read_from_file(f, points);
+            if (rc != OK)
+                points_free(points);
         }
     }
 
-    return OK;
+    return rc;
 }
 
-error_code points_write_to_file(FILE *f, const points_t &points)
+error_code points_write_to_file(FILE* const f, const points_t &points)
 {
     error_code rc = OK;
+    rc = points_is_valid(points);
+    if (rc != OK)
+        return rc;
     if (!f)
-        return INVALID_FILE_ERR;
+        return FILE_INVALID;
 
     fprintf(f, "%lu\n", points.count);
     for (size_t i = 0; i < points.count; i++)
@@ -90,34 +121,49 @@ error_code points_write_to_file(FILE *f, const points_t &points)
 
 error_code points_move(points_t &points, const move_data_t &move)
 {
+    error_code rc = points_is_valid(points);
+    if (rc != OK)
+        return rc;
+
+
     for (size_t i = 0; i < points.count; i++)
-    {
         point_move(points.data[i], move);
-    }
-    return OK;
+
+    return rc;
 }
 
 error_code points_rotate(points_t &points, const rotate_data_t &rotate, const point_t center)
 {
+    error_code rc = points_is_valid(points);
+    if (rc != OK)
+        return rc;
+
     for (size_t i = 0; i < points.count; i++)
-    {
         point_rotate(points.data[i], rotate, center);
-    }
-    return OK;
+
+    return rc;
 }
 
 error_code points_scale(points_t &points, const scale_data_t &scale, const point_t center)
 {
+    error_code rc = points_is_valid(points);
+    if (rc != OK)
+        return rc;
+
     for (size_t i = 0; i < points.count; i++)
-    {
         point_scale(points.data[i], scale, center);
-    }
-    return OK;
+
+    return rc;
 }
 
 
-void points_center(points_t &points, point_t &center)
+error_code points_center(points_t &points, point_t &center)
 {
+    error_code rc = points_is_valid(points);
+    if (rc != OK)
+        return rc;
+
+
     point_default(center);
 
     for (size_t i = 0; i < points.count; i++)
@@ -132,6 +178,8 @@ void points_center(points_t &points, point_t &center)
     center.x /= points.count;
     center.y /= points.count;
     center.z /= points.count;
+
+    return rc;
 }
 
 
