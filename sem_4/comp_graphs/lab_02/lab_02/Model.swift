@@ -8,8 +8,17 @@
 import Foundation
 import SwiftUI
 
+
+enum TransformAction {
+    
+    case scale(kx: Double, ky: Double, center: CGPoint)
+    case scale_zero(points: [[CGPoint]])
+}
+
 struct Model {
-    var points = [CGPoint]()
+    var points = [[CGPoint]]()
+    
+    
     
     var centerPoint: CGPoint {
         guard let first = points.first else { return .zero }

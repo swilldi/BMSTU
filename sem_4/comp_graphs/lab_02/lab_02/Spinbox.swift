@@ -10,6 +10,7 @@ import SwiftUI
 struct Spinbox: View {
     var title: String = "Sample text: "
     @Binding var value: Double
+    @State private var text = ""
     
     var body: some View {
         HStack {

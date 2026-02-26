@@ -39,7 +39,7 @@ struct NumberInput: View {
     
     var body: some View {
         GroupBox(title) {
-            Spinbox(title: "angle:", value: $angle)
+            Spinbox(title: "Угол:", value: $angle)
             if let action = action {
                 Button(action: action) {
                     Text(actionTitle)

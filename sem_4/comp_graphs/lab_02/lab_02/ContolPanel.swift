@@ -22,12 +22,27 @@ struct ContolPanel: View {
     
     var body: some View {
         VStack {
+            
+            HStack {
+                Button {
+                    print("Undo")
+                } label: {
+                    Image(systemName: "arrowshape.backward.circle")
+                        .frame(maxWidth: .infinity)
+                        .font(.system(size: 20))       
+                }
+                Spacer()
+            }
+            
+            Divider()
+            
             NumbersInput(
                 title: "Центр операций",
                 action: {
                     actionCenterX = model.centerPoint.x
                     actionCenterY = model.centerPoint.y
                 },
+                actionTitle: "центр фигуры",
                 x: $actionCenterX,
                 y: $actionCenterY
                 
@@ -35,17 +50,20 @@ struct ContolPanel: View {
             NumbersInput(
                 title: "Перемещение",
                 action: { model.move(x: move_x, y: move_y) },
+                actionTitle: "Переместить",
                 x: $move_x,
                 y: $move_y
             )
             NumberInput(
                 title: "Поворот",
                 action: { model.rotate(angle: -angle, center: CGPoint(x :actionCenterX, y: actionCenterY)) },
+                actionTitle: "Повернуть",
                 angle: $angle
             )
             NumbersInput(
                 title: "Масштабирование",
                 action: { model.scale(kx: scale_x, ky: scale_y, center: CGPoint(x: actionCenterX, y: actionCenterY)) },
+                actionTitle: "Масштабировать",
                 x: $scale_x,
                 y: $scale_y
             )

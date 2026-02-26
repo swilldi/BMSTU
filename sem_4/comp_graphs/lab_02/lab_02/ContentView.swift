@@ -31,6 +31,7 @@ struct ContentView: View {
         _actionCenterY = State(initialValue: m.centerPoint.y)
     }
     
+
     var body: some View {
         HStack {
             Canvas { context, size in
