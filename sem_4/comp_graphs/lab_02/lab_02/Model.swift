@@ -10,84 +10,123 @@ import SwiftUI
 
 
 enum TransformAction {
-    
+    case move(dx: Double, dy: Double)
+    case rotate(angle: Double, center: CGPoint)
     case scale(kx: Double, ky: Double, center: CGPoint)
-    case scale_zero(points: [[CGPoint]])
+    case snapshot(points: [[CGPoint]])
 }
 
 struct Model {
     var points = [[CGPoint]]()
-    
+    var undoTransform: TransformAction?
     
     
     var centerPoint: CGPoint {
-        guard let first = points.first else { return .zero }
+        var all: [CGPoint] = []
+        for contour in points {
+            guard !contour.isEmpty else { continue }
+            let pts = (contour.count >= 2 && contour.first == contour.last) ? Array(contour.dropLast()) : contour
+            all.append(contentsOf: pts)
+        }
+        guard let first = all.first else { return .zero }
+
         var minX = first.x, maxX = first.x
         var minY = first.y, maxY = first.y
-        
-        
-        for point in points.dropLast() {
-            minX = min(minX, point.x)
-            maxX = max(maxX, point.x)
-            
-            minY = min(minY, point.y)
-            maxY = max(maxY, point.y)
+        for p in all {
+            minX = min(minX, p.x); maxX = max(maxX, p.x)
+            minY = min(minY, p.y); maxY = max(maxY, p.y)
         }
-        
-        let cx = minX + (maxX - minX) / 2, cy = minY + (maxY - minY) / 2
-        print(cx, cy)
-        
-        return CGPoint(x: cx, y: cy)
+        return CGPoint(x: (minX + maxX) / 2, y: (minY + maxY) / 2)
     }
     
+    private mutating func applyMove(dx: Double, dy: Double) {
+            let dxCG = CGFloat(dx)
+            let dyCG = CGFloat(dy)
+            for i in points.indices {
+                points[i] = points[i].map { p in
+                    CGPoint(x: p.x + dxCG, y: p.y + dyCG)
+                }
+            }
+        }
+
+    private mutating func applyScale(kx: Double, ky: Double, center: CGPoint) {
+        let kxCG = CGFloat(kx)
+        let kyCG = CGFloat(ky)
+        let cx = center.x
+        let cy = center.y
+
+        for i in points.indices {
+            points[i] = points[i].map { p in
+                let x = (p.x - cx) * kxCG + cx
+                let y = (p.y - cy) * kyCG + cy
+                return CGPoint(x: x, y: y)
+            }
+        }
+    }
+
+    private mutating func applyRotate(angleDeg: Double, center: CGPoint) {
+        let rad = angleDeg * .pi / 180.0
+        let cosCG = CGFloat(cos(rad))
+        let sinCG = CGFloat(sin(rad))
+        let cx = center.x
+        let cy = center.y
+
+        for i in points.indices {
+            points[i] = points[i].map { p in
+                let x = p.x - cx
+                let y = p.y - cy
+                return CGPoint(x: x * cosCG - y * sinCG + cx, y: x * sinCG + y * cosCG + cy)
+            }
+        }
+    }
+
+
     mutating func move(x: Double, y: Double) {
-        print("Перемещение")
-        print(points)
-        points = points.map { p in
-            CGPoint(x: p.x + x, y: p.y + y)
-        }
-        print(points)
+        undoTransform = .move(dx: -x, dy: -y)
+        applyMove(dx: x, dy: y)
     }
-    
-    mutating func scale(kx: Double = 1.0, ky: Double = 1.0, center: CGPoint) {
-        let cx = Double(center.x), cy = Double(center.y)
-        
-        print("Scale")
-        print(points)
-        self.move(x: -cx, y: -cy)
-        points = points.map { p in
-            CGPoint(x: p.x * kx, y: p.y * ky)
+
+    mutating func scale(kx: Double, ky: Double, center: CGPoint) {
+        let eps = 1e-6
+        if abs(kx) <= eps || abs(ky) <= eps {
+            undoTransform = .snapshot(points: points) // необратимо — снапшот
+        } else {
+            undoTransform = .scale(kx: 1.0 / kx, ky: 1.0 / ky, center: center)
         }
-        self.move(x: cx, y: cy)
-        print(points)
+        applyScale(kx: kx, ky: ky, center: center)
     }
-    
-    mutating func rotate(angle: Double = 0.0, center: CGPoint) {
-        print(center)
-        let cx = Double(center.x), cy = Double(center.y)
-        let angleRad = angle * .pi / 180.0
-        let cosCG = CGFloat(cos(angleRad)), sinCG = CGFloat(sin(angleRad))
-        
-        print("rotate")
-        print(points)
-        self.move(x: -cx, y: -cy)
-        points = points.map { p in
-            let x = p.x, y = p.y
-            return CGPoint(x: x * cosCG - y * sinCG, y: x * sinCG + y * cosCG)
+
+    mutating func rotate(angle: Double, center: CGPoint) {
+        undoTransform = .rotate(angle: -angle, center: center) // <-- минус!
+        applyRotate(angleDeg: angle, center: center)
+    }
+
+    mutating func undo() {
+        guard let action = undoTransform else { return }
+        undoTransform = nil // важно: чтобы undo не перезаписывался
+
+        switch action {
+        case .move(let dx, let dy):
+            applyMove(dx: dx, dy: dy)
+        case .scale(let kx, let ky, let center):
+            applyScale(kx: kx, ky: ky, center: center)
+        case .rotate(let angle, let center):
+            applyRotate(angleDeg: angle, center: center)
+        case .snapshot(let pts):
+            points = pts
         }
-        self.move(x: cx, y: cy)
-        print(points)
     }
     
     func drawingPath() -> Path {
         var path = Path()
         
-        path.move(to: points[0])
-        for point in points[1...] {
-            path.addLine(to: point)
+        for points in self.points {
+            path.move(to: points[0])
+            for point in points[1...] {
+                path.addLine(to: point)
+            }
         }
 
-        
         return path
     }
 }

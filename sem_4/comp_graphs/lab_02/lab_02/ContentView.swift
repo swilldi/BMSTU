@@ -18,13 +18,7 @@ struct ContentView: View {
     
     init() {
         let m = Model(
-            points: [
-                CGPoint(x: 50, y: 50),
-                CGPoint(x: 100, y: 50),
-                CGPoint(x: 100, y: 100),
-                CGPoint(x: 50, y: 100),
-                CGPoint(x: 50, y: 50)
-            ]
+            points: gitara
         )
         _model = State(initialValue: m)
         _actionCenterX = State(initialValue: m.centerPoint.x)
@@ -34,15 +28,32 @@ struct ContentView: View {
 
     var body: some View {
         HStack {
-            Canvas { context, size in
-                let figure = model.drawingPath()
-                context.stroke(figure, with: .color(.black), lineWidth: 1)
-                
-                let cursor = cursorPath()
-                context.stroke(cursor, with: .color(cursorColor), lineWidth: 1.5)
+            GeometryReader { geom in
+                Canvas { context, size in
+                    let figure = model.drawingPath()
+                    context.stroke(figure, with: .color(.black), lineWidth: 1)
+                    
+                    let cursor = cursorPath()
+                    context.stroke(cursor, with: .color(cursorColor), lineWidth: 1.5)
+                }
+                .onAppear {
+                    let targetX = geom.size.width / 2
+                    let targetY = geom.size.height / 2
+
+                    let c = model.centerPoint
+                    let dx = targetX - c.x
+                    let dy = targetY - c.y
+
+                    model.move(x: dx, y: dy)
+                    model.undoTransform = nil
+
+                    actionCenterX = Double(targetX)
+                    actionCenterY = Double(targetY)
+                    
+                }
+                .frame(maxWidth: .infinity)
+                .border(.black, width: 2)
             }
-            .frame(maxWidth: .infinity)
-            .border(.black, width: 2)
             
             Divider()
             

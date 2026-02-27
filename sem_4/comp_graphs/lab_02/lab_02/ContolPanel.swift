@@ -18,19 +18,21 @@ struct ContolPanel: View {
     @State var move_y = 0.0
     @State var scale_x = 1.0
     @State var scale_y = 1.0
-    @State var angle = 30.0
+    @State var angle = 0.0
     
     var body: some View {
         VStack {
             
             HStack {
                 Button {
+                    model.undo()
                     print("Undo")
                 } label: {
                     Image(systemName: "arrowshape.backward.circle")
                         .frame(maxWidth: .infinity)
                         .font(.system(size: 20))       
                 }
+                .disabled(model.undoTransform == nil)
                 Spacer()
             }
             
@@ -43,6 +45,8 @@ struct ContolPanel: View {
                     actionCenterY = model.centerPoint.y
                 },
                 actionTitle: "центр фигуры",
+                range: -1000...1000,
+                step: 10,
                 x: $actionCenterX,
                 y: $actionCenterY
                 
@@ -51,6 +55,8 @@ struct ContolPanel: View {
                 title: "Перемещение",
                 action: { model.move(x: move_x, y: move_y) },
                 actionTitle: "Переместить",
+                range: -1000...1000,
+                step: 10,
                 x: $move_x,
                 y: $move_y
             )
@@ -64,6 +70,8 @@ struct ContolPanel: View {
                 title: "Масштабирование",
                 action: { model.scale(kx: scale_x, ky: scale_y, center: CGPoint(x: actionCenterX, y: actionCenterY)) },
                 actionTitle: "Масштабировать",
+                range: -100...100,
+                step: 0.1,
                 x: $scale_x,
                 y: $scale_y
             )

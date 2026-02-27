@@ -84,7 +84,6 @@ class Canvas(QGraphicsView):
         return rect
 
     def _ensure_all_points_visible(self, force=False):
-        """Если точки не помещаются во видимую область, подбираем масштаб так, чтобы всё было видно."""
         rect = self._points_bbox()
         if rect is None:
             return
@@ -137,7 +136,6 @@ class Canvas(QGraphicsView):
 
         label = QGraphicsTextItem(str(point.index + 1))
         label.setDefaultTextColor(QColor("red"))
-        # Сдвиг подписи немного вправо и вверх от центра точки
         label.setPos(x + size / 2 + 2, y - size / 2 - 2)
         self.scene.addItem(label)
         self.dot_labels[point.index] = label
@@ -153,8 +151,6 @@ class Canvas(QGraphicsView):
             self.scene.removeItem(self.dot_labels[index])
             self.dot_labels.pop(index)
 
-        # После удаления индексы точек в таблице обычно съезжают.
-        # Сдвигаем ключи для всех элементов с индексом больше удалённого.
         keys = sorted(list(self.dots.keys()))
         for k in keys:
             if k > index:

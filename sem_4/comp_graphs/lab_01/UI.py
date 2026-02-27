@@ -106,50 +106,12 @@ class MainWindow(QWidget):
         self.selected_figure_index = 0
         self._draw_parallelogram()
 
-        #
-        # # 1) читаем d
-        # dx = self.spinbox_d_x.value()
-        # dy = self.spinbox_d_y.value()
-        #
-        # # 2) читаем точки A из таблицы (в математических координатах: Y вверх)
-        # points = []
-        # n = self.table.rowCount()
-        # for row in range(n):
-        #     x_item = self.table.item(row, 1)
-        #     y_item = self.table.item(row, 2)
-        #
-        #     x = float(x_item.text()) if x_item is not None else 0.0
-        #     y = float(y_item.text()) if y_item is not None else 0.0
-        #
-        #     points.append(Point(row, x, y))
-        #
-        # # 3) решаем
-        # ok, count, found, text = solve(points, dx, dy, max_draw=100)
-        # if not ok:
-        #     QMessageBox.warning(self, "Ошибка", text)
-        #     return
-        #
-        # # 4) текстовый вывод
-        # self.text_result.setText(text)
-        #
-        # # 5) графический вывод
-        # self.canvas.update_d_dot(dx, dy)
-        # self.canvas.clear_result_shapes()
-        #
-        # for a, b, c in found[:100]:
-        #     self.canvas.draw_parallelogram(a, b, c, dx, dy)
-        #
-        # self.canvas._ensure_all_points_visible(force=True)
 
     def _draw_parallelogram(self):
         if not self.parallelograms:
             QMessageBox.warning(self, "Ошибка", "Параллелограммы не найдены")
 
         self.canvas.draw_parallelogram(self.parallelograms[self.selected_figure_index])
-
-
-
-
 
     def canvas_update_d_dot(self):
         print(f"d({self.spinbox_d_x.value(), self.spinbox_d_y.value()})")

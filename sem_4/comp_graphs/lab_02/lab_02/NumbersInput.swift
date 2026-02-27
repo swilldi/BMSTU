@@ -11,14 +11,16 @@ struct NumbersInput: View {
     var title: String = "Название"
     var action: (() -> Void)? = nil
     var actionTitle: String = "Кнопка"
+    var range: ClosedRange<Double>
+    var step: Double
     
     @Binding var x: Double
     @Binding var y: Double
     
     var body: some View {
         GroupBox(title) {
-            Spinbox(title: "x:", value: $x)
-            Spinbox(title: "y:", value: $y)
+            Spinbox(title: "x:", value: $x, range: range, step: step)
+            Spinbox(title: "y:", value: $y, range: range, step: step)
             if let action = action {
                 Button(action: action) {
                     Text(actionTitle)
@@ -39,7 +41,7 @@ struct NumberInput: View {
     
     var body: some View {
         GroupBox(title) {
-            Spinbox(title: "Угол:", value: $angle)
+            Spinbox(title: "Угол:", value: $angle, range: -360...360, step: 5)
             if let action = action {
                 Button(action: action) {
                     Text(actionTitle)

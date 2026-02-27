@@ -13,5 +13,6 @@ struct lab_02App: App {
         WindowGroup {
             ContentView()
         }
+        .defaultSize(width: 800, height: 600)
     }
 }
