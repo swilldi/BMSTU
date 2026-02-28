@@ -2,7 +2,7 @@
 #include "error_codes.h"
 #include "points.h"
 
-
+// Выделение памяти для массива точек
 error_code points_data_allocate(point_t* &points, const size_t count)
 {
     point_t *tmp_arr = (point_t*)malloc(sizeof(point_t) * count);
@@ -14,37 +14,27 @@ error_code points_data_allocate(point_t* &points, const size_t count)
     return OK;
 }
 
+// Освобождение памяти из под массива точек
 void points_free(points_t &points)
 {
     std::free(points.data);
     points_init(points);
 }
 
+// Инициализавция структуры с массивом точек
 void points_init(points_t &points)
 {
     points.data = NULL;
     points.count = 0;
 }
 
-
-error_code points_is_valid(points_t points)
-{
-    if (!points.data)
-        return POINTS_INVALID;
-    if (points.count <= 0)
-        return POINTS_EMPTY;
-
-    return OK;
-}
-
-// чтение количества точек в файле
+// Чтение количества точек в файле
 static error_code count_points_read_from_file(size_t &count, FILE* const f)
 {
+    error_code rc = OK;
     if (!f)
         return FILE_INVALID;
 
-
-    error_code rc = OK;
     long tmp_count;
     if (fscanf(f, "%ld", &tmp_count) == 1)
     {
@@ -61,57 +51,53 @@ static error_code count_points_read_from_file(size_t &count, FILE* const f)
     return rc;
 }
 
-// чтение координато точек из файла
-error_code points_data_read_from_file(FILE* const f, points_t &points)
+// Чтение координат точек из файла
+error_code points_data_read_from_file(point_t* &array, const size_t count, FILE* const f)
 {
+    error_code rc = OK;
     if (!f)
         return FILE_INVALID;
-    if (points.count <= 0)
+    if (count <= 0)
         return POINTS_EMPTY;
 
-    error_code rc = OK;
-    for (size_t i = 0; i < points.count; i++)
+    rc = points_data_allocate(array, count);
+    for (size_t i = 0; rc == OK && i < count; i++)
     {
-        rc = point_read_from_file(points.data[i], f);
-        if (rc != OK)
-            break;
+        rc = point_read_from_file(array[i], f);
     }
     return rc;
 }
 
-// чтение точек из файла
-error_code points_read_from_file(FILE* const f, points_t &points)
+// Чтение точек из файла
+error_code points_read_from_file(points_t &points, FILE* const f)
 {
+    error_code rc = OK;
     if (!f)
         return FILE_INVALID;
 
     // количество точек
-    error_code rc = count_points_read_from_file(points.count, f);
+    rc = count_points_read_from_file(points.count, f);
     if (rc == OK)
     {
-        // выделение памяти под точки
-        rc = points_data_allocate(points.data, points.count);
-        if (rc == OK)
-        {
-            // чтение точек
-            rc = points_data_read_from_file(f, points);
-            if (rc != OK)
-                points_free(points);
-        }
+        // чтение точек
+        rc = points_data_read_from_file(points.data, points.count, f);
+        if (rc != OK)
+            points_free(points);
     }
 
     return rc;
 }
 
-// запись точек в файл
+// Запись точек в файл
 error_code points_write_to_file(FILE* const f, const points_t &points)
 {
     error_code rc = OK;
-    rc = points_is_valid(points);
-    if (rc != OK)
-        return rc;
     if (!f)
         return FILE_INVALID;
+    if (!points.data)
+        return POINTS_INVALID;
+    if (points.count <= 0)
+        return POINTS_EMPTY;
 
     fprintf(f, "%lu\n", points.count);
     for (size_t i = 0; i < points.count; i++)
@@ -124,13 +110,14 @@ error_code points_write_to_file(FILE* const f, const points_t &points)
     return rc;
 }
 
-// перемещение точек
+// Перемещение точек
 error_code points_move(points_t &points, const move_data_t &move)
 {
-    error_code rc = points_is_valid(points);
-    if (rc != OK)
-        return rc;
-
+    error_code rc = OK;
+    if (!points.data)
+        return POINTS_INVALID;
+    if (points.count <= 0)
+        return POINTS_EMPTY;
 
     for (size_t i = 0; i < points.count; i++)
         point_move(points.data[i], move);
@@ -138,12 +125,14 @@ error_code points_move(points_t &points, const move_data_t &move)
     return rc;
 }
 
-// вращение точек
+// Вращение точек
 error_code points_rotate(points_t &points, const rotate_data_t &rotate, const point_t center)
 {
-    error_code rc = points_is_valid(points);
-    if (rc != OK)
-        return rc;
+    error_code rc = OK;
+    if (!points.data)
+        return POINTS_INVALID;
+    if (points.count <= 0)
+        return POINTS_EMPTY;
 
     for (size_t i = 0; i < points.count; i++)
         point_rotate(points.data[i], rotate, center);
@@ -151,12 +140,14 @@ error_code points_rotate(points_t &points, const rotate_data_t &rotate, const po
     return rc;
 }
 
-// масштабирование точек
+// Масштабирование точек
 error_code points_scale(points_t &points, const scale_data_t &scale, const point_t center)
 {
-    error_code rc = points_is_valid(points);
-    if (rc != OK)
-        return rc;
+    error_code rc = OK;
+    if (!points.data)
+        return POINTS_INVALID;
+    if (points.count <= 0)
+        return POINTS_EMPTY;
 
     for (size_t i = 0; i < points.count; i++)
         point_scale(points.data[i], scale, center);
@@ -165,16 +156,16 @@ error_code points_scale(points_t &points, const scale_data_t &scale, const point
 }
 
 
-// подсчет центра точек
+// Подсчет центра точек
 error_code points_center(points_t &points, point_t &center)
 {
-    error_code rc = points_is_valid(points);
-    if (rc != OK)
-        return rc;
-
+    error_code rc = OK;
+    if (!points.data)
+        return POINTS_INVALID;
+    if (points.count <= 0)
+        return POINTS_EMPTY;
 
     point_default(center);
-
     for (size_t i = 0; i < points.count; i++)
     {
         point_t p = points.data[i];
