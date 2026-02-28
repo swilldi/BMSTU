@@ -17,3 +17,4 @@ sem_2/C/lab_works/tamplate_directiry/
 !**/data/*.txt
 **/private/**
 **/oop/**/build
+**/.qtcreator/**
