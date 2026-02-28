@@ -9,7 +9,7 @@ void edge_init(edge_t &edge, size_t from_index, size_t to_index)
 }
 
 // чтение ребра из файла
-error_code edge_read_from_file(FILE* const f, edge_t &edge)
+error_code edge_read_from_file(edge_t &edge, FILE* const f)
 {
     if (!f)
         return FILE_INVALID;

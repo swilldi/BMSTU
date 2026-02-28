@@ -15,7 +15,7 @@ void point_default(point_t &point)
 }
 
 // чтегие точки из файла
-error_code point_read_from_file(FILE* const f, point_t &point)
+error_code point_read_from_file(point_t &point, FILE* const f)
 {
     if (!f)
         return FILE_INVALID;

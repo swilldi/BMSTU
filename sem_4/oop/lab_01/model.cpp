@@ -31,7 +31,7 @@ error_code model_is_valid(const model_t &model)
 
 
 // чтение модели из файла
-error_code model_read_from_file(FILE* const f, model_t &model)
+error_code model_read_from_file(model_t &model, FILE* const f)
 {
     if (!f)
         return FILE_INVALID;
@@ -39,14 +39,14 @@ error_code model_read_from_file(FILE* const f, model_t &model)
 
     error_code rc = OK;
     // чтение точек
-    rc = points_read_from_file(f, model.points);
+    rc = points_read_from_file(model.points, f);
     if (rc == OK)
     {
         // определение центра модели
-        points_center(model.points, model.center);
+        points_center(model.points, model.center); // <-- киндер сюрприз: центр модели не хранится в файле, а вычисляется по точкам
 
         // чтение вершин
-        rc = edges_read_from_file(f, model.edges);
+        rc = edges_read_from_file(model.edges, f);
         if (rc != OK)
         {
             model_free(model);

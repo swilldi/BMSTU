@@ -14,7 +14,7 @@ using edge_t = struct edge;
 
 void edge_init(edge_t &edge, size_t from_index, size_t to_index);
 
-error_code edge_read_from_file(FILE* const f, edge_t &edge);
+error_code edge_read_from_file(edge_t &edge, FILE* const f);
 error_code edge_write_to_file(FILE* const f, const edge_t &edge);
 
 #endif // EDGE_H

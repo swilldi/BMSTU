@@ -4,7 +4,7 @@
 #include "edges.h"
 
 
-error_code edges_create(edges_t &edges, size_t count)
+error_code edges_allocate(edges_t &edges, size_t count)
 {
     error_code rc = OK;
 
@@ -48,7 +48,7 @@ error_code edges_is_valid(edges_t edges)
 }
 
 // чтение количества ребер в файле
-error_code count_edges_read_from_file(FILE* const f, size_t &count)
+error_code count_edges_read_from_file(size_t &count, FILE* const f)
 {
     if (!f)
         return FILE_INVALID;
@@ -71,7 +71,7 @@ error_code count_edges_read_from_file(FILE* const f, size_t &count)
 }
 
 // чтение точек из которых состоят ребра из файла
-error_code edges_data_read_from_file(FILE* const f, edges_t &edges)
+error_code edges_data_read_from_file(edges_t &edges, FILE* const f)
 {
     if (!f)
         return FILE_INVALID;
@@ -82,7 +82,7 @@ error_code edges_data_read_from_file(FILE* const f, edges_t &edges)
     error_code rc = OK;
     for (size_t i = 0; i < edges.count; i++)
     {
-        rc = edge_read_from_file(f, edges.data[i]);
+        rc = edge_read_from_file(edges.data[i], f);
         if (rc != OK)
         {
             edges_free(edges);
@@ -101,13 +101,13 @@ error_code edges_read_from_file(FILE* const f, edges_t &edges)
 
     // чтение количества ребер и выделение памяти
     size_t edges_count;
-    error_code rc = count_edges_read_from_file(f, edges_count);
+    error_code rc = count_edges_read_from_file(edges_count, f);
     if (rc == OK)
     {
-        rc = edges_create(edges, edges_count);
+        rc = edges_allocate(edges, edges_count);
         if (rc == OK)
         {
-            rc = edges_data_read_from_file(f, edges);
+            rc = edges_data_read_from_file(edges, f);
             if (rc != OK)
                 edges_free(edges);
         }

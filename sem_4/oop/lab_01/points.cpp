@@ -3,7 +3,7 @@
 #include "points.h"
 
 
-error_code points_data_create(point_t* &points, const size_t count)
+error_code points_data_allocate(point_t* &points, const size_t count)
 {
     point_t *tmp_arr = (point_t*)malloc(sizeof(point_t) * count);
     if (!tmp_arr)
@@ -17,14 +17,13 @@ error_code points_data_create(point_t* &points, const size_t count)
 void points_free(points_t &points)
 {
     std::free(points.data);
-    points.data = NULL;
-    points.count = 0;
+    points_init(points);
 }
 
 void points_init(points_t &points)
 {
-    points.count = 0;
     points.data = NULL;
+    points.count = 0;
 }
 
 
@@ -39,7 +38,7 @@ error_code points_is_valid(points_t points)
 }
 
 // чтение количества точек в файле
-static error_code count_points_read_from_file(FILE* const f, size_t &count)
+static error_code count_points_read_from_file(size_t &count, FILE* const f)
 {
     if (!f)
         return FILE_INVALID;
@@ -73,7 +72,7 @@ error_code points_data_read_from_file(FILE* const f, points_t &points)
     error_code rc = OK;
     for (size_t i = 0; i < points.count; i++)
     {
-        rc = point_read_from_file(f, points.data[i]);
+        rc = point_read_from_file(points.data[i], f);
         if (rc != OK)
             break;
     }
@@ -87,11 +86,11 @@ error_code points_read_from_file(FILE* const f, points_t &points)
         return FILE_INVALID;
 
     // количество точек
-    error_code rc = count_points_read_from_file(f, points.count);
+    error_code rc = count_points_read_from_file(points.count, f);
     if (rc == OK)
     {
         // выделение памяти под точки
-        rc = points_data_create(points.data, points.count);
+        rc = points_data_allocate(points.data, points.count);
         if (rc == OK)
         {
             // чтение точек
