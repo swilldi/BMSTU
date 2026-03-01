@@ -2,19 +2,20 @@
 .idea
 __pycache__
 .vscode
-sem_2/C/lab_works/tamplate_directiry/
-**/build/**
+*.xcodeproj
+
+# Проекты в QtCreator
+**/.qtcreator/**
+**/oop/**/build
+
 *.o
 *.exe
-*.docx
 *.png
 *.jpg
 *.jpeg
+*.docx
 *.d
 *.dot
 *.txt
 .devcontainer
 !**/data/*.txt
-**/private/**
-**/oop/**/build
-**/.qtcreator/**
