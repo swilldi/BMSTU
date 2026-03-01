@@ -46,12 +46,19 @@ void select_error_message(const error_code rc, QString &qmsg)
         case EDGES_EMPTY:
             qmsg = QStringLiteral("Количество ребер 0");    
             break;
+        case EDGES_INVALID_INDEX_RANGE:
+            qmsg = QStringLiteral("Некоректный индекс точки при описании ребра");    
+            break;
 
         case POINTS_INVALID:
             qmsg = QStringLiteral("Некорректные точки");    
             break;
         case POINTS_EMPTY:
             qmsg = QStringLiteral("Количество точек 0");    
+            break;
+
+        case ACTION_INVALID:
+            qmsg = QStringLiteral("Некорректное действие");    
             break;
             
         default:

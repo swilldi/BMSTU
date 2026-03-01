@@ -22,17 +22,17 @@ struct request
     action_t action;
     union 
     {
+        draw_scene_t scene;
         const char *file_name;
         move_data_t move;
         rotate_data_t rotate;
-        scale_data_t scale;
-        draw_scene_t scene;
+        scale_data_t scale; 
     };
 };
 
 using request_t = struct request;
 
-error_code complete_request(request_t request);
+error_code complete_request(const request_t &request);
 
 
 #endif // ACTIONS_H

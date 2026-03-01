@@ -6,6 +6,7 @@ enum error_code
     OK = 0,
 
     // Ошибки файла
+    FILE_NAME_INVALID,
     FILE_OPEN_ERR,
     FILE_INVALID,
     FILE_INVALID_TYPE_DATA,
@@ -24,11 +25,13 @@ enum error_code
     // Ошибки с ребрами
     EDGES_INVALID,
     EDGES_EMPTY,
+    EDGES_INVALID_INDEX_RANGE,
 
     // Ошибки с точками
     POINTS_INVALID,
     POINTS_EMPTY,
 
+    ACTION_INVALID,
 };
 
 using error_code = enum error_code;

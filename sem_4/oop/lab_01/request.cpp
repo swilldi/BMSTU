@@ -1,14 +1,11 @@
 #include "request.h"
+#include "model.h"
 
 
-error_code complete_request(request_t request)
+error_code complete_request(const request_t &request)
 {
     error_code rc = OK;
-    static model_t model = model_init();  // будут приколы, если была загружена модель и новая загрузка не удалась
-    FILE* f;
-
-    if (model_is_valid(model) != OK && request.action != LOAD && request.action != EXIT)
-        return MODEL_NOT_LOADED;
+    static model_t model = model_init();
 
     switch (request.action)
     {
@@ -27,32 +24,17 @@ error_code complete_request(request_t request)
             break;
 
         case LOAD:
-            f = fopen(request.file_name, "r");
-            if (!f)
-            {
-                rc = FILE_OPEN_ERR;
-                break;
-            }
-            
-            // чтение модели
-            rc = model_read_from_file(f, model);
-            fclose(f);
+            rc = model_load(model, request.file_name);
             break;
         case SAVE:
-            f = fopen(request.file_name, "w");
-            if (!f)
-            {
-                rc = FILE_OPEN_ERR;
-                break;
-            }
-            rc = model_write_to_file(f, model);
-            fclose(f);
+            rc = model_save(request.file_name, model);
             break;
 
         case EXIT:
             model_free(model);
             break;
         default:
+            rc = ACTION_INVALID;
             break;
     }
 

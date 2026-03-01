@@ -2,19 +2,26 @@
 #include "error_codes.h"
 #include <cmath>
 
+static void point_rotate_by_x(point_t &point, const double angle);
+static void point_rotate_by_y(point_t &point, const double angle);
+static void point_rotate_by_z(point_t &point, const double angle);
+static void apply_scale(point_t &point, const scale_data_t &scale);
 
+// Инициализация точки
 void point_init(point_t &point, const double x, const double y, const double z)
 {
     point.x = x;
     point.y = y;
     point.z = z;
 }
+
+// Дефолтное значение точки
 void point_default(point_t &point)
 {
     point.x = point.y = point.z = 0;
 }
 
-// чтегие точки из файла
+// Чтение точки из файла
 error_code point_read_from_file(point_t &point, FILE* const f)
 {
     if (!f)
@@ -27,19 +34,18 @@ error_code point_read_from_file(point_t &point, FILE* const f)
     return rc;
 }
 
-// запись точку в файл
+// Запись точки в файл
 error_code point_write_to_file(FILE* const f, const point_t &point)
 {
     if (!f)
         return FILE_INVALID;
 
-    error_code rc = OK;
     fprintf(f, "%lf %lf %lf\n", point.x, point.y, point.z);
 
-    return rc;
+    return OK;
 }
 
-// === Перемещение точки ===
+// Перемещение точки
 void point_move(point_t &point, const move_data_t &move)
 {
     point.x += move.x;
@@ -61,18 +67,29 @@ static void point_from_origin(point_t &point, const point_t center)
     point.z += center.z;
 }
 
-// === Вращение точки ===
+// Вращение точки
+void point_rotate(point_t &point, const rotate_data_t &rotate, const point_t center)
+{
+    point_to_origin(point, center);
+
+    point_rotate_by_x(point, rotate.x);
+    point_rotate_by_y(point, rotate.y);
+    point_rotate_by_z(point, rotate.z);
+
+    point_from_origin(point, center);
+}
+
 static double to_radian(double angle)
 {
     return angle * M_PI / 180;
 }
 
-static void apply_rotate(double &a, double &b, double angle_cos, double angle_sin)
+static void apply_rotate(double &x, double &y, double angle_cos, double angle_sin)
 {
-    double tmp_a = a, tmp_b = b;
+    double tmp_x = x, tmp_y = y;
 
-    a = tmp_a * angle_cos + tmp_b * angle_sin;
-    b = -tmp_a * angle_sin + tmp_b * angle_cos;
+    x = tmp_x * angle_cos + tmp_y * angle_sin;
+    y = -tmp_x * angle_sin + tmp_y * angle_cos;
 }
 
 static void point_rotate_by_x(point_t &point, const double angle)
@@ -93,50 +110,20 @@ static void point_rotate_by_z(point_t &point, const double angle)
     apply_rotate(point.x, point.y, angle_cos, angle_sin);
 }
 
-void point_rotate(point_t &point, const rotate_data_t &rotate, const point_t center)
+
+
+// Масштабирование точки
+void point_scale(point_t &point, const scale_data_t &scale, const point_t center)
 {
     point_to_origin(point, center);
-
-    point_rotate_by_x(point, rotate.x);
-    point_rotate_by_y(point, rotate.y);
-    point_rotate_by_z(point, rotate.z);
-
+    apply_scale(point, scale);
     point_from_origin(point, center);
 }
 
-// === Масштабирование точки ===
-static void point_scale(point_t &point, const scale_data_t scale)
+static void apply_scale(point_t &point, const scale_data_t &scale)
 {
     point.x *= scale.x;
     point.y *= scale.y;
     point.z *= scale.z;
 }
-
-void point_scale(point_t &point, const scale_data_t &scale, const point_t center)
-{
-    point_to_origin(point, center);
-    point_scale(point, scale);
-    point_from_origin(point, center);
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

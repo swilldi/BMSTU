@@ -18,7 +18,10 @@ using model_t = struct model;
 model_t model_init();
 void model_free(model_t &model);
 
-error_code model_is_valid(const model_t &model);
+error_code model_check(const model_t &model);
+
+error_code model_load(model_t &model, const char *file_name);
+error_code model_save(const char *file_name, const model_t &model);
 
 error_code model_read_from_file(model_t &model, FILE* const f);
 error_code model_write_to_file(FILE* const f, const model_t &model);

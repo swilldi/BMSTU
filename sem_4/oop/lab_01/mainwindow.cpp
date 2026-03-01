@@ -19,12 +19,14 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), ui(new Ui::MainWin
     ui->graphicsView->setScene(scene);
     ui->graphicsView->setRenderHint(QPainter::Antialiasing);
 
-    complete_request({ .action=LOAD, .file_name="/Users/dmitriy/BMSTU/sem_4/oop/lab_01/figures/cube.txt" });
-    draw();
+    // complete_request({ .action=LOAD, .file_name="./figures/cube.txt" });
+    // draw();
 }
 
 MainWindow::~MainWindow()
 {
+    request_t request = { .action = EXIT };
+    complete_request(request);
     delete ui;
 }
 
@@ -37,17 +39,17 @@ void MainWindow::on_move_button_clicked()
     double x = ui->move_x->value(), y = ui->move_y->value(), z = ui->move_z->value();
     std::cout << "Фигура будет сдвинута по осям:\nx: " << x << "\ny: " << y << "\nz: " << z << std::endl;
 
-    request_t request = { .action = MOVE, .move = { x, y, z} };
+    request_t request = { .action = MOVE, .move = { x, y, z } };
     rc = complete_request(request);
-    if (rc == OK)
+    if (rc != OK)
+    {
+        error_message_box(rc);
+    }
+    else
     {
         rc = draw();
         if (rc != OK)
             error_message_box(rc);
-    }
-    else
-    {
-        error_message_box(rc);
     }
 }
 
@@ -60,15 +62,15 @@ void MainWindow::on_rotate_button_clicked()
     error_code rc = OK;
     request_t request = { .action = ROTATE, .rotate = { x, y, z } };
     rc = complete_request(request);
-    if (rc == OK)
+    if (rc != OK)
+    {
+        error_message_box(rc);
+    }
+    else
     {
         rc = draw();
         if (rc != OK)
             error_message_box(rc);
-    }
-    else
-    {
-        error_message_box(rc);
     }
 }
 
@@ -81,15 +83,15 @@ void MainWindow::on_scale_button_clicked()
     error_code rc = OK;
     request_t request = { .action = SCALE, .scale = { x, y, z } };
     rc = complete_request(request);
-    if (rc == OK)
+    if (rc != OK)
+    {
+        error_message_box(rc);
+    }
+    else
     {
         rc = draw();
         if (rc != OK)
             error_message_box(rc);
-    }
-    else
-    {
-        error_message_box(rc);
     }
 }
 
@@ -111,15 +113,15 @@ void MainWindow::on_save_model_button_clicked()
 
     request_t request = { .action = SAVE, .file_name = file_name };
     rc = complete_request(request);
-    if (rc == OK)
+    if (rc != OK)
+    {
+        error_message_box(rc);
+    }
+    else
     {
         rc = draw();
         if (rc != OK)
             error_message_box(rc);
-    }
-    else
-    {
-        error_message_box(rc);
     }
 }
 
@@ -140,15 +142,15 @@ void MainWindow::on_load_model_button_clicked()
     request_t request = { .action = LOAD, .file_name = file_name };
     rc = complete_request(request);
     // rc = FILE_OPEN_ERR;
-    if (rc == OK)
+    if (rc != OK)
+    {
+        error_message_box(rc);
+    }
+    else
     {
         rc = draw();
         if (rc != OK)
             error_message_box(rc);
-    }
-    else
-    {
-        error_message_box(rc);
     }
 
 }
