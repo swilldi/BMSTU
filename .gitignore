@@ -3,13 +3,13 @@
 __pycache__
 .vscode
 sem_2/C/lab_works/tamplate_directiry/
+**/build/**
 *.o
 *.exe
 *.docx
 *.png
 *.jpg
 *.jpeg
-*.xcodeproj
 *.d
 *.dot
 *.txt
