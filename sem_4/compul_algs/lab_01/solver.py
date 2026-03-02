@@ -4,6 +4,7 @@ from interpolation import newton_polynomial2D, newton_polynomial
 EPS = 1e-5
 TIME_SCALE = 1e-6
 TIME_EPS_FACTOR = 0.5
+R_SCALE = L_SCALE = 1e-2
 
 class Solver:
     def __init__(self, I_table, Nh_table, sigma_tabe, c_table, q_table):
@@ -80,7 +81,8 @@ class Solver:
 
     def solve(self, t0: float, t_end: float, t_step: float, T0: float, R: float, l: float, px: float):
         Tx = 300
-        self.R = R
+        self.R = R * R_SCALE
+        l *= L_SCALE
         self.solve_p_right = 7.242 * 10 ** 4 * px / Tx
         t = t0 * TIME_SCALE
         t_end *= TIME_SCALE

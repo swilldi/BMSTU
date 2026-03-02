@@ -10,6 +10,7 @@ from PyQt6.QtWidgets import QWidget, QHBoxLayout, QVBoxLayout, QGroupBox, QLabel
 class MainWindow(QWidget):
     def __init__(self):
         super().__init__()
+        self.setMinimumHeight(1000)
 
 
         self.solver = Solver(*read_data())
@@ -82,8 +83,9 @@ class MainWindow(QWidget):
                 label.setText(f"{header}, K")
             elif header in ["px"]:
                 label.setText(f"{header}, МПа")
-            elif header in ["l"]:
+            elif header in ["l", "R"]:
                 label.setText(f"{header}, cм")
+
 
             spinbox = QDoubleSpinBox()
             spinbox.setMinimumWidth(120)
