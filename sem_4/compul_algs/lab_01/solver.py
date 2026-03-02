@@ -46,7 +46,7 @@ class Solver:
             raise ValueError("solve_p_right is not initialized")
 
         # диапазон поиска корня
-        a, b = 0.3 * 1e6, 2.5 * 10e6
+        a, b = 0.3, 2.5
 
         # функция вычисления корня
         def f(p: float) -> float:
@@ -59,6 +59,9 @@ class Solver:
             return a
         if fb == 0:
             return b
+
+        # if fa * fb < 0:
+        #     print("=)")
 
         while b - a > EPS:
             p = (b + a) / 2
@@ -81,8 +84,7 @@ class Solver:
 
     def solve(self, t0: float, t_end: float, t_step: float, T0: float, R: float, l: float, px: float):
         Tx = 300
-        self.R = R * R_SCALE
-        l *= L_SCALE
+        self.R = R
         self.solve_p_right = 7.242 * 10 ** 4 * px / Tx
         t = t0 * TIME_SCALE
         t_end *= TIME_SCALE
@@ -118,14 +120,3 @@ class Solver:
             t += t_step
 
         return data
-
-
-'''
-На входе:
-t_0
-t_k
-step
-
-T_0
-
-'''

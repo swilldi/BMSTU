@@ -12,6 +12,8 @@ class MainWindow(QWidget):
         super().__init__()
         self.setMinimumHeight(1000)
 
+        self.graph_headers = ["T", "p", "sigma", "q", "Rd", "Fr"]
+
 
         self.solver = Solver(*read_data())
 
@@ -30,8 +32,8 @@ class MainWindow(QWidget):
         spinbox["step"].setValue(1)
         spinbox["T0"].setValue(5400)
         spinbox["px"].setValue(0.04)
-        spinbox["R"].setValue(1)
-        spinbox["l"].setValue(10)
+        spinbox["R"].setValue(0.25)
+        spinbox["l"].setValue(12)
 
     def ui_setup(self):
         self.input_setup()
@@ -55,6 +57,16 @@ class MainWindow(QWidget):
             "Fr": pg.PlotWidget(),
         }
         self.all_graph = all_garph
+
+        for graph in all_garph.values():
+            graph.setLabel("bottom", "t, мкс (10^-6)")
+
+        all_garph["T"].setLabel("left", "T, K")
+        all_garph["p"].setLabel("left", "p, МПа")
+        all_garph["sigma"].setLabel("left", "sigma, 1 / (omega * см)")
+        all_garph["q"].setLabel("left", "q, W / см^3")
+        all_garph["Rd"].setLabel("left", "Rd, Omega")
+        all_garph["Fr"].setLabel("left", "Fr, W / см^2")
 
         grid = QGridLayout(gbox)
         grid.addWidget(all_garph["T"], 0, 0)
@@ -115,8 +127,10 @@ class MainWindow(QWidget):
 
     def draw_graphs(self):
         data = self.get_data()
-        for header in ["T", "p", "sigma", "q", "Rd", "Fr"]:
+        for header in self.graph_headers:
+            self.all_graph[header].clear()
             self.all_graph[header].plot(data["t"], data[header])
+            self.all_graph[header]
             self.all_graph[header].setTitle(f"{header}(t)", size="20pt")
             print(f"{header}: {data[header]}")
 
