@@ -10,7 +10,7 @@ from PyQt6.QtWidgets import QWidget, QHBoxLayout, QVBoxLayout, QGroupBox, QLabel
 class MainWindow(QWidget):
     def __init__(self):
         super().__init__()
-        self.setMinimumHeight(1000)
+        self.setMinimumHeight(800)
 
         self.graph_headers = ["T", "p", "sigma", "q", "Rd", "Fr"]
 

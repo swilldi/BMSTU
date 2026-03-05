@@ -8,6 +8,29 @@ __pycache__
 **/.qtcreator/**
 **/oop/**/build
 
+# --- Xcode: ignore all project internals by default
+**/*.xcodeproj/**
+# Allow traversing the directories we need
+!**/*.xcodeproj/
+!**/*.xcodeproj/xcshareddata/
+!**/*.xcodeproj/xcshareddata/xcschemes/
+!**/*.xcodeproj/xcshareddata/swiftpm/
+# Allow the essentials
+!**/*.xcodeproj/project.pbxproj
+!**/*.xcodeproj/xcshareddata/xcschemes/*.xcscheme
+!**/*.xcodeproj/xcshareddata/swiftpm/Package.resolved
+# --- Workspace
+**/*.xcworkspace/**
+!**/*.xcworkspace/
+!**/*.xcworkspace/contents.xcworkspacedata
+!**/*.xcworkspace/xcshareddata/**
+!**/*.xcworkspace/xcshareddata/
+# --- SwiftPM
+!Package.swift
+!Package.resolved
+# --- Build configs
+!*.xcconfig
+
 *.o
 *.exe
 *.png

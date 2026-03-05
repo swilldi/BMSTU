@@ -34,7 +34,7 @@ class Solver:
 
     def phi(self, t: float, T: float, p: float) -> float:
         I = self.I_of(t)
-        j = I / (pi * self.R**2)
+        j = I * 0.6 / (pi * self.R**2)
         sigma = self.sigma_of(T, p)
         q = self.q_of(T, p)
         c = self.c_of(T, p)
