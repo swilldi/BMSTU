@@ -57,7 +57,7 @@ struct GridCanvasView: View {
             
             
 
-        }.frame(width: 600, height: 600)
+        }.frame(width: 800, height: 800)
     }
     
     func gridPath(_ m: Metrics) -> Path {

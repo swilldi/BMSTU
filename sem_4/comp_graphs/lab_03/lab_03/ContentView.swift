@@ -15,12 +15,15 @@ func pointRotate(_ p: CGPoint, angle angleGrad: Int, center: CGPoint) -> CGPoint
     let x = x0 * cos(CGFloat(angle)) - y0 * sin(CGFloat(angle)) + center.x,
         y = x0 * sin(CGFloat(angle)) + y0 * cos(CGFloat(angle)) + center.y
     
-    return CGPoint(x: x, y: y)
+    return CGPoint(x: round(x), y: round(y))
 }
 
 enum DrawAlgo: String, CaseIterable, Identifiable {
     case dda = "ЦДА"
-    case bresenham = "Бренсшман"
+    case bresenham = "Брезенхема"
+    case bresenhamInt = "Брезенхема:\nцелые числа"
+    case bresenhamNoStep = "Брезенхема:\nустарнение\nступенчатости"
+    case vu = "Ву"
     var id: String { rawValue }
 }
 
@@ -34,11 +37,11 @@ struct ContentView: View {
     
     @State var cellCount = 11
     @State var pixelColor: Color = .black
-    @State var lines = [PixelLine(pixels: lineDDA(CGPoint(x: 50, y: 50), CGPoint(x: 100 - 2, y: 50)), color: .black)]
+    @State var lines = [PixelLine]()
     
     @State var angle = 0
-    @State var algo: DrawAlgo = .dda
-    @State var linePixels: (CGPoint, CGPoint) -> [Pixel] = lineDDA
+    @State var algo: DrawAlgo = .bresenham
+    @State var linePixels: (CGPoint, CGPoint) -> [Pixel] = lineBresenham
     @State var lineMode = LineMode.twoPoints
     
     @State var x0 = 0
@@ -52,7 +55,8 @@ struct ContentView: View {
         HStack {
             GridCanvasView(cellCount: $cellCount, lines: $lines)
                 .onAppear {
-                    cellCount = 11
+                    applyCurrentAlgorithm()
+                    updateLine()
                 }
             
             Divider()
@@ -67,6 +71,7 @@ struct ContentView: View {
 //                    .pickerStyle(.inline)
 //                }
                 
+                Divider().padding()
                 Text("Режим работы")
                 Picker("", selection: $lineMode) {
                         ForEach(LineMode.allCases) { m in
@@ -74,10 +79,8 @@ struct ContentView: View {
                         }
                     }
                     .pickerStyle(.radioGroup)
-                    .onTapGesture {
-                        updateLine()
-                    }
                 
+                Divider().padding()
                 Text("Алгоритм")
                 Picker("", selection: $algo) {
                         ForEach(DrawAlgo.allCases) { m in
@@ -85,12 +88,13 @@ struct ContentView: View {
                         }
                     }
                     .pickerStyle(.radioGroup)
-                Divider()
+                
+                Divider().padding()
                 Spinbox(title: "Количество клеток", value: $cellCount, range: 5...1000)
-                Divider()
+                Divider().padding()
                 
                 if lineMode == .twoPoints {
-                    let maxLen = cellCount / 2
+                    let maxLen = cellCount / 2 - 1
                     let range = -maxLen...maxLen
                     HStack {
                         Spinbox(title: "X0", value: $x0, range: range, step: 1)
@@ -102,6 +106,26 @@ struct ContentView: View {
                     }
                 } else if lineMode == .centerAngle {
                     Spinbox(title: "Угол", value: $angle, range: -1000...1000)
+                }
+                
+                
+                Divider().padding()
+                Button {
+                    if let line = lines.last {
+                        lines.append(line)
+                    }
+                    updateLine()
+                } label: {
+                    Text("Сохранить линию")
+                        .frame(maxWidth: .infinity)
+                }
+                
+                Button {
+                    lines.removeAll()
+                    updateLine()
+                } label: {
+                    Text("Очистить линии")
+                        .frame(maxWidth: .infinity)
                 }
                 
                 Spacer()
@@ -123,12 +147,11 @@ struct ContentView: View {
                 updateLine()
             }
             .onChange(of: algo) {
-                switch algo {
-                case .dda:
-                    linePixels = lineDDA
-                default:
-                    break
-                }
+                applyCurrentAlgorithm()
+                updateLine()
+            }
+            .onChange(of: lineMode) {
+                updateLine()
             }
             .onChange(of: x0) {
                 updateLine()
@@ -145,19 +168,40 @@ struct ContentView: View {
             
         }
     }
+
+    func applyCurrentAlgorithm() {
+        switch algo {
+        case .dda:
+            linePixels = lineDDA
+        case .bresenham:
+            linePixels = lineBresenham
+        case .bresenhamInt:
+            linePixels = bresenhamInt
+        case .bresenhamNoStep:
+            break
+        case .vu:
+            break
+        }
+    }
     
     func updateLine() {
+        if lines.count != 0 {
+            lines.removeLast()
+        }
+        
         let cx = cellCount / 2, cy = cellCount / 2
         var startPoint: CGPoint, endPoint: CGPoint
+        
         switch lineMode {
         case .twoPoints:
             startPoint = CGPoint(x: cx + x0, y: cy + y0)
             endPoint = CGPoint(x: cx + x1, y: cy + y1)
         case .centerAngle:
             startPoint = CGPoint(x: cx, y: cy)
-            endPoint = pointRotate(CGPoint(x: cellCount, y: cy), angle: angle, center: startPoint)
+            endPoint = pointRotate(CGPoint(x: cellCount - 1, y: cy), angle: angle, center: startPoint)
         }
-        lines = [PixelLine(pixels: linePixels(startPoint, endPoint), color: pixelColor)]
+        
+        lines.append(PixelLine(pixels: linePixels(startPoint, endPoint), color: pixelColor))
     }
 }
 

@@ -37,5 +37,5 @@ struct ColorSelecter: View {
 }
 
 #Preview {
-    ColorSelecter(selectedColor: .constant(.gray))
+    ColorSelecter(selectedColor: .constant(.black))
 }
