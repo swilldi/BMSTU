@@ -40,8 +40,8 @@ struct ContentView: View {
     @State var lines = [PixelLine]()
     
     @State var angle = 0
-    @State var algo: DrawAlgo = .bresenham
-    @State var linePixels: (CGPoint, CGPoint) -> [Pixel] = lineBresenham
+    @State var algo: DrawAlgo = .vu
+    @State var linePixels: (CGPoint, CGPoint) -> [Pixel] = lineVu
     @State var lineMode = LineMode.twoPoints
     
     @State var x0 = 0
@@ -62,54 +62,52 @@ struct ContentView: View {
             Divider()
             
             VStack {
+                Spinbox(title: "Количество клеток", value: $cellCount, range: 5...1000)
+                    .padding(.top)
+                Divider().padding()
+                
                 ColorSelecter(selectedColor: $pixelColor)
                 
-//                Picker("Алгоритм", selection: $algo) {
-//                    ForEach(DrawAlgo.allCases) { alg in
-//                        Text(alg.rawValue).tag(alg)
-//                    }
-//                    .pickerStyle(.inline)
-//                }
-                
                 Divider().padding()
-                Text("Режим работы")
-                Picker("", selection: $lineMode) {
-                        ForEach(LineMode.allCases) { m in
-                            Text(m.rawValue).tag(m)
-                        }
-                    }
-                    .pickerStyle(.radioGroup)
-                
-                Divider().padding()
-                Text("Алгоритм")
+                Text("Алгоритм").font(.headline)
                 Picker("", selection: $algo) {
-                        ForEach(DrawAlgo.allCases) { m in
-                            Text(m.rawValue).tag(m)
-                        }
+                    ForEach(DrawAlgo.allCases) { m in
+                        Text(m.rawValue).tag(m)
                     }
-                    .pickerStyle(.radioGroup)
-                
-                Divider().padding()
-                Spinbox(title: "Количество клеток", value: $cellCount, range: 5...1000)
-                Divider().padding()
-                
-                if lineMode == .twoPoints {
-                    let maxLen = cellCount / 2 - 1
-                    let range = -maxLen...maxLen
-                    HStack {
-                        Spinbox(title: "X0", value: $x0, range: range, step: 1)
-                        Spinbox(title: "Y0", value: $y0, range: range, step: 1)
-                    }
-                    HStack {
-                        Spinbox(title: "X1", value: $x1, range: range, step: 1)
-                        Spinbox(title: "Y1", value: $y1, range: range, step: 1)
-                    }
-                } else if lineMode == .centerAngle {
-                    Spinbox(title: "Угол", value: $angle, range: -1000...1000)
                 }
-                
+                .pickerStyle(.radioGroup)
                 
                 Divider().padding()
+                
+                Text("Режим работы").font(.headline)
+                Picker("", selection: $lineMode) {
+                    ForEach(LineMode.allCases) { m in
+                        Text(m.rawValue).tag(m)
+                    }
+                }
+                .pickerStyle(.radioGroup)
+                
+                
+                GroupBox {
+                    if lineMode == .twoPoints {
+                        let maxLen = cellCount / 2 - 1
+                        let range = -maxLen...maxLen
+                        HStack {
+                            Spinbox(title: "X0", value: $x0, range: range, step: 1)
+                            Spinbox(title: "Y0", value: $y0, range: range, step: 1)
+                        }
+                        HStack {
+                            Spinbox(title: "X1", value: $x1, range: range, step: 1)
+                            Spinbox(title: "Y1", value: $y1, range: range, step: 1)
+                        }
+                    } else if lineMode == .centerAngle {
+                        Spinbox(title: "Угол", value: $angle, range: -1000...1000)
+                    }
+                }
+                .padding()
+                
+                
+                Divider().padding(.bottom)
                 Button {
                     if let line = lines.last {
                         lines.append(line)
@@ -128,6 +126,7 @@ struct ContentView: View {
                         .frame(maxWidth: .infinity)
                 }
                 
+
                 Spacer()
             }
             
@@ -177,10 +176,11 @@ struct ContentView: View {
             linePixels = lineBresenham
         case .bresenhamInt:
             linePixels = bresenhamInt
+            break
         case .bresenhamNoStep:
-            break
+            linePixels = bresenhamNoStep
         case .vu:
-            break
+            linePixels = lineVu(_:_:)
         }
     }
     
@@ -202,6 +202,13 @@ struct ContentView: View {
         }
         
         lines.append(PixelLine(pixels: linePixels(startPoint, endPoint), color: pixelColor))
+    }
+}
+
+struct SettingsView: View {
+    var body: some View {
+        Text("Я НОВЫЙ ЭКРАН")
+            .font(.largeTitle)
     }
 }
 

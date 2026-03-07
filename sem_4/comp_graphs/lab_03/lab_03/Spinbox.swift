@@ -56,7 +56,7 @@ struct Spinbox: View {
 
     var body: some View {
         VStack {
-            Text(title)
+            Text(title).font(.headline)
             
             HStack {
                 TextField("", value: $value, formatter: formatter)

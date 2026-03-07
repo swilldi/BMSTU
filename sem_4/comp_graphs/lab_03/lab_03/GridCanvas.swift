@@ -47,12 +47,10 @@ struct GridCanvasView: View {
             
 //            print(pixels)
             for line in lines {
-                var linePath = Path()
+//                var linePath = Path()
                 for pixel in line.pixels {
-                    linePath.addPath(pixelPath(pixel, m))
+                    context.fill(pixelPath(pixel, m), with: .color(line.color.opacity(pixel.opacity)))
                 }
-                
-                context.fill(linePath, with: .color(line.color))
             }
             
             

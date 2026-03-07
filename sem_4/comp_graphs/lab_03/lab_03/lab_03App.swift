@@ -12,6 +12,11 @@ struct lab_03App: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .preferredColorScheme(.light)
+//                .toolbar {
+//                    NavigationLink("Временное сравнение")
+//                    SettingsView()
+//                }
         }
     }
 }

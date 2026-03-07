@@ -8,10 +8,32 @@
 import Foundation
 import SwiftUI
 
-struct Pixel {
+struct Pixel: CustomStringConvertible {
     let x: Int
     let y: Int
-    let color: Color? = nil
+    let opacity: Double
+    
+    init (x: Int, y: Int) {
+        self.x = x
+        self.y = y
+        self.opacity = 1
+    }
+    
+    init (x: Double, y: Double, opacity: Double) {
+        self.x = Int(round(x))
+        self.y = Int(round(y))
+        self.opacity = opacity
+    }
+    
+    init (x: Double, y: Double) {
+        self.x = Int(round(x))
+        self.y = Int(round(y))
+        self.opacity = 1
+    }
+    
+    var description: String {
+        "[\(x);\(y)]"
+    }
 }
 
 func sign<T: Comparable & Numeric>(_ num: T) -> T {
@@ -50,87 +72,147 @@ func lineDDA(_ p1: CGPoint, _ p2: CGPoint) -> [Pixel] {
     return pixels
 }
 
+
 func lineBresenham(_ p1: CGPoint, _ p2: CGPoint) -> [Pixel] {
-    var x0 = p1.x, y0 = p1.y
-    let x1 = p2.x, y1 = p2.y
-
-    let dx = abs(x1 - x0)
-    let sx = x0 < x1 ? 1.0 : -1.0
-    let dy = -abs(y1 - y0)
-    let sy = y0 < y1 ? 1.0 : -1.0
-    var error = dy / dx - 0.5
-
-    var pixels = [Pixel]()
+    var x1 = Double(p1.x), x2 = Double(p2.x)
+    var y1 = Double(p1.y), y2 = Double(p2.y)
+    var dx = abs(x2 - x1), dy = abs(y2 - y1)
+    let steep = dy > dx
     
-    var x = Double(x0), y = Double(y0)
+    if steep {
+        swap(&x1, &y1)
+        swap(&x2, &y2)
+        swap(&dx, &dy)
+    }
+    
+    let stepY = y2 > y1 ? 1.0 : -1.0
+    let stepX = x2 > x1 ? 1.0 : -1.0
+        
+    var x: Double = x1, y: Double = y1
+    var error = dy / dx - 0.5
+    var pixels = [steep ? Pixel(x: y, y: x) : Pixel(x: x, y: y)]
     for _ in 0..<Int(dx) {
         if error >= 0 {
-            y += sy
+            y += stepY
             error -= 1
         }
         
-        x += sx
-        error += Double(dy) / Double (dx)
-        
-        pixels.append(Pixel(x: Int(round(x)), y: Int(round(y))))
+        x += stepX
+        error += dy / dx
+        pixels.append(steep ? Pixel(x: y, y: x) : Pixel(x: x, y: y))
     }
-
+    print(pixels)
     return pixels
 }
 
 func bresenhamInt(_ p1: CGPoint, _ p2: CGPoint) -> [Pixel] {
-    var x0 = Int(p1.x.rounded()), y0 = Int(p1.y.rounded())
-    let x1 = Int(p2.x.rounded()), y1 = Int(p2.y.rounded())
-
-    let dx = abs(x1 - x0)
-    let sx = x0 < x1 ? 1 : -1
-    let dy = -abs(y1 - y0)
-    let sy = y0 < y1 ? 1 : -1
+    var x1 = Int(round(p1.x)), x2 = Int(round(p2.x))
+    var y1 = Int(round(p1.y)), y2 = Int(round(p2.y))
+    var dx = Int(abs(x2 - x1)), dy = Int(abs(y2 - y1))
+    let steep = dy > dx
+    
+    if steep {
+        swap(&x1, &y1)
+        swap(&x2, &y2)
+        swap(&dx, &dy)
+    }
+    if x1 > x2 {
+        swap(&x1, &x2)
+        swap(&y1, &y2)
+    }
+    
+    let stepY = y2 > y1 ? 1 : -1
+        
+    var x: Int = x1, y: Int = y1
     var error = 2 * dy - dx
-
-    var x = x0, y = y0
-    var pixels = [Pixel(x: x, y: y)]
-    for _ in 0..<dx {
+    var pixels = [steep ? Pixel(x: y, y: x) : Pixel(x: x, y: y)]
+    for _ in 0..<Int(dx) {
         if error >= 0 {
-            y += sy
+            y += stepY
             error -= 2 * dx
         }
         
-        x += sx
+        x += 1
         error += 2 * dy
-        
-        pixels.append(Pixel(x: x, y: y))
+        pixels.append(steep ? Pixel(x: y, y: x) : Pixel(x: x, y: y))
     }
-
+    print(pixels)
     return pixels
 }
 
 func bresenhamNoStep(_ p1: CGPoint, _ p2: CGPoint) -> [Pixel] {
-    var x0 = Int(p1.x.rounded()), y0 = Int(p1.y.rounded())
-    let x1 = Int(p2.x.rounded()), y1 = Int(p2.y.rounded())
-
-    let dx = abs(x1 - x0)
-    let sx = x0 < x1 ? 1 : -1
-    let dy = -abs(y1 - y0)
-    let sy = y0 < y1 ? 1 : -1
-    var error = 2 * dy - dx
-
-    var x = x0, y = y0
-    var pixels = [Pixel(x: x, y: y)]
-    for _ in 0..<dx {
+    var x1 = Double(p1.x), x2 = Double(p2.x)
+    var y1 = Double(p1.y), y2 = Double(p2.y)
+    var dx = abs(x2 - x1), dy = abs(y2 - y1)
+    let steep = dy > dx
+    
+    if steep {
+        swap(&x1, &y1)
+        swap(&x2, &y2)
+        swap(&dx, &dy)
+    }
+    if x1 > x2 {
+        swap(&x1, &x2)
+        swap(&y1, &y2)
+    }
+    
+    let stepY = y2 > y1 ? 1.0 : -1.0
+    
+    var x: Double = x1, y: Double = y1
+    var error = dy / dx - 0.5
+    
+    var e = error + 0.5
+    var pixels = [Pixel]()
+    pixels.append(steep ? Pixel(x: y, y: x, opacity: 1 - e) : Pixel(x: x, y: y, opacity: 1 - e))
+    pixels.append(steep ? Pixel(x: y + stepY, y: x, opacity: e) : Pixel(x: x, y: y + stepY, opacity: e))
+    for _ in 0..<Int(dx) {
         if error >= 0 {
-            y += sy
-            error -= 2 * dx
+            y += stepY
+            error -= 1
         }
         
-        x += sx
-        error += 2 * dy
-        
-        pixels.append(Pixel(x: x0, y: y0))
+        x += 1
+        error += dy / dx
+        e = error + 0.5
+        print(e)
+        pixels.append(steep ? Pixel(x: y, y: x, opacity: 1 - e) : Pixel(x: x, y: y, opacity: 1 - e))
+        pixels.append(steep ? Pixel(x: y + stepY, y: x, opacity: e) : Pixel(x: x, y: y + stepY, opacity: e))
     }
-
+    print(pixels)
     return pixels
 }
-//func lineVu(_ p1: CGPoint, _ p2: CGPoint) -> [Pixel] {
-//    
-//}
+
+
+func lineVu(_ p1: CGPoint, _ p2: CGPoint) -> [Pixel] {
+    var x1 = Double(p1.x), x2 = Double(p2.x),
+        y1 = Double(p1.y), y2 = Double(p2.y)
+    var dx = abs(x1 - x2), dy = abs(y1 - y2)
+    let steep = dy > dx
+    
+    if steep {
+        swap(&x1, &y1)
+        swap(&x2, &y2)
+        swap(&dx, &dy)
+    }
+    
+    if x1 > x2 {
+        swap(&x1, &x2)
+        swap(&y1, &y2)
+    }
+    
+    let gradient = (y2 - y1) / dx
+    var x = x1, y = y1
+    
+    var pixels = [Pixel]()
+    for _ in 0...Int(dx) {
+        let opacity = y - floor(y)
+        
+        pixels.append(steep ? Pixel(x: floor(y), y: x, opacity: 1 - opacity) : Pixel(x: x, y: floor(y), opacity: 1 - opacity))
+        pixels.append(steep ? Pixel(x: floor(y) + 1 , y: x, opacity: opacity) : Pixel(x: x, y: floor(y) + 1, opacity: opacity))
+        
+        x += 1
+        y += gradient
+    }
+    
+    return pixels
+}
