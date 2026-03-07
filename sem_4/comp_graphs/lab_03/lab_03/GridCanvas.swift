@@ -28,7 +28,7 @@ struct GridCanvasView: View {
     }
     
     func metrics(_ size: CGSize) -> Metrics {
-//        print(size)
+//        // print(size)
         let w = size.width - 2 * CGFloat(gridPadding), h = size.height - 2 * CGFloat(gridPadding)
         let gridSize = CGSize(width: w, height: h)
         let origin = CGPoint(x: gridPadding, y: gridPadding + Int(h))
@@ -45,7 +45,7 @@ struct GridCanvasView: View {
             let grid = gridPath(m)
             context.stroke(grid, with: .color(.black), lineWidth: 0.3)
             
-//            print(pixels)
+//            // print(pixels)
             for line in lines {
 //                var linePath = Path()
                 for pixel in line.pixels {

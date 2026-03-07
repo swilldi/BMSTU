@@ -48,8 +48,8 @@ func sign<T: Comparable & Numeric>(_ num: T) -> T {
 }
 
 func lineDDA(_ p1: CGPoint, _ p2: CGPoint) -> [Pixel] {
-    let x0 = Int(p1.x.rounded()), y0 = Int(p1.y.rounded())
-    let x1 = Int(p2.x.rounded()), y1 = Int(p2.y.rounded())
+    let x0 = p1.x.rounded(), y0 = p1.y.rounded()
+    let x1 = p2.x.rounded(), y1 = p2.y.rounded()
 
     let dxInt = x1 - x0
     let dyInt = y1 - y0
@@ -62,10 +62,9 @@ func lineDDA(_ p1: CGPoint, _ p2: CGPoint) -> [Pixel] {
     var x = Double(x0)
     var y = Double(y0)
     var pixels: [Pixel] = []
-    pixels.reserveCapacity(len + 1)
 
-    for _ in 0...len {
-        pixels.append(Pixel(x: Int(x.rounded()), y: Int(y.rounded())))
+    for _ in 0...Int(len) {
+        pixels.append(Pixel(x: x.rounded(), y: y.rounded()))
         x += dx
         y += dy
     }
@@ -101,7 +100,7 @@ func lineBresenham(_ p1: CGPoint, _ p2: CGPoint) -> [Pixel] {
         error += dy / dx
         pixels.append(steep ? Pixel(x: y, y: x) : Pixel(x: x, y: y))
     }
-    print(pixels)
+    // print(pixels)
     return pixels
 }
 
@@ -136,7 +135,7 @@ func bresenhamInt(_ p1: CGPoint, _ p2: CGPoint) -> [Pixel] {
         error += 2 * dy
         pixels.append(steep ? Pixel(x: y, y: x) : Pixel(x: x, y: y))
     }
-    print(pixels)
+    // print(pixels)
     return pixels
 }
 
@@ -174,11 +173,11 @@ func bresenhamNoStep(_ p1: CGPoint, _ p2: CGPoint) -> [Pixel] {
         x += 1
         error += dy / dx
         e = error + 0.5
-        print(e)
+        // print(e)
         pixels.append(steep ? Pixel(x: y, y: x, opacity: 1 - e) : Pixel(x: x, y: y, opacity: 1 - e))
         pixels.append(steep ? Pixel(x: y + stepY, y: x, opacity: e) : Pixel(x: x, y: y + stepY, opacity: e))
     }
-    print(pixels)
+    // print(pixels)
     return pixels
 }
 

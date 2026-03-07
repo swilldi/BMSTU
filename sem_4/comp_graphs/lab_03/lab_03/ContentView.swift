@@ -52,84 +52,97 @@ struct ContentView: View {
     
     
     var body: some View {
-        HStack {
-            GridCanvasView(cellCount: $cellCount, lines: $lines)
-                .onAppear {
-                    applyCurrentAlgorithm()
-                    updateLine()
-                }
-            
-            Divider()
-            
-            VStack {
-                Spinbox(title: "Количество клеток", value: $cellCount, range: 5...1000)
-                    .padding(.top)
-                Divider().padding()
-                
-                ColorSelecter(selectedColor: $pixelColor)
-                
-                Divider().padding()
-                Text("Алгоритм").font(.headline)
-                Picker("", selection: $algo) {
-                    ForEach(DrawAlgo.allCases) { m in
-                        Text(m.rawValue).tag(m)
+        NavigationStack {
+            HStack {
+                GridCanvasView(cellCount: $cellCount, lines: $lines)
+                    .onAppear {
+                        applyCurrentAlgorithm()
+                        updateLine()
                     }
-                }
-                .pickerStyle(.radioGroup)
                 
-                Divider().padding()
+                Divider()
                 
-                Text("Режим работы").font(.headline)
-                Picker("", selection: $lineMode) {
-                    ForEach(LineMode.allCases) { m in
-                        Text(m.rawValue).tag(m)
-                    }
-                }
-                .pickerStyle(.radioGroup)
-                
-                
-                GroupBox {
-                    if lineMode == .twoPoints {
-                        let maxLen = cellCount / 2 - 1
-                        let range = -maxLen...maxLen
-                        HStack {
-                            Spinbox(title: "X0", value: $x0, range: range, step: 1)
-                            Spinbox(title: "Y0", value: $y0, range: range, step: 1)
+                VStack {
+                    Spinbox(title: "Количество клеток", value: $cellCount, range: 5...1000)
+                        .padding(.top)
+                    Divider().padding()
+                    
+                    ColorSelecter(selectedColor: $pixelColor)
+                    
+                    Divider().padding()
+                    Text("Алгоритм").font(.headline)
+                    Picker("", selection: $algo) {
+                        ForEach(DrawAlgo.allCases) { m in
+                            Text(m.rawValue).tag(m)
                         }
-                        HStack {
-                            Spinbox(title: "X1", value: $x1, range: range, step: 1)
-                            Spinbox(title: "Y1", value: $y1, range: range, step: 1)
+                    }
+                    .pickerStyle(.radioGroup)
+                    
+                    Divider().padding()
+                    
+                    Text("Режим работы").font(.headline)
+                    Picker("", selection: $lineMode) {
+                        ForEach(LineMode.allCases) { m in
+                            Text(m.rawValue).tag(m)
                         }
-                    } else if lineMode == .centerAngle {
-                        Spinbox(title: "Угол", value: $angle, range: -1000...1000)
                     }
-                }
-                .padding()
-                
-                
-                Divider().padding(.bottom)
-                Button {
-                    if let line = lines.last {
-                        lines.append(line)
+                    .pickerStyle(.radioGroup)
+                    
+                    
+                    GroupBox {
+                        if lineMode == .twoPoints {
+                            let maxLen = cellCount / 2 - 1
+                            let range = -maxLen...maxLen
+                            HStack {
+                                Spinbox(title: "X0", value: $x0, range: range, step: 1)
+                                Spinbox(title: "Y0", value: $y0, range: range, step: 1)
+                            }
+                            HStack {
+                                Spinbox(title: "X1", value: $x1, range: range, step: 1)
+                                Spinbox(title: "Y1", value: $y1, range: range, step: 1)
+                            }
+                        } else if lineMode == .centerAngle {
+                            Spinbox(title: "Угол", value: $angle, range: -1000...1000)
+                        }
                     }
-                    updateLine()
-                } label: {
-                    Text("Сохранить линию")
-                        .frame(maxWidth: .infinity)
+                    .padding()
+                    
+                    
+                    Divider().padding(.bottom)
+                    Button {
+                        if let line = lines.last {
+                            lines.append(line)
+                        }
+                        updateLine()
+                    } label: {
+                        Text("Сохранить линию")
+                            .frame(maxWidth: .infinity)
+                    }
+                    
+                    Button {
+                        lines.removeAll()
+                        updateLine()
+                    } label: {
+                        Text("Очистить линии")
+                            .frame(maxWidth: .infinity)
+                    }
+                    
+                    
+                    Spacer()
                 }
                 
-                Button {
-                    lines.removeAll()
-                    updateLine()
-                } label: {
-                    Text("Очистить линии")
-                        .frame(maxWidth: .infinity)
-                }
-                
-
-                Spacer()
             }
-            
+            .navigationTitle("Lab_03")
+            .toolbar {
+                NavigationLink("Временные характеристики") {
+                    TimeTestView()
+                }
+                NavigationLink("Ступенчатость отрезков") {
+                    SteppingLinesView()
+                }
+            }
+        }
+                    
             .onChange(of: cellCount) {
                 if cellCount == 0 {
                     return
@@ -166,7 +179,6 @@ struct ContentView: View {
             }
             
         }
-    }
 
     func applyCurrentAlgorithm() {
         switch algo {
@@ -205,13 +217,165 @@ struct ContentView: View {
     }
 }
 
-struct SettingsView: View {
+import Charts
+let startLineLen = 100, startAngle = 0
+struct TimeTestView: View {
+        
+    @State var lineLen: Int = startLineLen
+    @State var angle: Int = startAngle
+    
+    struct TimeTestResult: Identifiable, CustomStringConvertible {
+        let id = UUID()
+        let title: String
+        let time: Double
+        
+        var description: String {
+            "\(title.replacingOccurrences(of: "\n", with: " ")) – \(time)"
+        }
+    }
+    
+    @State var data = [
+        TimeTestResult(title: DrawAlgo.dda.rawValue, time: timeToComplete(lineDDA, len: startLineLen, angle: startAngle)),
+        TimeTestResult(title: DrawAlgo.bresenham.rawValue, time: timeToComplete(lineBresenham, len: startLineLen, angle: startAngle)),
+        TimeTestResult(title: DrawAlgo.bresenhamInt.rawValue, time: timeToComplete(bresenhamInt, len: startLineLen, angle: startAngle)),
+        TimeTestResult(title: DrawAlgo.bresenhamNoStep.rawValue, time: timeToComplete(bresenhamNoStep, len: startLineLen, angle: startAngle)),
+        TimeTestResult(title: DrawAlgo.vu.rawValue, time: timeToComplete(lineVu, len: startLineLen, angle: startAngle))
+    ]
+    
     var body: some View {
-        Text("Я НОВЫЙ ЭКРАН")
-            .font(.largeTitle)
+        ZStack {
+            Color.clear
+//            Text("Будет гистограмма")
+//                .font(.largeTitle)
+            HStack {
+                // Гистограммы
+                Chart(data) { item in
+                    BarMark(
+                        x: .value("Алгоритм", item.title),
+                        y: .value("Время", item.time)
+                    )
+                }
+                .padding()
+                
+                Divider()
+                
+                VStack {
+                    Spinbox(title: "Длина отрезка", value: $lineLen, range: 0...10_000, step: 5)
+                        .padding()
+                    Spinbox(title: "Угол", value: $angle, range: -360...360, step: 5)
+                        .padding(.horizontal)
+                        .padding(.bottom)
+                }
+            }
+        }
+        .onChange(of: lineLen, dataUpdate)
+        .onChange(of: angle, dataUpdate)
+    }
+    
+    
+    func dataUpdate() {
+        data = [
+            TimeTestResult(title: DrawAlgo.dda.rawValue, time: timeToComplete(lineDDA, len: lineLen, angle: angle)),
+            TimeTestResult(title: DrawAlgo.bresenham.rawValue, time: timeToComplete(lineBresenham, len: lineLen, angle: angle)),
+            TimeTestResult(title: DrawAlgo.bresenhamInt.rawValue, time: timeToComplete(bresenhamInt, len: lineLen, angle: angle)),
+            TimeTestResult(title: DrawAlgo.bresenhamNoStep.rawValue, time: timeToComplete(bresenhamNoStep, len: lineLen, angle: angle)),
+            TimeTestResult(title: DrawAlgo.vu.rawValue, time: timeToComplete(lineVu, len: lineLen, angle: angle))
+        ]
+         print(data, "len: \(lineLen), angle: \(angle)")
+    }
+}
+
+struct SteppingLinesView: View {
+    @State var lineLen: Int = startLineLen
+    @State var typeY: typeAxisY = .lenStep
+    
+    enum typeAxisY: String, CaseIterable, Identifiable {
+        case countStep = "Количество ступенек"
+        case lenStep = "Длина ступенек"
+        
+        var id: String { rawValue }
+    }
+    
+    struct DataStruct: Identifiable {
+        let id = UUID()
+        let angle: Int
+        let value: Int
+    }
+    
+    
+    var body: some View {
+        ZStack {
+            Color.clear
+//            Text("Будет гистограмма")
+//                .font(.largeTitle)
+            HStack {
+                // График
+                let data = dataUpdate()
+                
+                Chart(data) { item in
+                    LineMark(
+                        x: .value("Угол", item.angle),
+                        y: .value(typeY.rawValue, item.value)
+                    )
+                }
+                .padding()
+                
+                Divider()
+                
+                VStack {
+                    Picker("Ось OY", selection: $typeY) {
+                        ForEach(typeAxisY.allCases) { typeData in
+                            Text(typeData.rawValue).tag(typeData)
+                        }
+                    }
+                    Spinbox(title: "Длина отрезка", value: $lineLen, range: 0...10_000, step: 5)
+                        .padding()
+
+                }
+            }
+        }
+    }
+    
+    
+    func dataUpdate() -> [DataStruct] {
+        var data = [DataStruct]()
+        for angle in 0...360 {
+            
+        }
     }
 }
 
 #Preview {
-    ContentView()
+    SteppingLinesView()
+}
+
+
+
+func timeToComplete(_ line: (CGPoint, CGPoint) -> [Pixel], len: Int, angle: Int) -> Double {
+    let preTestCount = 10, testCount = 3000
+    
+    let clock = ContinuousClock()
+    var time: Double = 0
+    
+    let p1 = CGPoint(x: 0, y: 0), p2 = pointRotate(CGPoint(x: len, y: 0), angle: angle, center: .zero)
+    
+    // Прогревочные замеры
+    for _ in 0..<preTestCount {
+        line(p1, p2)
+    }
+    
+    // Основные замеры
+    for _ in 0..<testCount {
+        let start = clock.now
+        line(p1, p2)
+        let end = clock.now
+        let elapsed = start.duration(to: end)
+        
+        time += Double(elapsed.components.seconds) * 1e6 +
+                Double(elapsed.components.attoseconds) / 1e12
+    }
+    
+    time /= Double(testCount)
+    
+    return time  // ms
 }

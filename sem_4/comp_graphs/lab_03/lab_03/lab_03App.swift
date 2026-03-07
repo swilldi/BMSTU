@@ -11,12 +11,11 @@ import SwiftUI
 struct lab_03App: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+//            ContentView()
+//                .preferredColorScheme(.light)
+            TimeTestView()
                 .preferredColorScheme(.light)
-//                .toolbar {
-//                    NavigationLink("Временное сравнение")
-//                    SettingsView()
-//                }
+            
         }
     }
 }
