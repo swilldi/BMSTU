@@ -60,7 +60,7 @@ static error_code point_to_center_scene(point_t &point, const draw_scene_t &draw
 }
 
 // Отрисовка линии по двум точкам
-static error_code line_draw(const draw_scene_t &draw_scene, const point_t &first_point, const point_t &second_point)
+static error_code line_draw(const draw_scene_t &draw_scene, const line_t line)
 {
     if (!draw_scene.scene)
         return DRAW_SCENE_SCENE_INVALID;
@@ -70,6 +70,7 @@ static error_code line_draw(const draw_scene_t &draw_scene, const point_t &first
         return DRAW_SCENE_WIDTH_INVALID_RANGE;
 
     QGraphicsScene *scene = draw_scene.scene;
+    point_t first_point = line.from_point, second_point = line.to_point;
     QPen pen = QPen(draw_scene.color);
     scene->addLine(first_point.x, first_point.y, second_point.x, second_point.y, pen);
 
@@ -102,7 +103,7 @@ static error_code lines_draw(const draw_scene_t &draw_scene, const points_t &poi
 
         rc = edge_scene_line(line, draw_scene, points, edge);
         if (rc == OK)
-            rc = line_draw(draw_scene, line.from_point, line.to_point);
+            rc = line_draw(draw_scene, line);
     }
 
     return rc;

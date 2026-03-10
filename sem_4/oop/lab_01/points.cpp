@@ -15,11 +15,16 @@ error_code points_data_allocate(point_t* &points, const size_t count)
 }
 
 // Освобождение памяти из под массива точек
+void points_data_free(point_t* &data)
+{
+    if (data)
+        free(data);
+}
+
 void points_free(points_t &points)
 {
-    if (points.data)
-        free(points.data);
 
+    points_data_free(points.data);
     points_init(points);
 }
 
@@ -66,21 +71,23 @@ static error_code count_points_read_from_file(size_t &count, FILE* const f)
 }
 
 // Чтение координат точек из файла
-error_code points_data_read_from_file(points_t &points, FILE* const f)
+error_code points_data_read_from_file(point_t* &data, size_t count, FILE* const f)
 {
     error_code rc = OK;
     if (!f)
         return FILE_INVALID;
-    if (points.count <= 0)
+    if (count <= 0)
         return POINTS_EMPTY;
 
-    rc = points_data_allocate(points.data, points.count);
-    for (size_t i = 0; rc == OK && i < points.count; i++)
+    rc = points_data_allocate(data, count);
+    for (size_t i = 0; rc == OK && i < count; i++)
     {
-        rc = point_read_from_file(points.data[i], f);
-        if (rc != OK)
-            points_free(points);
+        rc = point_read_from_file(data[i], f);
     }
+
+    if (rc != OK)
+        points_data_free(data);
+
     return rc;
 }
 
@@ -96,7 +103,7 @@ error_code points_read_from_file(points_t &points, FILE* const f)
     if (rc == OK)
     {
         // чтение точек
-        rc = points_data_read_from_file(points, f);
+        rc = points_data_read_from_file(points.data, points.count, f);
     }
 
     return rc;

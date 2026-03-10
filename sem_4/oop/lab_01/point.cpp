@@ -55,16 +55,14 @@ void point_move(point_t &point, const move_data_t &move)
 
 static void point_to_origin(point_t &point, const point_t center)
 {
-    point.x -= center.x;
-    point.y -= center.y;
-    point.z -= center.z;
+    move_data_t to_origin = { .x = -center.x, .y = -center.y, .z = -center.z };
+    point_move(point, to_origin);
 }
 
 static void point_from_origin(point_t &point, const point_t center)
 {
-    point.x += center.x;
-    point.y += center.y;
-    point.z += center.z;
+    move_data_t from_origin = { .x = center.x, .y = center.y, .z = center.z };
+    point_move(point, from_origin);
 }
 
 // Вращение точки

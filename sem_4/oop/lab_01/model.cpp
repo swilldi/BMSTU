@@ -1,5 +1,7 @@
 #include "model.h"
 
+static error_code model_center_update(model_t model);
+
 // инициализация модели
 model_t model_init()
 {
@@ -42,9 +44,10 @@ error_code model_load(model_t &model, const char *file_name)
     {
         model_t tmp_model = model_init();
         rc = model_read_from_file(tmp_model, f);
+        fclose(f);
         if (rc == OK)
         {
-            rc = points_center(tmp_model.center, tmp_model.points);
+            rc = model_center_update(tmp_model);
             if (rc != OK)
             {
                 model_free(tmp_model);
@@ -55,9 +58,19 @@ error_code model_load(model_t &model, const char *file_name)
                 model = tmp_model;
             }
         }
-
-        fclose(f);
     }
+
+    return rc;
+}
+
+// настройка центра модели
+static error_code model_center_update(model_t model)
+{
+    error_code rc = model_check(model);
+    if (rc != OK)
+        return rc;
+
+    rc = points_center(model.center, model.points);
 
     return rc;
 }
@@ -133,10 +146,6 @@ error_code model_move(model_t &model, const move_data_t &move)
         return rc;
 
     rc = points_move(model.points, move);
-    if (rc == OK)
-    {
-        rc = points_center(model.center, model.points);
-    }
 
     return rc;
 }
@@ -149,10 +158,6 @@ error_code model_rotate(model_t &model, const rotate_data_t &rotate)
         return rc;
 
     rc = points_rotate(model.points, rotate, model.center);
-    if (rc == OK)
-    {
-        rc = points_center(model.center, model.points);
-    }
 
     return rc;
 }
@@ -165,10 +170,6 @@ error_code model_scale(model_t &model, const scale_data_t &scale)
         return rc;
 
     rc = points_scale(model.points, scale, model.center);
-    if (rc == OK)
-    {
-        rc = points_center(model.center, model.points);
-    }
 
     return rc;
 }
