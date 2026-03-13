@@ -11,10 +11,10 @@ import SwiftUI
 struct lab_03App: App {
     var body: some Scene {
         WindowGroup {
-//            ContentView()
-//                .preferredColorScheme(.light)
-            TimeTestView()
+            ContentView()
                 .preferredColorScheme(.light)
+//            SteppingLinesView()
+//                .preferredColorScheme(.light)
             
         }
     }

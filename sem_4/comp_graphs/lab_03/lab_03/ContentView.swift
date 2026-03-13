@@ -35,12 +35,13 @@ enum LineMode: String, CaseIterable, Identifiable {
 
 struct ContentView: View {
     
-    @State var cellCount = 11
+    @State var cellCount = 101
     @State var pixelColor: Color = .black
     @State var lines = [PixelLine]()
     
     @State var angle = 0
-    @State var algo: DrawAlgo = .vu
+    @State var angleSpecter = 5
+    @State var algo: DrawAlgo = .dda
     @State var linePixels: (CGPoint, CGPoint) -> [Pixel] = lineVu
     @State var lineMode = LineMode.twoPoints
     
@@ -63,7 +64,7 @@ struct ContentView: View {
                 Divider()
                 
                 VStack {
-                    Spinbox(title: "Количество клеток", value: $cellCount, range: 5...1000)
+                    Spinbox(title: "Количество клеток", value: $cellCount, range: 5...1000, step: 2)
                         .padding(.top)
                     Divider().padding()
                     
@@ -105,10 +106,22 @@ struct ContentView: View {
                             Spinbox(title: "Угол", value: $angle, range: -1000...1000)
                         }
                     }
-                    .padding()
+                    .padding(.top)
                     
+                    Divider().padding(.vertical, 5)
                     
-                    Divider().padding(.bottom)
+                    GroupBox {
+                        Spinbox(title: "Шаг спектра", value: $angleSpecter, range: 1...360, step: 1)
+                        Button {
+                            addSpecterAngleLines()
+                        } label: {
+                            Text("Построить спектр")
+                                .frame(maxWidth: .infinity)
+                        }
+                    }
+                        
+                    Divider().padding(.vertical, 5)
+                    
                     Button {
                         if let line = lines.last {
                             lines.append(line)
@@ -192,7 +205,22 @@ struct ContentView: View {
         case .bresenhamNoStep:
             linePixels = bresenhamNoStep
         case .vu:
-            linePixels = lineVu(_:_:)
+            linePixels = lineVu
+        }
+    }
+    
+    func addSpecterAngleLines() {
+        
+        let cx = cellCount / 2, cy = cellCount / 2
+        var startPoint: CGPoint, endPoint: CGPoint
+        
+        for angle in stride(from: 0, to: 360, by: angleSpecter) {
+            startPoint = CGPoint(x: cx, y: cy)
+            endPoint = pointRotate(CGPoint(x: cellCount - 1, y: cy), angle: angle, center: startPoint)
+            lines.append(PixelLine(pixels: linePixels(startPoint, endPoint), color: pixelColor))
+            if angle + angleSpecter >= 360 {
+                lines.append(PixelLine(pixels: linePixels(startPoint, endPoint), color: pixelColor))
+            }
         }
     }
     
@@ -255,6 +283,15 @@ struct TimeTestView: View {
                         y: .value("Время", item.time)
                     )
                 }
+                .chartYAxisLabel("t, мкс", position: .leading)
+                .chartXAxisLabel("Алгоритм")
+                .chartYAxis {
+                    AxisMarks(position: .leading, values: .automatic(desiredCount: 12)) {
+                        AxisGridLine()
+                        AxisTick()
+                        AxisValueLabel()
+                    }
+                }
                 .padding()
                 
                 Divider()
@@ -281,72 +318,135 @@ struct TimeTestView: View {
             TimeTestResult(title: DrawAlgo.bresenhamNoStep.rawValue, time: timeToComplete(bresenhamNoStep, len: lineLen, angle: angle)),
             TimeTestResult(title: DrawAlgo.vu.rawValue, time: timeToComplete(lineVu, len: lineLen, angle: angle))
         ]
-         print(data, "len: \(lineLen), angle: \(angle)")
+        print(data, "len: \(lineLen), angle: \(angle)")
     }
 }
 
 struct SteppingLinesView: View {
-    @State var lineLen: Int = startLineLen
-    @State var typeY: typeAxisY = .lenStep
+    @State private var lineLen = startLineLen
+    @State private var typeY: AxisYType = .lenStep
     
-    enum typeAxisY: String, CaseIterable, Identifiable {
+    enum AxisYType: String, CaseIterable, Identifiable {
         case countStep = "Количество ступенек"
-        case lenStep = "Длина ступенек"
-        
+        case lenStep = "Макс. длина ступеньки"
         var id: String { rawValue }
     }
     
-    struct DataStruct: Identifiable {
+    struct DataPoint: Identifiable {
         let id = UUID()
+        let algorithm: String
         let angle: Int
         let value: Int
     }
     
+    private let algorithms: [(name: String, line: (CGPoint, CGPoint) -> [Pixel])] = [
+        ("ЦДА", lineDDA),
+        ("Брезенхем", lineBresenham),
+        ("Брезенхем int", bresenhamInt),
+        ("Брезенхем сглаж.", bresenhamNoStep),
+        ("Ву", lineVu)
+    ]
     
     var body: some View {
-        ZStack {
-            Color.clear
-//            Text("Будет гистограмма")
-//                .font(.largeTitle)
-            HStack {
-                // График
-                let data = dataUpdate()
-                
-                Chart(data) { item in
-                    LineMark(
-                        x: .value("Угол", item.angle),
-                        y: .value(typeY.rawValue, item.value)
-                    )
-                }
-                .padding()
-                
-                Divider()
-                
-                VStack {
-                    Picker("Ось OY", selection: $typeY) {
-                        ForEach(typeAxisY.allCases) { typeData in
-                            Text(typeData.rawValue).tag(typeData)
-                        }
-                    }
-                    Spinbox(title: "Длина отрезка", value: $lineLen, range: 0...10_000, step: 5)
-                        .padding()
-
+        HStack {
+            Chart(data) { item in
+                LineMark(
+                    x: .value("Угол", item.angle),
+                    y: .value(typeY.rawValue, item.value)
+                )
+                .foregroundStyle(by: .value("Алгоритм", item.algorithm))
+            }
+            .chartForegroundStyleScale([
+                "ЦДА": .red,
+                "Брезенхем": .blue,
+                "Брезенхем int": .green,
+                "Брезенхем сглаж.": .orange,
+                "Ву": .purple
+            ])
+            .chartXAxis {
+                AxisMarks(values: Array(stride(from: 0, through: 90, by: 5))) {
+                    AxisGridLine()
+                    AxisTick()
+                    AxisValueLabel()
                 }
             }
+            .chartYAxis {
+                AxisMarks(position: .leading, values: .automatic(desiredCount: 12)) {
+                    AxisGridLine()
+                    AxisTick()
+                    AxisValueLabel()
+                }
+            }
+            .chartXAxisLabel("Угол (°)")
+            .chartYAxisLabel(typeY.rawValue, position: .leading)
+            .chartLegend()
+            .padding()
+            
+            Divider()
+            
+            VStack {
+                Picker("Ось OY", selection: $typeY) {
+                    ForEach(AxisYType.allCases) { metric in
+                        Text(metric.rawValue).tag(metric)
+                    }
+                }
+                .pickerStyle(.segmented)
+                .padding()
+                
+                Spinbox(title: "Длина отрезка", value: $lineLen, range: 5...10_000, step: 5)
+                    .padding(.horizontal)
+                
+                Spacer()
+            }
+            .frame(width: 320)
         }
     }
     
-    
-    func dataUpdate() -> [DataStruct] {
-        var data = [DataStruct]()
-        for angle in 0...360 {
+    private var data: [DataPoint] {
+        var result = [DataPoint]()
+        result.reserveCapacity(algorithms.count * 91)
+        
+        for angle in 0...90 {
+            let p1 = CGPoint.zero
+            let p2 = pointRotate(CGPoint(x: lineLen, y: 0), angle: angle, center: .zero)
             
+            for algorithm in algorithms {
+                let value = metricValue(algorithm.line(p1, p2))
+                result.append(DataPoint(algorithm: algorithm.name, angle: angle, value: value))
+            }
         }
+        
+        return result
+    }
+    
+    private func metricValue(_ rawPixels: [Pixel]) -> Int {
+        let pixels = rawPixels.filter { $0.opacity >= 0.5 }
+        guard pixels.count > 1 else { return 0 }
+        
+        let xMajor = abs((pixels.last?.x ?? 0) - pixels[0].x) >= abs((pixels.last?.y ?? 0) - pixels[0].y)
+        var stepsCount = 0
+        var run = 1
+        var maxRun = 1
+        
+        for i in 1..<pixels.count {
+            let prev = pixels[i - 1], cur = pixels[i]
+            let sameMinor = xMajor ? (prev.y == cur.y) : (prev.x == cur.x)
+            
+            if sameMinor {
+                run += 1
+                maxRun = max(maxRun, run)
+            } else {
+                stepsCount += 1
+                run = 1
+            }
+        }
+        
+        return typeY == .countStep ? stepsCount : maxRun
     }
 }
 
 #Preview {
-    SteppingLinesView()
+    ContentView()
 }
 
 
