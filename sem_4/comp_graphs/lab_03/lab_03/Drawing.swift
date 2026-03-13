@@ -7,6 +7,7 @@
 
 import Foundation
 import SwiftUI
+import CoreGraphics
 
 struct Pixel: CustomStringConvertible {
     let x: Int
@@ -213,5 +214,64 @@ func lineVu(_ p1: CGPoint, _ p2: CGPoint) -> [Pixel] {
         y += gradient
     }
     
+    return pixels
+}
+
+func lineLibrary(_ p1: CGPoint, _ p2: CGPoint) -> [Pixel] {
+    let startGrid = CGPoint(x: p1.x.rounded(), y: p1.y.rounded())
+    let endGrid = CGPoint(x: p2.x.rounded(), y: p2.y.rounded())
+    if startGrid == endGrid {
+        return [Pixel(x: Int(startGrid.x), y: Int(startGrid.y))]
+    }
+    
+    // Shift to pixel centers, otherwise axis-aligned lines lie on cell borders
+    // and may be selected as 2-pixel thick.
+    let start = CGPoint(x: startGrid.x + 0.5, y: startGrid.y + 0.5)
+    let end = CGPoint(x: endGrid.x + 0.5, y: endGrid.y + 0.5)
+
+    let path = CGMutablePath()
+    path.move(to: start)
+    path.addLine(to: end)
+
+    let stroked = path.copy(
+        strokingWithWidth: 1,
+        lineCap: .butt,
+        lineJoin: .miter,
+        miterLimit: 10
+    )
+
+    let bbox = stroked.boundingBoxOfPath.insetBy(dx: -1, dy: -1)
+    let minX = Int(floor(bbox.minX))
+    let maxX = Int(ceil(bbox.maxX))
+    let minY = Int(floor(bbox.minY))
+    let maxY = Int(ceil(bbox.maxY))
+
+    var pixels = [Pixel]()
+    pixels.reserveCapacity(max(0, (maxX - minX + 1) * (maxY - minY + 1)))
+
+    for y in minY...maxY {
+        for x in minX...maxX {
+            let center = CGPoint(x: Double(x) + 0.5, y: Double(y) + 0.5)
+            if stroked.contains(center) {
+                pixels.append(Pixel(x: x, y: y))
+            }
+        }
+    }
+
+    if pixels.isEmpty {
+        return [Pixel(x: Int(startGrid.x), y: Int(startGrid.y))]
+    }
+
+    // Keep pixel order along the segment to preserve stepping metrics.
+    let vx = end.x - start.x
+    let vy = end.y - start.y
+    let denom = max(1e-9, vx * vx + vy * vy)
+
+    pixels.sort { lhs, rhs in
+        let tl = ((Double(lhs.x) - start.x) * vx + (Double(lhs.y) - start.y) * vy) / denom
+        let tr = ((Double(rhs.x) - start.x) * vx + (Double(rhs.y) - start.y) * vy) / denom
+        return tl < tr
+    }
+
     return pixels
 }

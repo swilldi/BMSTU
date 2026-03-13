@@ -23,6 +23,7 @@ enum DrawAlgo: String, CaseIterable, Identifiable {
     case bresenham = "Брезенхема"
     case bresenhamInt = "Брезенхема:\nцелые числа"
     case bresenhamNoStep = "Брезенхема:\nустарнение\nступенчатости"
+    case library = "Библиотечная"
     case vu = "Ву"
     var id: String { rawValue }
 }
@@ -204,6 +205,8 @@ struct ContentView: View {
             break
         case .bresenhamNoStep:
             linePixels = bresenhamNoStep
+        case .library:
+            linePixels = lineLibrary
         case .vu:
             linePixels = lineVu
         }
@@ -267,6 +270,7 @@ struct TimeTestView: View {
         TimeTestResult(title: DrawAlgo.bresenham.rawValue, time: timeToComplete(lineBresenham, len: startLineLen, angle: startAngle)),
         TimeTestResult(title: DrawAlgo.bresenhamInt.rawValue, time: timeToComplete(bresenhamInt, len: startLineLen, angle: startAngle)),
         TimeTestResult(title: DrawAlgo.bresenhamNoStep.rawValue, time: timeToComplete(bresenhamNoStep, len: startLineLen, angle: startAngle)),
+        TimeTestResult(title: DrawAlgo.library.rawValue, time: timeToComplete(lineLibrary, len: startLineLen, angle: startAngle)),
         TimeTestResult(title: DrawAlgo.vu.rawValue, time: timeToComplete(lineVu, len: startLineLen, angle: startAngle))
     ]
     
@@ -316,6 +320,7 @@ struct TimeTestView: View {
             TimeTestResult(title: DrawAlgo.bresenham.rawValue, time: timeToComplete(lineBresenham, len: lineLen, angle: angle)),
             TimeTestResult(title: DrawAlgo.bresenhamInt.rawValue, time: timeToComplete(bresenhamInt, len: lineLen, angle: angle)),
             TimeTestResult(title: DrawAlgo.bresenhamNoStep.rawValue, time: timeToComplete(bresenhamNoStep, len: lineLen, angle: angle)),
+            TimeTestResult(title: DrawAlgo.library.rawValue, time: timeToComplete(lineLibrary, len: lineLen, angle: angle)),
             TimeTestResult(title: DrawAlgo.vu.rawValue, time: timeToComplete(lineVu, len: lineLen, angle: angle))
         ]
         print(data, "len: \(lineLen), angle: \(angle)")
@@ -344,6 +349,7 @@ struct SteppingLinesView: View {
         ("Брезенхем", lineBresenham),
         ("Брезенхем int", bresenhamInt),
         ("Брезенхем сглаж.", bresenhamNoStep),
+        ("Библиотечная", lineLibrary),
         ("Ву", lineVu)
     ]
     
@@ -361,6 +367,7 @@ struct SteppingLinesView: View {
                 "Брезенхем": .blue,
                 "Брезенхем int": .green,
                 "Брезенхем сглаж.": .orange,
+                "Библиотечная": .brown,
                 "Ву": .purple
             ])
             .chartXAxis {
