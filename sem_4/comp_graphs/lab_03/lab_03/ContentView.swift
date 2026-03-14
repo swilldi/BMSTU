@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import CoreGraphics
 
 
 func pointRotate(_ p: CGPoint, angle angleGrad: Int, center: CGPoint) -> CGPoint {
@@ -42,6 +43,8 @@ struct ContentView: View {
     
     @State var angle = 0
     @State var angleSpecter = 5
+    @State var startSpecterAngle = 0
+    @State var endSpecterAngle = 360
     @State var algo: DrawAlgo = .dda
     @State var linePixels: (CGPoint, CGPoint) -> [Pixel] = lineVu
     @State var lineMode = LineMode.twoPoints
@@ -112,6 +115,10 @@ struct ContentView: View {
                     Divider().padding(.vertical, 5)
                     
                     GroupBox {
+                        HStack {
+                            Spinbox(title: "Начальный угол", value: $startSpecterAngle, range: -360...360, step: 1)
+                            Spinbox(title: "Конечный угол", value: $endSpecterAngle, range: -360...360, step: 1)
+                        }
                         Spinbox(title: "Шаг спектра", value: $angleSpecter, range: 1...360, step: 1)
                         Button {
                             addSpecterAngleLines()
@@ -215,15 +222,32 @@ struct ContentView: View {
     func addSpecterAngleLines() {
         
         let cx = cellCount / 2, cy = cellCount / 2
-        var startPoint: CGPoint, endPoint: CGPoint
-        
-        for angle in stride(from: 0, to: 360, by: angleSpecter) {
-            startPoint = CGPoint(x: cx, y: cy)
-            endPoint = pointRotate(CGPoint(x: cellCount - 1, y: cy), angle: angle, center: startPoint)
+        func appendLine(angle: Int) {
+            let startPoint = CGPoint(x: cx, y: cy)
+            let endPoint = pointRotate(CGPoint(x: cellCount - 1, y: cy), angle: angle, center: startPoint)
             lines.append(PixelLine(pixels: linePixels(startPoint, endPoint), color: pixelColor))
-            if angle + angleSpecter >= 360 {
-                lines.append(PixelLine(pixels: linePixels(startPoint, endPoint), color: pixelColor))
-            }
+        }
+        
+        let step = max(1, angleSpecter)
+        let start = startSpecterAngle
+        let end = endSpecterAngle
+        let signedStep = start <= end ? step : -step
+        
+        if start == end {
+            appendLine(angle: start)
+            return
+        }
+        
+        var angle = start
+        var lastDrawn: Int? = nil
+        while (signedStep > 0 && angle <= end) || (signedStep < 0 && angle >= end) {
+            appendLine(angle: angle)
+            lastDrawn = angle
+            angle += signedStep
+        }
+        
+        if lastDrawn != end {
+            appendLine(angle: end)
         }
     }
     
@@ -270,7 +294,7 @@ struct TimeTestView: View {
         TimeTestResult(title: DrawAlgo.bresenham.rawValue, time: timeToComplete(lineBresenham, len: startLineLen, angle: startAngle)),
         TimeTestResult(title: DrawAlgo.bresenhamInt.rawValue, time: timeToComplete(bresenhamInt, len: startLineLen, angle: startAngle)),
         TimeTestResult(title: DrawAlgo.bresenhamNoStep.rawValue, time: timeToComplete(bresenhamNoStep, len: startLineLen, angle: startAngle)),
-        TimeTestResult(title: DrawAlgo.library.rawValue, time: timeToComplete(lineLibrary, len: startLineLen, angle: startAngle)),
+        TimeTestResult(title: DrawAlgo.library.rawValue, time: timeToCompletePath(lineLibraryPath, len: startLineLen, angle: startAngle)),
         TimeTestResult(title: DrawAlgo.vu.rawValue, time: timeToComplete(lineVu, len: startLineLen, angle: startAngle))
     ]
     
@@ -320,7 +344,7 @@ struct TimeTestView: View {
             TimeTestResult(title: DrawAlgo.bresenham.rawValue, time: timeToComplete(lineBresenham, len: lineLen, angle: angle)),
             TimeTestResult(title: DrawAlgo.bresenhamInt.rawValue, time: timeToComplete(bresenhamInt, len: lineLen, angle: angle)),
             TimeTestResult(title: DrawAlgo.bresenhamNoStep.rawValue, time: timeToComplete(bresenhamNoStep, len: lineLen, angle: angle)),
-            TimeTestResult(title: DrawAlgo.library.rawValue, time: timeToComplete(lineLibrary, len: lineLen, angle: angle)),
+            TimeTestResult(title: DrawAlgo.library.rawValue, time: timeToCompletePath(lineLibraryPath, len: lineLen, angle: angle)),
             TimeTestResult(title: DrawAlgo.vu.rawValue, time: timeToComplete(lineVu, len: lineLen, angle: angle))
         ]
         print(data, "len: \(lineLen), angle: \(angle)")
@@ -485,4 +509,32 @@ func timeToComplete(_ line: (CGPoint, CGPoint) -> [Pixel], len: Int, angle: Int)
     time /= Double(testCount)
     
     return time  // ms
+}
+
+func timeToCompletePath(_ linePath: (CGPoint, CGPoint) -> CGPath, len: Int, angle: Int) -> Double {
+    let preTestCount = 10, testCount = 3000
+    
+    let clock = ContinuousClock()
+    var time: Double = 0
+    
+    let p1 = CGPoint(x: 0, y: 0), p2 = pointRotate(CGPoint(x: len, y: 0), angle: angle, center: .zero)
+    
+    for _ in 0..<preTestCount {
+        _ = linePath(p1, p2)
+    }
+    
+    for _ in 0..<testCount {
+        let start = clock.now
+        let path = linePath(p1, p2)
+        _ = path.boundingBox
+        let end = clock.now
+        let elapsed = start.duration(to: end)
+        
+        time += Double(elapsed.components.seconds) * 1e6 +
+                Double(elapsed.components.attoseconds) / 1e12
+    }
+    
+    time /= Double(testCount)
+    
+    return time
 }

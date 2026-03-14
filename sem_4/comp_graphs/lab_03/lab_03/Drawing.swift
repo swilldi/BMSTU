@@ -224,14 +224,9 @@ func lineLibrary(_ p1: CGPoint, _ p2: CGPoint) -> [Pixel] {
         return [Pixel(x: Int(startGrid.x), y: Int(startGrid.y))]
     }
     
-    // Shift to pixel centers, otherwise axis-aligned lines lie on cell borders
-    // and may be selected as 2-pixel thick.
+    let path = lineLibraryPath(p1, p2)
     let start = CGPoint(x: startGrid.x + 0.5, y: startGrid.y + 0.5)
     let end = CGPoint(x: endGrid.x + 0.5, y: endGrid.y + 0.5)
-
-    let path = CGMutablePath()
-    path.move(to: start)
-    path.addLine(to: end)
 
     let stroked = path.copy(
         strokingWithWidth: 1,
@@ -274,4 +269,18 @@ func lineLibrary(_ p1: CGPoint, _ p2: CGPoint) -> [Pixel] {
     }
 
     return pixels
+}
+
+func lineLibraryPath(_ p1: CGPoint, _ p2: CGPoint) -> CGPath {
+    let startGrid = CGPoint(x: p1.x.rounded(), y: p1.y.rounded())
+    let endGrid = CGPoint(x: p2.x.rounded(), y: p2.y.rounded())
+    
+    // Draw through pixel centers, otherwise axis-aligned lines become 2-pixel thick.
+    let start = CGPoint(x: startGrid.x + 0.5, y: startGrid.y + 0.5)
+    let end = CGPoint(x: endGrid.x + 0.5, y: endGrid.y + 0.5)
+
+    let path = CGMutablePath()
+    path.move(to: start)
+    path.addLine(to: end)
+    return path.copy() ?? path
 }
