@@ -60,6 +60,7 @@ class MainWindow(QWidget):
 
         for graph in all_garph.values():
             graph.setLabel("bottom", "t, мкс (10^-6)")
+            graph.showGrid(x=True, y=True, alpha=0.3)
 
         all_garph["T"].setLabel("left", "T, K")
         all_garph["p"].setLabel("left", "p, МПа")
