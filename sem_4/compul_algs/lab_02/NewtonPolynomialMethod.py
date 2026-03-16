@@ -67,19 +67,16 @@ def newton_polynomial(
     return y
 
 
-def newton_polynomial2D(
-    table: list[tuple[float, float, float]], target_x: float, target_y: float, degree: int
-) -> float:
-    x_values = []
-    for x, _, _ in table:
-        if x not in x_values:
-            x_values.append(x)
+def newton_polynomial2D(table: list[tuple[float, float, float]], target_x: float, target_y: float, degree: int) -> float:
+    y_values = sorted({y for _, y, _ in table})
+    u_values = []
 
-    xv_values = []
-    for cur_x in x_values:
-        yz_values = [(y, z) for x, y, z in table if x == cur_x]
-        y_degree = min(degree, len(yz_values) - 1)
-        xv_values.append((cur_x, newton_polynomial(yz_values, target_y, y_degree)))
+    x_degree = min(degree, len({x for x, _, _ in table}) - 1)
+    for fixed_y in y_values:
+        xz_values = [(x, z) for x, y, z in table if y == fixed_y]
+        u_values.append(newton_polynomial(xz_values, target_x, x_degree))
 
-    x_degree = min(degree, len(xv_values) - 1)
-    return newton_polynomial(xv_values, target_x, x_degree)
+    y_degree = min(degree, len(y_values))
+    z = newton_polynomial(list(zip(y_values, u_values)), target_y, y_degree)
+    return z
+
