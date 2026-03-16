@@ -9,6 +9,7 @@ import SwiftUI
 
 struct PixelCanvas: View {
     @Binding var figures: [Figure]
+    @Binding var currentFigure: Figure?
     @Binding var directionCellCount: Int
     
     struct Metrics {
@@ -32,6 +33,7 @@ struct PixelCanvas: View {
                 }
             }
             
+            // Сохраненные фигуры
             for figure in figures {
                 for pixel in figure.pixels {
                     let x = directionCellCount + pixel.x,
@@ -41,6 +43,18 @@ struct PixelCanvas: View {
                 }
             }
             
+            // Текущая фигура
+            if let figure = currentFigure {
+                for pixel in figure.pixels {
+                    let x = directionCellCount + pixel.x,
+                        y = directionCellCount - pixel.y
+                    let color = figure.color.opacity(pixel.opacity)
+                    if abs(pixel.y) <= directionCellCount && abs(pixel.x) <= directionCellCount {
+                        context.fill(grid[y][x], with: .color(color))
+                    }
+                        
+                }
+            }
             
         }
         .aspectRatio(1, contentMode: .fit)
@@ -77,6 +91,7 @@ struct PixelCanvas: View {
     let figure = Figure(pixels, color: .red)
     PixelCanvas(
         figures: .constant([figure]),
+        currentFigure: .constant(nil),
         directionCellCount: .constant(2)
     )
 }

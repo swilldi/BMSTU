@@ -8,9 +8,40 @@
 import Foundation
 import SwiftUI
 
+enum FigureType: String, CaseIterable, Identifiable {
+    case ellipse = "Эллипс"
+    case cirlce = "Круг"
+    case line = "Линия"
+    
+    var id: String { rawValue }
+}
+
+struct FigureSettings: Equatable {
+    var type: FigureType
+    
+    // Центр фигуры
+    var center: CGPoint = CGPoint(x: 0, y: 0)
+    
+    // Радиус круга
+    var circleRadius: Double = 1
+    var circleAlgorithms: CircleDrawingAlgorithms = .canonicalEquation
+    
+    // Радиусы эллипса
+    var ellipseXRadius: Double = 2
+    var ellipseYRadius: Double = 2
+    var ellipseAlgorithms: EllipseDrawingAlgorithms = .canonicalEquation
+    
+    init(type: FigureType) {
+        self.type = type
+    }
+}
 
 
-class Figure {
+struct Figure: Equatable {
+    static func == (lhs: Figure, rhs: Figure) -> Bool {
+        lhs.pixels == rhs.pixels && lhs.color == rhs.color
+    }
+    
     let pixels: [Pixel]
     let color: Color
     init(_ pixels: [Pixel], color: Color) {
@@ -19,20 +50,20 @@ class Figure {
     }
 }
 
-struct Pixel {
+struct Pixel: Equatable & Hashable {
     let x: Int
     let y: Int
     let opacity: Double
     
-    init(x: Int, y: Int) {
-        self.x = x
-        self.y = y
+    init(x: Double, y: Double) {
+        self.x = Int(x)
+        self.y = Int(y)
         opacity = 1
     }
     
-    init(x: Int, y: Int, opacity: Double) {
-        self.x = x
-        self.y = y
+    init(x: Double, y: Double, opacity: Double) {
+        self.x = Int(x)
+        self.y = Int(y)
         self.opacity = opacity
     }
 }
