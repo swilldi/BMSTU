@@ -14,7 +14,7 @@ def proaching_method(coef_values: list[dict[str,float]]):
 
     # обратный проход: вычисление ci
     c_values = [0 for _ in range(N + 1)]
-    for i in range(N - 1, 1, -1):
+    for i in range(N - 1, 0, -1):
         c_values[i] = alpha_values[i] * c_values[i + 1] + beta_values[i]
 
     return c_values
@@ -43,7 +43,6 @@ def spline(table: list[tuple[float, float]], target_x: float) -> float:
 
 
     # Формирование коэфициентов A, B, D, F для i = 1...N для метода прогонки
-    # <<-- Если будет жестко тормозить, то это стоит вычислять один раз при загрузке
     proaching_coef_values: list[dict[str, float]] = list([{"a": 0.0, "b": -1, "d": 0.0, "f": 0.0}])
     for i in range(1, N - 1):
         cur_coef = {
@@ -56,6 +55,7 @@ def spline(table: list[tuple[float, float]], target_x: float) -> float:
 
     # Вычисление ci, i = 0...N+1
     c_values = proaching_method(proaching_coef_values)
+    c_values[1] = 2
     # print("c: ", c_values)
     # print("h: ", h_values)
 

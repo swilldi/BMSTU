@@ -15,7 +15,7 @@ def read_data_from_file():
         nums = list(map(int, line.split()))
 
         if len(nums) == 1:
-            cur_z = nums[0]
+            z = nums[0]
             is_x_line = True
         elif is_x_line:
             is_x_line = False
