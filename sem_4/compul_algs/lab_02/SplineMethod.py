@@ -10,7 +10,7 @@ def proaching_method(coef_values: list[dict[str,float]]):
         a, b, d, f = coef["a"], coef["b"], coef["d"], coef["f"]
 
         alpha_values[i] = d / (b - a * alpha_values[i - 1])
-        beta_values[i] = (a * beta_values[i - 1] + f) / (b - a * alpha_values[i - 1])
+        beta_values[i] = (f - a * beta_values[i - 1]) / (b - a * alpha_values[i - 1])
 
     # обратный проход: вычисление ci
     c_values = [0 for _ in range(N + 1)]
@@ -21,10 +21,14 @@ def proaching_method(coef_values: list[dict[str,float]]):
 
 
 def interval_indexes(values: list[float], target_value: float) -> tuple[int, int]:
+    # if target_value <= values[0]:
+    #     return 0, 1  # левый край
+    # if target_value >= values[-1]:
+    #     return len(values) - 2, len(values) - 1  # правый край
     for ind, value in enumerate(values):
         if value > target_value:
             return ind - 1, ind
-    return -1, -1
+    return len(values) - 2, len(values) - 1
 
 def spline(table: list[tuple[float, float]], target_x: float) -> float:
     N = len(table)

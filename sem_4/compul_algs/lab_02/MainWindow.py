@@ -5,12 +5,15 @@ from PyQt6.QtWidgets import (
 )
 from PyQt6.QtGui import QFont
 
+from Solver import Solver
+
 
 # TODO: заменить на реальную модель
 from pprint import pprint
-def compute_interpolation(params: dict) -> float:
-    pprint(params)
-    raise NotImplementedError("Модель не реализована")
+def compute_interpolation(solver: Solver, params: dict) -> float:
+    # pprint(params)
+    # raise NotImplementedError("Модель не реализована")
+    return solver.solve(params)
 
 
 FONT = QFont()
@@ -21,6 +24,8 @@ class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Интерполяция u = f(x, y, z)")
+
+        self.solver = Solver()
 
         central = QWidget()
         self.setCentralWidget(central)
@@ -41,7 +46,7 @@ class MainWindow(QMainWindow):
             g_layout.addWidget(lbl_val)
 
             spin_val = QDoubleSpinBox()
-            spin_val.setRange(0.0, 4.0)
+            spin_val.setRange(0.0, 4)
             spin_val.setSingleStep(0.1)
             spin_val.setDecimals(4)
             spin_val.setFont(FONT)
@@ -70,7 +75,7 @@ class MainWindow(QMainWindow):
             g_layout.addWidget(lbl_deg)
 
             spin_deg = QSpinBox()
-            spin_deg.setRange(1, 20)
+            spin_deg.setRange(1, 4)
             spin_deg.setValue(3)
             spin_deg.setFont(FONT)
             spin_deg.setMinimumHeight(36)
@@ -115,7 +120,7 @@ class MainWindow(QMainWindow):
             params[f"{ax}_degree"] = spin_deg.value()
 
         try:
-            result = compute_interpolation(params)
+            result = compute_interpolation(self.solver, params)
             self.lbl_result.setText(str(result))
         except NotImplementedError:
             self.lbl_result.setText("Ошибка: модель не реализована")
