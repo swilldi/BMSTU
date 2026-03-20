@@ -9,8 +9,11 @@ import SwiftUI
 
 struct ContentView: View {
     @State var figures = [Figure]()
-    @State var currentFigure: Figure? = Figure([.init(x: 0, y: 0)], color: .black)
-    @State var directionCellCount = 5
+    @State var currentFigure: Figure = Figure(
+        ellipsePixelsCanonicalEquation(center: CGPoint(x: 0, y: 0), rx: 2, ry: 2),
+        color: .black
+    )
+    @State var directionCellCount = 20
     
     var body: some View {
         NavigationStack {
@@ -24,13 +27,37 @@ struct ContentView: View {
             }
             
             .onChange(of: currentFigure) {
-                guard let figure = currentFigure else { return }
+//                guard let figure = currentFigure else { return }
                 
-                print(figure)
+                print(currentFigure)
+            }
+            .navigationTitle("Lab 04")
+            .toolbar {
+                VStack {
+                    HStack {
+                        Text("Сравнение алгоритмов: ")
+                        NavigationLink("Окружность") {
+                            CircleTimeTestView()
+                        }
+                        NavigationLink("Эллипс") {
+                            EllipseTimeTestView()
+                        }
+                    }
+                    .padding(.vertical, -5)
+                    
+                    HStack {
+                        Text("Тест алгоритма: ")
+                        NavigationLink("Окружность") {
+                            CircleTimeByRTestView()
+                        }
+                        NavigationLink("Эллипс") {
+                            EllipseTimeByRTestView()
+                        }
+                    }
+                }
             }
             
         }
-        
     }
     
     

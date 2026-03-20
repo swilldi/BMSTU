@@ -7,16 +7,43 @@
 
 import SwiftUI
 
+struct CircleSpecterSettings {
+    var r0: Int = 1,
+        r1: Int = 1,
+        step: Int = 1,
+        count: Int = 1
+}
+
+struct EllipseSpecterSettings {
+    enum EditDirection: String, CaseIterable, Identifiable {
+        case x = "X", y = "Y"
+        
+        var id: String {
+            rawValue
+        }
+    }
+    
+    var rx0: Int = 1,
+        ry0: Int = 1,
+        r1: Int = 1,
+        step: Int = 1,
+        count: Int = 1,
+        direction: EditDirection = .x
+        
+}
+
 struct ControlPanel: View {
-    @State var figureSettings = FigureSettings(type: .ellipse)
+    @State var figureSettings = FigureSettings(type: .cirlce)
+    @State var circleSpecterSettings = CircleSpecterSettings()
+    @State var ellipseSpecterSettings = EllipseSpecterSettings()
     
     @Binding var directionCellCount: Int
     @Binding var figures: [Figure]
-    @Binding var currentFigure: Figure?
-    
+    @Binding var currentFigure: Figure
+
     var radiusStep = 1.0, radiusRange: ClosedRange<Double>
     
-    init(directionCellCount: Binding<Int>, figures: Binding<[Figure]>, currentFigure: Binding<Figure?>) {
+    init(directionCellCount: Binding<Int>, figures: Binding<[Figure]>, currentFigure: Binding<Figure>) {
         _directionCellCount = directionCellCount
         _figures = figures
         _currentFigure = currentFigure
@@ -27,15 +54,19 @@ struct ControlPanel: View {
     var body: some View {
         VStack {
             // MARK: Настройки количества пикселей
-            Stepper(value: $directionCellCount, in: 2...100) {
-                HStack {
-                    Text("Количество пикселей: ")
-                    Text("\(directionCellCount)")
-                        .padding(.horizontal)
-                        .padding(.vertical, 3)
-                        .background()
-                }
-            }
+            ColorSelecter(selectedColor: $figureSettings.color)
+            
+            // MARK: Настройки количества пикселей
+//            Stepper(value: $directionCellCount, in: 2...100) {
+//                HStack {
+//                    Text("Количество пикселей: ")
+//                    Text("\(directionCellCount)")
+//                        .padding(.horizontal)
+//                        .padding(.vertical, 3)
+//                        .background()
+//                }
+//            }
+            SpinBox(value: $directionCellCount, min: 2, max: 100, label: "Количество пикселей ")
             
             // MARK: Настройки фигуры
             GroupBox {
@@ -66,49 +97,52 @@ struct ControlPanel: View {
                     switch figureSettings.type {
                     case .ellipse:
                         PointStepper(x: $figureSettings.center.x, y: $figureSettings.center.y, maxValue: directionCellCount)
+                            .padding(.bottom)
                         
-                        let rxStr = String(format: "%.0f", figureSettings.ellipseXRadius),
-                            ryStr = String(format: "%.0f", figureSettings.ellipseYRadius)
                         HStack {
-                            Stepper(value: $figureSettings.ellipseXRadius, in: radiusRange, step: radiusStep) {
-                                HStack {
-                                    Text("rx: ")
-                                    Text(rxStr)
-                                        .padding(.horizontal)
-                                        .padding(.vertical, 3)
-                                        .background()
-                                }
-                            }
+                            SpinBox(value: $figureSettings.ellipseXRadius, min: Int(radiusRange.lowerBound), max: Int(radiusRange.upperBound), label: "rx ")
                             .padding(.horizontal)
-                            
-                            Stepper(value: $figureSettings.ellipseYRadius, in: radiusRange, step: radiusStep) {
-                                HStack {
-                                    Text("ry: ")
-                                    Text(ryStr)
-                                        .padding(.horizontal)
-                                        .padding(.vertical, 3)
-                                        .background()
-                                }
-                            }
+                            SpinBox(value: $figureSettings.ellipseYRadius, min: Int(radiusRange.lowerBound), max: Int(radiusRange.upperBound), label: "ry ")
                             .padding(.horizontal)
                         }
                     case .cirlce:
                         PointStepper(x: $figureSettings.center.x, y: $figureSettings.center.y, maxValue: directionCellCount)
+                            .padding(.bottom)
                         
-                        let rStr = String(format: "%.0f", figureSettings.circleRadius)
-                        Stepper(value: $figureSettings.circleRadius, in: radiusRange, step: radiusStep) {
-                            HStack {
-                                Text("r: ")
-                                Text(rStr)
-                                    .padding(.horizontal)
-                                    .padding(.vertical, 3)
-                                    .background()
-                            }
-                            
-                        }
+                        SpinBox(value: $figureSettings.circleRadius, min: Int(radiusRange.lowerBound), max: Int(radiusRange.upperBound), label: "rx ")
                         .padding(.horizontal)
                     case .line:
                         Text("TODO")
+                    }
+                }
+                
+                GroupBox {
+                    switch figureSettings.type {
+                    case .ellipse:
+                        EllipseParams(settings: $ellipseSpecterSettings)
+                    case .cirlce:
+                        CircleParams(settings: $circleSpecterSettings)
+                    case .line:
+                        Text("TODO")
+                    }
+                    
+                    
+                    Button {
+                        print("Будет построен спектр")
+                        currentFigure = Figure([], color: .black)
+                        
+                        switch figureSettings.type {
+                        case .cirlce:
+                            circleSpecter()
+                        case .ellipse:
+                            ellipseSpecter()
+                        case .line:
+                            break
+                        }
+                        
+                    } label: {
+                        Text("Построить спектр")
+                            .frame(maxWidth: .infinity)
                     }
                 }
             }
@@ -116,6 +150,7 @@ struct ControlPanel: View {
             // MARK: Настройки сохраненных фигур
             Button {
                 print("Сохранить фигуру")
+                figures.append(currentFigure)
             } label: {
                 Text("Сохранить фигуру")
                     .frame(maxWidth: .infinity)
@@ -123,6 +158,8 @@ struct ControlPanel: View {
             
             Button {
                 print("Очистить фигуры")
+                figures.removeAll()
+                figureUpdate()
             } label: {
                 Text("Очистить фигуры")
                     .frame(maxWidth: .infinity)
@@ -130,63 +167,120 @@ struct ControlPanel: View {
         }
         
         .onChange(of: figureSettings) {
-            switch figureSettings.type {
-            case .cirlce:
-                currentFigure = circleFigure()
-            case .ellipse:
-                currentFigure = ellipseFigure()
-            case .line:
-                break
-            }
+            figureUpdate()
+        }
+        .frame(maxWidth: 360)
+    }
+    
+    func figureUpdate() {
+        switch figureSettings.type {
+        case .cirlce:
+            currentFigure = circleFigure()
+        case .ellipse:
+            currentFigure = ellipseFigure()
+        case .line:
+            break
         }
     }
     
-    func circleFigure() -> Figure {
+    func circleSpecter() {
+        let r0 = circleSpecterSettings.r0, r1 = circleSpecterSettings.r1, step = circleSpecterSettings.step
+        
+        print("\(r0) -> \(r1)")
+        for r in stride(from: r0, through: r1, by: step) {
+            print("Построенна окружность: \(r)")
+            figures.append(circleFigure(r: r))
+        }
+    }
+    
+    func ellipseSpecter() {
+        let rx0 = ellipseSpecterSettings.rx0, ry0 = ellipseSpecterSettings.ry0, step = ellipseSpecterSettings.step,
+            r1 = ellipseSpecterSettings.r1
+        
+//        print("\(r0) -> \(r1)")
+        switch ellipseSpecterSettings.direction {
+        case .x:
+            for r in stride(from: rx0, through: r1, by: step) {
+                figures.append(ellipseFigure(rx: r, ry: ry0))
+            }
+        case .y:
+            for r in stride(from: ry0, through: r1, by: step) {
+                figures.append(ellipseFigure(rx: rx0, ry: r))
+            }
+        }
+        
+    }
+    
+    func circleFigure(r circleR: Int? = nil) -> Figure {
+        var center: CGPoint
+        var r: Int
+        
+        if let circleR = circleR {
+            r = circleR
+            center = figureSettings.center
+        } else {
+            r = figureSettings.circleRadius
+            center = figureSettings.center
+        }
+        
         var pixels: [Pixel] {
             switch figureSettings.circleAlgorithms {
             case .canonicalEquation:
-                return circlePixelsCanonicalEquation(center: figureSettings.center, r: figureSettings.circleRadius)
+                return circlePixelsCanonicalEquation(center: center, r: Double(r))
             case .parametricEquatiob:
-                return cirlePixelParametricEquatiob(center: figureSettings.center, r: figureSettings.circleRadius)
+                return cirlePixelParametricEquatiob(center: center, r: Double(r))
             case .bresenham:
-                return circlePixelBresenham(center: figureSettings.center, r: figureSettings.circleRadius)
+                return circlePixelBresenham(center: center, r: Double(r))
             case .midPoint:
-                return circlePixelMidPoint(center: figureSettings.center, r: figureSettings.circleRadius)
+                return circlePixelMidPoint(center: center, r: Double(r))
             case .library:
                 break
             }
             return [Pixel(x: figureSettings.center.x, y: figureSettings.center.y)]
         }
         
-        return Figure(pixels, color: .black)
+        return Figure(pixels, color: figureSettings.color)
     }
     
-    func ellipseFigure() -> Figure {
+    func ellipseFigure(rx ellipseRX: Int? = nil, ry ellipseRY: Int? = nil) -> Figure {
+        var center: CGPoint
+        var rx: Int, ry: Int
+        
+        if let ellipseRX = ellipseRX, let ellipseRY = ellipseRY {
+            rx = ellipseRX
+            ry = ellipseRY
+            center = CGPoint(x: 0, y: 0)
+        } else {
+            rx = figureSettings.ellipseXRadius
+            ry = figureSettings.ellipseYRadius
+            center = figureSettings.center
+        }
+        
         var pixels: [Pixel] {
             switch figureSettings.ellipseAlgorithms {
             case .canonicalEquation:
                 return ellipsePixelsCanonicalEquation(
-                    center: figureSettings.center,
-                    rx: figureSettings.ellipseXRadius,
-                    ry: figureSettings.ellipseYRadius
+                    center: center,
+                    rx: Double(rx),
+                    ry: Double(ry)
                 )
             case .parametricEquatiob:
                 return ellipsePixelParametricEquatiob(
-                    center: figureSettings.center,
-                    rx: figureSettings.ellipseXRadius,
-                    ry: figureSettings.ellipseYRadius
+                    center: center,
+                    rx: Double(rx),
+                    ry: Double(ry)
                 )
             case .bresenham:
                 return ellipsePixelBresenham(
-                    center: figureSettings.center,
-                    rx: figureSettings.ellipseXRadius,
-                    ry: figureSettings.ellipseYRadius
+                    center: center,
+                    rx: Double(rx),
+                    ry: Double(ry)
                 )
             case .midPoint:
                 return ellipsePixelMidPoint(
-                    center: figureSettings.center,
-                    rx: figureSettings.ellipseXRadius,
-                    ry: figureSettings.ellipseYRadius
+                    center: center,
+                    rx: Double(rx),
+                    ry: Double(ry)
                 )
             case .library:
                 break
@@ -194,7 +288,7 @@ struct ControlPanel: View {
             return [Pixel(x: figureSettings.center.x, y: figureSettings.center.y)]
         }
         
-        return Figure(pixels, color: .black)
+        return Figure(pixels, color: figureSettings.color)
     }
     
 }
@@ -203,40 +297,54 @@ struct PointStepper: View {
     @Binding var x: CGFloat
     @Binding var y: CGFloat
     
-    var range: ClosedRange<CGFloat>
+    let minValue: Int, maxValue: Int
     
     init(x: Binding<CGFloat>, y: Binding<CGFloat>, maxValue: Int) {
         _x = x
         _y = y
         
-        range = -CGFloat(maxValue)...CGFloat(maxValue)
+        self.minValue = -maxValue
+        self.maxValue = maxValue
     }
     
     var body: some View {
         HStack {
             HStack {
-                Stepper(value: $x, in: range) {
-                    HStack {
-                        Text("x: ")
-                        Text(String(format: "%.0f", x))
-                            .padding(.horizontal)
-                            .padding(.vertical, 3)
-                            .background()
-                    }
-                }
+                SpinBox(
+                    value: Binding(
+                        get: { Int(x) },
+                        set: { x = CGFloat($0) }
+                    ),
+                    min: minValue,
+                    max: maxValue,
+                    label: "x"
+                )
                 .padding(.horizontal)
                 
-                Stepper(value: $y, in: range) {
-                    HStack {
-                        Text("y: ")
-                        Text(String(format: "%.0f", y))
-                            .padding(.horizontal)
-                            .padding(.vertical, 3)
-                            .background()
-                    }
-                }
+                SpinBox(
+                    value: Binding(
+                        get: { Int(y) },
+                        set: { y = CGFloat($0) }
+                    ),
+                    min: minValue,
+                    max: maxValue,
+                    label: "y"
+                )
                 .padding(.horizontal)
             }
+        }
+    }
+}
+
+
+struct VisualComparingSettingsView: View {
+    let type: FigureType
+    
+    var body: some View {
+        if type == .cirlce {
+            
+        } else if type == .ellipse {
+            
         }
     }
 }

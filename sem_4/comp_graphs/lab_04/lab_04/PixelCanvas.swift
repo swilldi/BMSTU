@@ -9,7 +9,7 @@ import SwiftUI
 
 struct PixelCanvas: View {
     @Binding var figures: [Figure]
-    @Binding var currentFigure: Figure?
+    @Binding var currentFigure: Figure
     @Binding var directionCellCount: Int
     
     struct Metrics {
@@ -39,21 +39,20 @@ struct PixelCanvas: View {
                     let x = directionCellCount + pixel.x,
                         y = directionCellCount - pixel.y
                     let color = figure.color.opacity(pixel.opacity)
-                    context.fill(grid[y][x], with: .color(color))
+                    if abs(pixel.y) <= directionCellCount && abs(pixel.x) <= directionCellCount {
+                        context.fill(grid[y][x], with: .color(color))
+                    }
                 }
             }
             
             // Текущая фигура
-            if let figure = currentFigure {
-                for pixel in figure.pixels {
+                for pixel in currentFigure.pixels {
                     let x = directionCellCount + pixel.x,
                         y = directionCellCount - pixel.y
-                    let color = figure.color.opacity(pixel.opacity)
+                    let color = currentFigure.color.opacity(pixel.opacity)
                     if abs(pixel.y) <= directionCellCount && abs(pixel.x) <= directionCellCount {
                         context.fill(grid[y][x], with: .color(color))
                     }
-                        
-                }
             }
             
         }
@@ -91,7 +90,7 @@ struct PixelCanvas: View {
     let figure = Figure(pixels, color: .red)
     PixelCanvas(
         figures: .constant([figure]),
-        currentFigure: .constant(nil),
+        currentFigure: .constant(.init([], color: .black)),
         directionCellCount: .constant(2)
     )
 }

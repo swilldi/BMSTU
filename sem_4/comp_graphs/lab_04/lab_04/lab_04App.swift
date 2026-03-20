@@ -12,6 +12,7 @@ struct lab_04App: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
+//            CircleTimeByRTestView()
         }
     }
 }

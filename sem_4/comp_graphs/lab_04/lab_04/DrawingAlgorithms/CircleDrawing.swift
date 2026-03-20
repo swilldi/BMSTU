@@ -24,12 +24,12 @@ func circlePixelsCanonicalEquation(center: CGPoint, r: Double) -> [Pixel] {
     let cx = center.x
     let cy = center.y
     let r2 = r * r
-    let limit = r / sqrt(2.0)
+    let limit = floor(r / sqrt(2.0))
     
-    for dx in stride(from: 0.0, through: limit, by: 1.0) {
+    for dx in stride(from: 0.0, through: limit + 1, by: 1.0) {
         let dy = sqrt(r2 - dx * dx)
         
-        let x = round(dx)
+        let x = dx
         let y = round(dy)
         
         pixels.append(contentsOf: [
@@ -56,10 +56,11 @@ func cirlePixelParametricEquatiob(center: CGPoint, r: Double) -> [Pixel] {
     
     let cx = center.x,
         cy = center.y,
-        step = .pi * .pi * r / 720
+        step = asin(1.0 / r) * 180 / .pi
     
-    for t in stride(from: 0, to: .pi / 4, by: step) {
-        let x = round(r * cos(t)), y = round(r * sin(t))
+    for t in stride(from: 0, through: 90, by: step) {
+        let tRad = Double(t) * .pi / 180
+        let x = round(r * cos(tRad)), y = round(r * sin(tRad))
         
         pixels.append(contentsOf: [
             .init(x: cx + x, y: cy + y),
@@ -124,11 +125,11 @@ func circlePixelBresenham(center: CGPoint, r: Double) -> [Pixel] {
 func circlePixelMidPoint(center: CGPoint, r: Double) -> [Pixel] {
     let cx = center.x, cy = center.y
     let xLimit = r / sqrt(2)
-    let r2 = pow(r, 2)
     
     var pixels = [Pixel]()
     var x = 0.0, y = r
-    while x <= xLimit {
+    var f = 1 - r
+    while x <= xLimit.rounded() {
         pixels.append(contentsOf: [
             .init(x: cx + x, y: cy + y),
             .init(x: cx + x, y: cy - y),
@@ -140,10 +141,12 @@ func circlePixelMidPoint(center: CGPoint, r: Double) -> [Pixel] {
             .init(x: cx - y, y: cy - x)
         ])
         
-        let f = pow(x + 1, 2) + pow(y - 0.5, 2) - r2
+        
         if f < 0 {
+            f += 2 * x + 3
             x += 1
         } else {
+            f += 2 * (x - y) + 5
             x += 1
             y -= 1
         }

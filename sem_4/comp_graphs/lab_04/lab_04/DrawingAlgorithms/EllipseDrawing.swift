@@ -76,7 +76,7 @@ func ellipsePixelParametricEquatiob(center: CGPoint, rx a: Double, ry b: Double)
 
 func ellipsePixelBresenham(center: CGPoint, rx a: Double, ry b: Double) -> [Pixel] {
     let cx = center.x, cy = center.y,
-        a2 = a * a, b2 = b * b, ab2 = a2 * b2
+        a2 = a * a, b2 = b * b
     var pixels = [Pixel]()
     
     var delta = a2 * (1 - 2 * b)
@@ -122,38 +122,43 @@ func ellipsePixelBresenham(center: CGPoint, rx a: Double, ry b: Double) -> [Pixe
 
 func ellipsePixelMidPoint(center: CGPoint, rx a: Double, ry b: Double) -> [Pixel] {
     
-    let cx = center.x, cy = center.y
-    let a2 = pow(a, 2), b2 = pow(b, 2), ab2 = a2 * b2
+    let cx = Int(center.x), cy = Int(center.y)
+    let a2 = a * a, b2 = b * b, ab2 = a2 * b2
     
     var pixels = [Pixel]()
+    pixels.reserveCapacity(4 * Int((a + b)) + 4)
     var x = 0.0, y = b
     
     if a == 0 {
         for y in -Int(b)...Int(b) {
-            pixels.append(Pixel(x: cx, y: cy + Double(y)))
+            pixels.append(Pixel(x: Double(cx), y: Double(cy) + Double(y)))
         }
         return pixels
     }
     if b == 0 {
         for x in -Int(a)...Int(a) {
-            pixels.append(Pixel(x: cx + Double(x), y: cy))
+            pixels.append(Pixel(x: Double(cx) + Double(x), y: Double(cy)))
         }
         return pixels
     }
     
     // Проход по x
+    var f = b2 * (x + 1) * (x + 1) + a2 * (y - 0.5) * (y - 0.5) - ab2
     while b2 * x <= a2 * y {
-        pixels.append(contentsOf: [
-            .init(x: cx + x, y: cy + y),
-            .init(x: cx + x, y: cy - y),
-            .init(x: cx - x, y: cy + y),
-            .init(x: cx - x, y: cy - y)
-        ])
+        let currentPixels = [
+            Pixel(x: Double(cx) + x, y: Double(cy) + y),
+            Pixel(x: Double(cx) + x, y: Double(cy) - y),
+            Pixel(x: Double(cx) - x, y: Double(cy) + y),
+            Pixel(x: Double(cx) - x, y: Double(cy) - y)
+        ]
+        pixels.append(contentsOf: currentPixels)
         
-        let f = b2 * (x + 1) * (x + 1) + a2 * (y - 0.5) * (y - 0.5) - ab2
+        
         if f < 0 {
+            f += b2 * (2 * x + 1)
             x += 1
         } else {
+            f += b2 * (2 * x + 1) - a2 * (2 * y - 1)
             x += 1
             y -= 1
         }
@@ -161,18 +166,20 @@ func ellipsePixelMidPoint(center: CGPoint, rx a: Double, ry b: Double) -> [Pixel
     
     // Проход по y
     while y >= 0 {
-        pixels.append(contentsOf: [
-            .init(x: cx + x, y: cy + y),
-            .init(x: cx + x, y: cy - y),
-            .init(x: cx - x, y: cy + y),
-            .init(x: cx - x, y: cy - y)
-        ])
+        let currentPixels = [
+            Pixel(x: Double(cx) + x, y: Double(cy) + y),
+            Pixel(x: Double(cx) + x, y: Double(cy) - y),
+            Pixel(x: Double(cx) - x, y: Double(cy) + y),
+            Pixel(x: Double(cx) - x, y: Double(cy) - y)
+        ]
+        pixels.append(contentsOf: currentPixels)
         
-        let f = b2 * (x + 0.5) * (x + 0.5) + a2 * (y - 1) * (y - 1) - ab2
         if f < 0 {
+            f += b2 * (2 * x + 1) - a2 * (2 * y - 1)
             x += 1
             y -= 1
         } else {
+            f += a2 * (2 * y - 1)
             y -= 1
         }
     }

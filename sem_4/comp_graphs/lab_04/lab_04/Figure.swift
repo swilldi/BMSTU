@@ -18,17 +18,18 @@ enum FigureType: String, CaseIterable, Identifiable {
 
 struct FigureSettings: Equatable {
     var type: FigureType
+    var color: Color = .black
     
     // Центр фигуры
     var center: CGPoint = CGPoint(x: 0, y: 0)
     
     // Радиус круга
-    var circleRadius: Double = 1
+    var circleRadius: Int = 2
     var circleAlgorithms: CircleDrawingAlgorithms = .canonicalEquation
     
     // Радиусы эллипса
-    var ellipseXRadius: Double = 2
-    var ellipseYRadius: Double = 2
+    var ellipseXRadius: Int = 2
+    var ellipseYRadius: Int = 2
     var ellipseAlgorithms: EllipseDrawingAlgorithms = .canonicalEquation
     
     init(type: FigureType) {
@@ -37,13 +38,13 @@ struct FigureSettings: Equatable {
 }
 
 
-struct Figure: Equatable {
+struct Figure: Equatable, Hashable {
     static func == (lhs: Figure, rhs: Figure) -> Bool {
         lhs.pixels == rhs.pixels && lhs.color == rhs.color
     }
     
     let pixels: [Pixel]
-    let color: Color
+    var color: Color
     init(_ pixels: [Pixel], color: Color) {
         self.pixels = pixels
         self.color = color
