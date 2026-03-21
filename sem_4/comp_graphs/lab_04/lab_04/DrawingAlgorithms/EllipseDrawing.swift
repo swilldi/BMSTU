@@ -18,32 +18,33 @@ enum EllipseDrawingAlgorithms: String, CaseIterable, Identifiable {
 }
 
 func ellipsePixelsCanonicalEquation(center: CGPoint, rx a: Double, ry b: Double) -> [Pixel] {
-    var pixels = Set<Pixel>()
+//    var pixels = Set<Pixel>()
+    var pixels = [Pixel]()
     
     let cx = center.x
     let cy = center.y
     let a2 = a * a, b2 = b * b
     let xLimit: Double = a2 / sqrt(a2 + b2), yLimit = b2 / sqrt(a2 + b2)
     
-    for x in stride(from: 0, to: xLimit, by: 1) {
+    for x in stride(from: 0, through: xLimit, by: 1) {
         let y = round(b * sqrt(1 - x * x / a2))
 
-        pixels.insert(Pixel(x: cx + x, y: cy + y))
-        pixels.insert(Pixel(x: cx + x, y: cy - y))
-        pixels.insert(Pixel(x: cx - x, y: cy + y))
-        pixels.insert(Pixel(x: cx - x, y: cy - y))
+        pixels.append(Pixel(x: cx + x, y: cy + y))
+        pixels.append(Pixel(x: cx + x, y: cy - y))
+        pixels.append(Pixel(x: cx - x, y: cy + y))
+        pixels.append(Pixel(x: cx - x, y: cy - y))
     }
     
-    for y in stride(from: 0, to: yLimit, by: 1) {
+    for y in stride(from: 0, through: yLimit, by: 1) {
         let x = round(a * sqrt(1 - y * y / b2))
         
-        pixels.insert(Pixel(x: cx + x, y: cy + y))
-        pixels.insert(Pixel(x: cx + x, y: cy - y))
-        pixels.insert(Pixel(x: cx - x, y: cy + y))
-        pixels.insert(Pixel(x: cx - x, y: cy - y))
+        pixels.append(Pixel(x: cx + x, y: cy + y))
+        pixels.append(Pixel(x: cx + x, y: cy - y))
+        pixels.append(Pixel(x: cx - x, y: cy + y))
+        pixels.append(Pixel(x: cx - x, y: cy - y))
     }
     
-    return Array(pixels)
+    return pixels
 }
 
 func ellipsePixelParametricEquatiob(center: CGPoint, rx a: Double, ry b: Double) -> [Pixel] {
@@ -51,7 +52,8 @@ func ellipsePixelParametricEquatiob(center: CGPoint, rx a: Double, ry b: Double)
         return [Pixel(x: center.x, y: center.y)]
     }
     
-    var pixels = Set<Pixel>()
+//    var pixels = Set<Pixel>()
+    var pixels = [Pixel]()
     
     let cx = center.x,
         cy = center.y,
@@ -60,16 +62,16 @@ func ellipsePixelParametricEquatiob(center: CGPoint, rx a: Double, ry b: Double)
     for t in stride(from: 0, through: .pi / 2, by: step) {
         let x = round(a * cos(t)), y = round(b * sin(t))
         
-        pixels.insert(Pixel(x: cx + x, y: cy + y))
-        pixels.insert(Pixel(x: cx + x, y: cy - y))
-        pixels.insert(Pixel(x: cx - x, y: cy + y))
-        pixels.insert(Pixel(x: cx - x, y: cy - y))
+        pixels.append(Pixel(x: cx + x, y: cy + y))
+        pixels.append(Pixel(x: cx + x, y: cy - y))
+        pixels.append(Pixel(x: cx - x, y: cy + y))
+        pixels.append(Pixel(x: cx - x, y: cy - y))
     }
     
-    pixels.insert(Pixel(x: cx, y: cy + b))
-    pixels.insert(Pixel(x: cx, y: cy - b))
-    pixels.insert(Pixel(x: cx + a, y: cy))
-    pixels.insert(Pixel(x: cx - a, y: cy))
+    pixels.append(Pixel(x: cx, y: cy + b))
+    pixels.append(Pixel(x: cx, y: cy - b))
+    pixels.append(Pixel(x: cx + a, y: cy))
+    pixels.append(Pixel(x: cx - a, y: cy))
     
     return Array(pixels)
 }

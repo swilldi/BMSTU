@@ -129,7 +129,7 @@ struct ControlPanel: View {
                     
                     Button {
                         print("Будет построен спектр")
-                        currentFigure = Figure([], color: .black)
+//                        currentFigure = Figure([], color: .black)
                         
                         switch figureSettings.type {
                         case .cirlce:

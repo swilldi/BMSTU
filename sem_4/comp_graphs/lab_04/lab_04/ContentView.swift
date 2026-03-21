@@ -35,7 +35,7 @@ struct ContentView: View {
             .toolbar {
                 VStack {
                     HStack {
-                        Text("Сравнение алгоритмов: ")
+                        Text("Время построения: ")
                         NavigationLink("Окружность") {
                             CircleTimeTestView()
                         }
@@ -46,7 +46,7 @@ struct ContentView: View {
                     .padding(.vertical, -5)
                     
                     HStack {
-                        Text("Тест алгоритма: ")
+                        Text("График зависимости времени от радиуса: ")
                         NavigationLink("Окружность") {
                             CircleTimeByRTestView()
                         }
