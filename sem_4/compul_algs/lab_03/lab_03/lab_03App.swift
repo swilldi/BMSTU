@@ -1,0 +1,18 @@
+//
+//  lab_03App.swift
+//  lab_03
+//
+//  Created by Dmitriy Dudurev on 21.03.2026.
+//
+
+import SwiftUI
+
+@main
+struct lab_03App: App {
+    var body: some Scene {
+        WindowGroup {
+            Test()
+                .preferredColorScheme(.light)
+        }
+    }
+}
