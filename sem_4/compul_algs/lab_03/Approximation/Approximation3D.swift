@@ -30,6 +30,7 @@ struct Point3D: Identifiable {
     let id = UUID()
 }
 
+
 private func multFunc<T>(x xValues: [T], y yValues: [T], weight p: [Double], _ f1: (T, T) -> Double, _ f2: (T, T) -> Double) -> Double {
     var result = 0.0
     for i in 0..<xValues.count {

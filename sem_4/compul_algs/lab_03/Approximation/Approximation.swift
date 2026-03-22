@@ -10,7 +10,7 @@ import Foundation
 struct Point: Identifiable {
     let x: Double
     let y: Double
-    let p: Double
+    var p: Double
     
     init(x: Double, y: Double) {
         self.x = x
@@ -77,23 +77,38 @@ func getCoef(data: [Point], n: Int) -> [Double] {
 }
 
 func aprox(data: [Point], n: Int) -> [Point] {
+    let minX = data.first!.x, maxX = data.last!.x
+    
     var points = [Point]()
 
     // получить коэфиенты
     let coef = getCoef(data: data, n: n)
     
-    // пары (x, F(x)) приближенной функции F(x)
-    for point in data {
+//    // пары (x, F(x)) приближенной функции F(x)
+//    for point in data {
+//        var y = 0.0
+//        var x = 1.0
+//        
+//        // F(x) = a0 * x^0 + a1 * x^1 + ... + an * x^n
+//        for i in 0..<coef.count {
+//            y += x * coef[i]
+//            x *= point.x
+//        }
+//        
+//        points.append(Point(x: point.x, y: y))
+//    }
+    
+    for curX in stride(from: minX, through: maxX, by: (maxX - minX) / 100) {
         var y = 0.0
         var x = 1.0
         
         // F(x) = a0 * x^0 + a1 * x^1 + ... + an * x^n
         for i in 0..<coef.count {
             y += x * coef[i]
-            x *= point.x
+            x *= curX
         }
         
-        points.append(Point(x: point.x, y: y))
+        points.append(Point(x: curX, y: y))
     }
     
     return points
