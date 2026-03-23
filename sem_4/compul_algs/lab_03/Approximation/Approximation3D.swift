@@ -11,7 +11,7 @@ struct Point3D: Identifiable {
     let x: Double
     let y: Double
     let z: Double
-    let p: Double
+    var p: Double
     
     init(x: Double, y: Double, z: Double) {
         self.x = x
@@ -82,11 +82,22 @@ private func getCoef3D(data: [Point3D], degrees degreePars: [(x: Double, y: Doub
         vectorOfMultFuncByY.append(multFunc(x: xValues, y: yValues, weight: pValues, zValues, f1))
     }
     
+    
+
+    print("Матрица A:")
+    for row in matrOfMultFunc {
+        print(row.map { String(format: "%.2f", $0) }.joined(separator: "\t"))
+    }
+    print("Вектор b: \(vectorOfMultFuncByY)")
+    
+    
+    
+    
     return solveMatrix(A: matrOfMultFunc, b: vectorOfMultFuncByY)
 
 }
 
-func aprox3D(data: [Point3D], n: Int) -> [Point3D] {
+func aprox3D(data: [Point3D], n: Int) -> ((Double, Double) -> Double) {
     var points = [Point3D]()
     
     var degreePars = [(x: Double, y: Double)]()
@@ -100,16 +111,27 @@ func aprox3D(data: [Point3D], n: Int) -> [Point3D] {
     let coef = getCoef3D(data: data, degrees: degreePars, n: n)
     
     
-    // пары (x, F(x)) приближенной функции F(x)
-    for point in data {
+//    // пары (x, F(x)) приближенной функции F(x)
+//    for point in data {
+//        var z = 0.0
+//        
+//        // F(x) = a0 * x^0 + a1 * x^1 + ... + an * x^n
+//        for i in 0..<coef.count {
+//            z += coef[i] * pow(point.x, degreePars[i].x) * pow(point.y, degreePars[i].y)
+//        }
+//        points.append(Point3D(x: point.x, y: point.y, z: z))
+//    }
+    
+    let f: (Double, Double) -> Double = { x, y in
         var z = 0.0
-        
+
         // F(x) = a0 * x^0 + a1 * x^1 + ... + an * x^n
         for i in 0..<coef.count {
-            z += coef[i] * pow(point.x, degreePars[i].x) * pow(point.y, degreePars[i].y)
+            z += coef[i] * pow(x, degreePars[i].x) * pow(y, degreePars[i].y)
         }
-        points.append(Point3D(x: point.x, y: point.y, z: z))
+        
+        return z
     }
     
-    return points
+    return f
 }

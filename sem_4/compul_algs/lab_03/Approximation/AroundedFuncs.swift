@@ -8,12 +8,18 @@
 import Foundation
 
 let digitsAfterDot = 3
-struct ApproxedFunc: CustomStringConvertible {
+struct ApproxedFunc: CustomStringConvertible, Identifiable {
     let f: (Double) -> Double
     
     let a: Double
     let b: Double
     var description: String
+    
+    var id = UUID()
+    
+    static func == (lh: ApproxedFunc, rh: ApproxedFunc) -> Bool {
+        return lh.id == rh.id
+    }
 }
 
 // MARK: y = ax^b

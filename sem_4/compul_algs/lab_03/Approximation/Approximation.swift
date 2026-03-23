@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct Point: Identifiable {
+struct Point: Identifiable, CustomStringConvertible {
     let x: Double
     let y: Double
     var p: Double
@@ -25,6 +25,10 @@ struct Point: Identifiable {
     }
     
     let id = UUID()
+    
+    var description: String {
+        "(x: \(x), y: \(y))"
+    }
 }
 
 private func multFunc<T>(x values: [T], weight p: [Double], _ f1: (T) -> Double, _ f2: (T) -> Double) -> Double {
