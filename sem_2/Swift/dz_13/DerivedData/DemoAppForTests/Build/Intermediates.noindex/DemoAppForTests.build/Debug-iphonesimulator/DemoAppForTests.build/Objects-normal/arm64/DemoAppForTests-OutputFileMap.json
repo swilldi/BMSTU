@@ -1,0 +1,108 @@
+{
+  "" : {
+    "diagnostics" : "/Users/d.toropkin/Developer/build/iOSLectures/DemoAppForTests/DerivedData/DemoAppForTests/Build/Intermediates.noindex/DemoAppForTests.build/Debug-iphonesimulator/DemoAppForTests.build/Objects-normal/arm64/DemoAppForTests-master.dia",
+    "emit-module-dependencies" : "/Users/d.toropkin/Developer/build/iOSLectures/DemoAppForTests/DerivedData/DemoAppForTests/Build/Intermediates.noindex/DemoAppForTests.build/Debug-iphonesimulator/DemoAppForTests.build/Objects-normal/arm64/DemoAppForTests-master-emit-module.d",
+    "emit-module-diagnostics" : "/Users/d.toropkin/Developer/build/iOSLectures/DemoAppForTests/DerivedData/DemoAppForTests/Build/Intermediates.noindex/DemoAppForTests.build/Debug-iphonesimulator/DemoAppForTests.build/Objects-normal/arm64/DemoAppForTests-master-emit-module.dia",
+    "swift-dependencies" : "/Users/d.toropkin/Developer/build/iOSLectures/DemoAppForTests/DerivedData/DemoAppForTests/Build/Intermediates.noindex/DemoAppForTests.build/Debug-iphonesimulator/DemoAppForTests.build/Objects-normal/arm64/DemoAppForTests-master.swiftdeps"
+  },
+  "/Users/d.toropkin/Developer/build/iOSLectures/DemoAppForTests/DemoAppForTests/AppDelegate.swift" : {
+    "const-values" : "/Users/d.toropkin/Developer/build/iOSLectures/DemoAppForTests/DerivedData/DemoAppForTests/Build/Intermediates.noindex/DemoAppForTests.build/Debug-iphonesimulator/DemoAppForTests.build/Objects-normal/arm64/AppDelegate.swiftconstvalues",
+    "dependencies" : "/Users/d.toropkin/Developer/build/iOSLectures/DemoAppForTests/DerivedData/DemoAppForTests/Build/Intermediates.noindex/DemoAppForTests.build/Debug-iphonesimulator/DemoAppForTests.build/Objects-normal/arm64/AppDelegate.d",
+    "diagnostics" : "/Users/d.toropkin/Developer/build/iOSLectures/DemoAppForTests/DerivedData/DemoAppForTests/Build/Intermediates.noindex/DemoAppForTests.build/Debug-iphonesimulator/DemoAppForTests.build/Objects-normal/arm64/AppDelegate.dia",
+    "index-unit-output-path" : "/DemoAppForTests.build/Debug-iphonesimulator/DemoAppForTests.build/Objects-normal/arm64/AppDelegate.o",
+    "llvm-bc" : "/Users/d.toropkin/Developer/build/iOSLectures/DemoAppForTests/DerivedData/DemoAppForTests/Build/Intermediates.noindex/DemoAppForTests.build/Debug-iphonesimulator/DemoAppForTests.build/Objects-normal/arm64/AppDelegate.bc",
+    "object" : "/Users/d.toropkin/Developer/build/iOSLectures/DemoAppForTests/DerivedData/DemoAppForTests/Build/Intermediates.noindex/DemoAppForTests.build/Debug-iphonesimulator/DemoAppForTests.build/Objects-normal/arm64/AppDelegate.o",
+    "swift-dependencies" : "/Users/d.toropkin/Developer/build/iOSLectures/DemoAppForTests/DerivedData/DemoAppForTests/Build/Intermediates.noindex/DemoAppForTests.build/Debug-iphonesimulator/DemoAppForTests.build/Objects-normal/arm64/AppDelegate.swiftdeps",
+    "swiftmodule" : "/Users/d.toropkin/Developer/build/iOSLectures/DemoAppForTests/DerivedData/DemoAppForTests/Build/Intermediates.noindex/DemoAppForTests.build/Debug-iphonesimulator/DemoAppForTests.build/Objects-normal/arm64/AppDelegate~partial.swiftmodule"
+  },
+  "/Users/d.toropkin/Developer/build/iOSLectures/DemoAppForTests/DemoAppForTests/BusinessLayer/CoffeeService.swift" : {
+    "const-values" : "/Users/d.toropkin/Developer/build/iOSLectures/DemoAppForTests/DerivedData/DemoAppForTests/Build/Intermediates.noindex/DemoAppForTests.build/Debug-iphonesimulator/DemoAppForTests.build/Objects-normal/arm64/CoffeeService.swiftconstvalues",
+    "dependencies" : "/Users/d.toropkin/Developer/build/iOSLectures/DemoAppForTests/DerivedData/DemoAppForTests/Build/Intermediates.noindex/DemoAppForTests.build/Debug-iphonesimulator/DemoAppForTests.build/Objects-normal/arm64/CoffeeService.d",
+    "diagnostics" : "/Users/d.toropkin/Developer/build/iOSLectures/DemoAppForTests/DerivedData/DemoAppForTests/Build/Intermediates.noindex/DemoAppForTests.build/Debug-iphonesimulator/DemoAppForTests.build/Objects-normal/arm64/CoffeeService.dia",
+    "index-unit-output-path" : "/DemoAppForTests.build/Debug-iphonesimulator/DemoAppForTests.build/Objects-normal/arm64/CoffeeService.o",
+    "llvm-bc" : "/Users/d.toropkin/Developer/build/iOSLectures/DemoAppForTests/DerivedData/DemoAppForTests/Build/Intermediates.noindex/DemoAppForTests.build/Debug-iphonesimulator/DemoAppForTests.build/Objects-normal/arm64/CoffeeService.bc",
+    "object" : "/Users/d.toropkin/Developer/build/iOSLectures/DemoAppForTests/DerivedData/DemoAppForTests/Build/Intermediates.noindex/DemoAppForTests.build/Debug-iphonesimulator/DemoAppForTests.build/Objects-normal/arm64/CoffeeService.o",
+    "swift-dependencies" : "/Users/d.toropkin/Developer/build/iOSLectures/DemoAppForTests/DerivedData/DemoAppForTests/Build/Intermediates.noindex/DemoAppForTests.build/Debug-iphonesimulator/DemoAppForTests.build/Objects-normal/arm64/CoffeeService.swiftdeps",
+    "swiftmodule" : "/Users/d.toropkin/Developer/build/iOSLectures/DemoAppForTests/DerivedData/DemoAppForTests/Build/Intermediates.noindex/DemoAppForTests.build/Debug-iphonesimulator/DemoAppForTests.build/Objects-normal/arm64/CoffeeService~partial.swiftmodule"
+  },
+  "/Users/d.toropkin/Developer/build/iOSLectures/DemoAppForTests/DemoAppForTests/BusinessLayer/Models/Coffee.swift" : {
+    "const-values" : "/Users/d.toropkin/Developer/build/iOSLectures/DemoAppForTests/DerivedData/DemoAppForTests/Build/Intermediates.noindex/DemoAppForTests.build/Debug-iphonesimulator/DemoAppForTests.build/Objects-normal/arm64/Coffee.swiftconstvalues",
+    "dependencies" : "/Users/d.toropkin/Developer/build/iOSLectures/DemoAppForTests/DerivedData/DemoAppForTests/Build/Intermediates.noindex/DemoAppForTests.build/Debug-iphonesimulator/DemoAppForTests.build/Objects-normal/arm64/Coffee.d",
+    "diagnostics" : "/Users/d.toropkin/Developer/build/iOSLectures/DemoAppForTests/DerivedData/DemoAppForTests/Build/Intermediates.noindex/DemoAppForTests.build/Debug-iphonesimulator/DemoAppForTests.build/Objects-normal/arm64/Coffee.dia",
+    "index-unit-output-path" : "/DemoAppForTests.build/Debug-iphonesimulator/DemoAppForTests.build/Objects-normal/arm64/Coffee.o",
+    "llvm-bc" : "/Users/d.toropkin/Developer/build/iOSLectures/DemoAppForTests/DerivedData/DemoAppForTests/Build/Intermediates.noindex/DemoAppForTests.build/Debug-iphonesimulator/DemoAppForTests.build/Objects-normal/arm64/Coffee.bc",
+    "object" : "/Users/d.toropkin/Developer/build/iOSLectures/DemoAppForTests/DerivedData/DemoAppForTests/Build/Intermediates.noindex/DemoAppForTests.build/Debug-iphonesimulator/DemoAppForTests.build/Objects-normal/arm64/Coffee.o",
+    "swift-dependencies" : "/Users/d.toropkin/Developer/build/iOSLectures/DemoAppForTests/DerivedData/DemoAppForTests/Build/Intermediates.noindex/DemoAppForTests.build/Debug-iphonesimulator/DemoAppForTests.build/Objects-normal/arm64/Coffee.swiftdeps",
+    "swiftmodule" : "/Users/d.toropkin/Developer/build/iOSLectures/DemoAppForTests/DerivedData/DemoAppForTests/Build/Intermediates.noindex/DemoAppForTests.build/Debug-iphonesimulator/DemoAppForTests.build/Objects-normal/arm64/Coffee~partial.swiftmodule"
+  },
+  "/Users/d.toropkin/Developer/build/iOSLectures/DemoAppForTests/DemoAppForTests/BusinessLayer/Models/Order.swift" : {
+    "const-values" : "/Users/d.toropkin/Developer/build/iOSLectures/DemoAppForTests/DerivedData/DemoAppForTests/Build/Intermediates.noindex/DemoAppForTests.build/Debug-iphonesimulator/DemoAppForTests.build/Objects-normal/arm64/Order.swiftconstvalues",
+    "dependencies" : "/Users/d.toropkin/Developer/build/iOSLectures/DemoAppForTests/DerivedData/DemoAppForTests/Build/Intermediates.noindex/DemoAppForTests.build/Debug-iphonesimulator/DemoAppForTests.build/Objects-normal/arm64/Order.d",
+    "diagnostics" : "/Users/d.toropkin/Developer/build/iOSLectures/DemoAppForTests/DerivedData/DemoAppForTests/Build/Intermediates.noindex/DemoAppForTests.build/Debug-iphonesimulator/DemoAppForTests.build/Objects-normal/arm64/Order.dia",
+    "index-unit-output-path" : "/DemoAppForTests.build/Debug-iphonesimulator/DemoAppForTests.build/Objects-normal/arm64/Order.o",
+    "llvm-bc" : "/Users/d.toropkin/Developer/build/iOSLectures/DemoAppForTests/DerivedData/DemoAppForTests/Build/Intermediates.noindex/DemoAppForTests.build/Debug-iphonesimulator/DemoAppForTests.build/Objects-normal/arm64/Order.bc",
+    "object" : "/Users/d.toropkin/Developer/build/iOSLectures/DemoAppForTests/DerivedData/DemoAppForTests/Build/Intermediates.noindex/DemoAppForTests.build/Debug-iphonesimulator/DemoAppForTests.build/Objects-normal/arm64/Order.o",
+    "swift-dependencies" : "/Users/d.toropkin/Developer/build/iOSLectures/DemoAppForTests/DerivedData/DemoAppForTests/Build/Intermediates.noindex/DemoAppForTests.build/Debug-iphonesimulator/DemoAppForTests.build/Objects-normal/arm64/Order.swiftdeps",
+    "swiftmodule" : "/Users/d.toropkin/Developer/build/iOSLectures/DemoAppForTests/DerivedData/DemoAppForTests/Build/Intermediates.noindex/DemoAppForTests.build/Debug-iphonesimulator/DemoAppForTests.build/Objects-normal/arm64/Order~partial.swiftmodule"
+  },
+  "/Users/d.toropkin/Developer/build/iOSLectures/DemoAppForTests/DemoAppForTests/BusinessLayer/Models/OrderStatus.swift" : {
+    "const-values" : "/Users/d.toropkin/Developer/build/iOSLectures/DemoAppForTests/DerivedData/DemoAppForTests/Build/Intermediates.noindex/DemoAppForTests.build/Debug-iphonesimulator/DemoAppForTests.build/Objects-normal/arm64/OrderStatus.swiftconstvalues",
+    "dependencies" : "/Users/d.toropkin/Developer/build/iOSLectures/DemoAppForTests/DerivedData/DemoAppForTests/Build/Intermediates.noindex/DemoAppForTests.build/Debug-iphonesimulator/DemoAppForTests.build/Objects-normal/arm64/OrderStatus.d",
+    "diagnostics" : "/Users/d.toropkin/Developer/build/iOSLectures/DemoAppForTests/DerivedData/DemoAppForTests/Build/Intermediates.noindex/DemoAppForTests.build/Debug-iphonesimulator/DemoAppForTests.build/Objects-normal/arm64/OrderStatus.dia",
+    "index-unit-output-path" : "/DemoAppForTests.build/Debug-iphonesimulator/DemoAppForTests.build/Objects-normal/arm64/OrderStatus.o",
+    "llvm-bc" : "/Users/d.toropkin/Developer/build/iOSLectures/DemoAppForTests/DerivedData/DemoAppForTests/Build/Intermediates.noindex/DemoAppForTests.build/Debug-iphonesimulator/DemoAppForTests.build/Objects-normal/arm64/OrderStatus.bc",
+    "object" : "/Users/d.toropkin/Developer/build/iOSLectures/DemoAppForTests/DerivedData/DemoAppForTests/Build/Intermediates.noindex/DemoAppForTests.build/Debug-iphonesimulator/DemoAppForTests.build/Objects-normal/arm64/OrderStatus.o",
+    "swift-dependencies" : "/Users/d.toropkin/Developer/build/iOSLectures/DemoAppForTests/DerivedData/DemoAppForTests/Build/Intermediates.noindex/DemoAppForTests.build/Debug-iphonesimulator/DemoAppForTests.build/Objects-normal/arm64/OrderStatus.swiftdeps",
+    "swiftmodule" : "/Users/d.toropkin/Developer/build/iOSLectures/DemoAppForTests/DerivedData/DemoAppForTests/Build/Intermediates.noindex/DemoAppForTests.build/Debug-iphonesimulator/DemoAppForTests.build/Objects-normal/arm64/OrderStatus~partial.swiftmodule"
+  },
+  "/Users/d.toropkin/Developer/build/iOSLectures/DemoAppForTests/DemoAppForTests/PresentationLayer/CoffeeOrder/CoffeeCell.swift" : {
+    "const-values" : "/Users/d.toropkin/Developer/build/iOSLectures/DemoAppForTests/DerivedData/DemoAppForTests/Build/Intermediates.noindex/DemoAppForTests.build/Debug-iphonesimulator/DemoAppForTests.build/Objects-normal/arm64/CoffeeCell.swiftconstvalues",
+    "dependencies" : "/Users/d.toropkin/Developer/build/iOSLectures/DemoAppForTests/DerivedData/DemoAppForTests/Build/Intermediates.noindex/DemoAppForTests.build/Debug-iphonesimulator/DemoAppForTests.build/Objects-normal/arm64/CoffeeCell.d",
+    "diagnostics" : "/Users/d.toropkin/Developer/build/iOSLectures/DemoAppForTests/DerivedData/DemoAppForTests/Build/Intermediates.noindex/DemoAppForTests.build/Debug-iphonesimulator/DemoAppForTests.build/Objects-normal/arm64/CoffeeCell.dia",
+    "index-unit-output-path" : "/DemoAppForTests.build/Debug-iphonesimulator/DemoAppForTests.build/Objects-normal/arm64/CoffeeCell.o",
+    "llvm-bc" : "/Users/d.toropkin/Developer/build/iOSLectures/DemoAppForTests/DerivedData/DemoAppForTests/Build/Intermediates.noindex/DemoAppForTests.build/Debug-iphonesimulator/DemoAppForTests.build/Objects-normal/arm64/CoffeeCell.bc",
+    "object" : "/Users/d.toropkin/Developer/build/iOSLectures/DemoAppForTests/DerivedData/DemoAppForTests/Build/Intermediates.noindex/DemoAppForTests.build/Debug-iphonesimulator/DemoAppForTests.build/Objects-normal/arm64/CoffeeCell.o",
+    "swift-dependencies" : "/Users/d.toropkin/Developer/build/iOSLectures/DemoAppForTests/DerivedData/DemoAppForTests/Build/Intermediates.noindex/DemoAppForTests.build/Debug-iphonesimulator/DemoAppForTests.build/Objects-normal/arm64/CoffeeCell.swiftdeps",
+    "swiftmodule" : "/Users/d.toropkin/Developer/build/iOSLectures/DemoAppForTests/DerivedData/DemoAppForTests/Build/Intermediates.noindex/DemoAppForTests.build/Debug-iphonesimulator/DemoAppForTests.build/Objects-normal/arm64/CoffeeCell~partial.swiftmodule"
+  },
+  "/Users/d.toropkin/Developer/build/iOSLectures/DemoAppForTests/DemoAppForTests/PresentationLayer/CoffeeOrder/CoffeeOrderPresenter.swift" : {
+    "const-values" : "/Users/d.toropkin/Developer/build/iOSLectures/DemoAppForTests/DerivedData/DemoAppForTests/Build/Intermediates.noindex/DemoAppForTests.build/Debug-iphonesimulator/DemoAppForTests.build/Objects-normal/arm64/CoffeeOrderPresenter.swiftconstvalues",
+    "dependencies" : "/Users/d.toropkin/Developer/build/iOSLectures/DemoAppForTests/DerivedData/DemoAppForTests/Build/Intermediates.noindex/DemoAppForTests.build/Debug-iphonesimulator/DemoAppForTests.build/Objects-normal/arm64/CoffeeOrderPresenter.d",
+    "diagnostics" : "/Users/d.toropkin/Developer/build/iOSLectures/DemoAppForTests/DerivedData/DemoAppForTests/Build/Intermediates.noindex/DemoAppForTests.build/Debug-iphonesimulator/DemoAppForTests.build/Objects-normal/arm64/CoffeeOrderPresenter.dia",
+    "index-unit-output-path" : "/DemoAppForTests.build/Debug-iphonesimulator/DemoAppForTests.build/Objects-normal/arm64/CoffeeOrderPresenter.o",
+    "llvm-bc" : "/Users/d.toropkin/Developer/build/iOSLectures/DemoAppForTests/DerivedData/DemoAppForTests/Build/Intermediates.noindex/DemoAppForTests.build/Debug-iphonesimulator/DemoAppForTests.build/Objects-normal/arm64/CoffeeOrderPresenter.bc",
+    "object" : "/Users/d.toropkin/Developer/build/iOSLectures/DemoAppForTests/DerivedData/DemoAppForTests/Build/Intermediates.noindex/DemoAppForTests.build/Debug-iphonesimulator/DemoAppForTests.build/Objects-normal/arm64/CoffeeOrderPresenter.o",
+    "swift-dependencies" : "/Users/d.toropkin/Developer/build/iOSLectures/DemoAppForTests/DerivedData/DemoAppForTests/Build/Intermediates.noindex/DemoAppForTests.build/Debug-iphonesimulator/DemoAppForTests.build/Objects-normal/arm64/CoffeeOrderPresenter.swiftdeps",
+    "swiftmodule" : "/Users/d.toropkin/Developer/build/iOSLectures/DemoAppForTests/DerivedData/DemoAppForTests/Build/Intermediates.noindex/DemoAppForTests.build/Debug-iphonesimulator/DemoAppForTests.build/Objects-normal/arm64/CoffeeOrderPresenter~partial.swiftmodule"
+  },
+  "/Users/d.toropkin/Developer/build/iOSLectures/DemoAppForTests/DemoAppForTests/PresentationLayer/CoffeeOrder/CoffeeOrderViewController.swift" : {
+    "const-values" : "/Users/d.toropkin/Developer/build/iOSLectures/DemoAppForTests/DerivedData/DemoAppForTests/Build/Intermediates.noindex/DemoAppForTests.build/Debug-iphonesimulator/DemoAppForTests.build/Objects-normal/arm64/CoffeeOrderViewController.swiftconstvalues",
+    "dependencies" : "/Users/d.toropkin/Developer/build/iOSLectures/DemoAppForTests/DerivedData/DemoAppForTests/Build/Intermediates.noindex/DemoAppForTests.build/Debug-iphonesimulator/DemoAppForTests.build/Objects-normal/arm64/CoffeeOrderViewController.d",
+    "diagnostics" : "/Users/d.toropkin/Developer/build/iOSLectures/DemoAppForTests/DerivedData/DemoAppForTests/Build/Intermediates.noindex/DemoAppForTests.build/Debug-iphonesimulator/DemoAppForTests.build/Objects-normal/arm64/CoffeeOrderViewController.dia",
+    "index-unit-output-path" : "/DemoAppForTests.build/Debug-iphonesimulator/DemoAppForTests.build/Objects-normal/arm64/CoffeeOrderViewController.o",
+    "llvm-bc" : "/Users/d.toropkin/Developer/build/iOSLectures/DemoAppForTests/DerivedData/DemoAppForTests/Build/Intermediates.noindex/DemoAppForTests.build/Debug-iphonesimulator/DemoAppForTests.build/Objects-normal/arm64/CoffeeOrderViewController.bc",
+    "object" : "/Users/d.toropkin/Developer/build/iOSLectures/DemoAppForTests/DerivedData/DemoAppForTests/Build/Intermediates.noindex/DemoAppForTests.build/Debug-iphonesimulator/DemoAppForTests.build/Objects-normal/arm64/CoffeeOrderViewController.o",
+    "swift-dependencies" : "/Users/d.toropkin/Developer/build/iOSLectures/DemoAppForTests/DerivedData/DemoAppForTests/Build/Intermediates.noindex/DemoAppForTests.build/Debug-iphonesimulator/DemoAppForTests.build/Objects-normal/arm64/CoffeeOrderViewController.swiftdeps",
+    "swiftmodule" : "/Users/d.toropkin/Developer/build/iOSLectures/DemoAppForTests/DerivedData/DemoAppForTests/Build/Intermediates.noindex/DemoAppForTests.build/Debug-iphonesimulator/DemoAppForTests.build/Objects-normal/arm64/CoffeeOrderViewController~partial.swiftmodule"
+  },
+  "/Users/d.toropkin/Developer/build/iOSLectures/DemoAppForTests/DemoAppForTests/SceneDelegate.swift" : {
+    "const-values" : "/Users/d.toropkin/Developer/build/iOSLectures/DemoAppForTests/DerivedData/DemoAppForTests/Build/Intermediates.noindex/DemoAppForTests.build/Debug-iphonesimulator/DemoAppForTests.build/Objects-normal/arm64/SceneDelegate.swiftconstvalues",
+    "dependencies" : "/Users/d.toropkin/Developer/build/iOSLectures/DemoAppForTests/DerivedData/DemoAppForTests/Build/Intermediates.noindex/DemoAppForTests.build/Debug-iphonesimulator/DemoAppForTests.build/Objects-normal/arm64/SceneDelegate.d",
+    "diagnostics" : "/Users/d.toropkin/Developer/build/iOSLectures/DemoAppForTests/DerivedData/DemoAppForTests/Build/Intermediates.noindex/DemoAppForTests.build/Debug-iphonesimulator/DemoAppForTests.build/Objects-normal/arm64/SceneDelegate.dia",
+    "index-unit-output-path" : "/DemoAppForTests.build/Debug-iphonesimulator/DemoAppForTests.build/Objects-normal/arm64/SceneDelegate.o",
+    "llvm-bc" : "/Users/d.toropkin/Developer/build/iOSLectures/DemoAppForTests/DerivedData/DemoAppForTests/Build/Intermediates.noindex/DemoAppForTests.build/Debug-iphonesimulator/DemoAppForTests.build/Objects-normal/arm64/SceneDelegate.bc",
+    "object" : "/Users/d.toropkin/Developer/build/iOSLectures/DemoAppForTests/DerivedData/DemoAppForTests/Build/Intermediates.noindex/DemoAppForTests.build/Debug-iphonesimulator/DemoAppForTests.build/Objects-normal/arm64/SceneDelegate.o",
+    "swift-dependencies" : "/Users/d.toropkin/Developer/build/iOSLectures/DemoAppForTests/DerivedData/DemoAppForTests/Build/Intermediates.noindex/DemoAppForTests.build/Debug-iphonesimulator/DemoAppForTests.build/Objects-normal/arm64/SceneDelegate.swiftdeps",
+    "swiftmodule" : "/Users/d.toropkin/Developer/build/iOSLectures/DemoAppForTests/DerivedData/DemoAppForTests/Build/Intermediates.noindex/DemoAppForTests.build/Debug-iphonesimulator/DemoAppForTests.build/Objects-normal/arm64/SceneDelegate~partial.swiftmodule"
+  },
+  "/Users/d.toropkin/Developer/build/iOSLectures/DemoAppForTests/DerivedData/DemoAppForTests/Build/Intermediates.noindex/DemoAppForTests.build/Debug-iphonesimulator/DemoAppForTests.build/DerivedSources/GeneratedAssetSymbols.swift" : {
+    "const-values" : "/Users/d.toropkin/Developer/build/iOSLectures/DemoAppForTests/DerivedData/DemoAppForTests/Build/Intermediates.noindex/DemoAppForTests.build/Debug-iphonesimulator/DemoAppForTests.build/Objects-normal/arm64/GeneratedAssetSymbols.swiftconstvalues",
+    "dependencies" : "/Users/d.toropkin/Developer/build/iOSLectures/DemoAppForTests/DerivedData/DemoAppForTests/Build/Intermediates.noindex/DemoAppForTests.build/Debug-iphonesimulator/DemoAppForTests.build/Objects-normal/arm64/GeneratedAssetSymbols.d",
+    "diagnostics" : "/Users/d.toropkin/Developer/build/iOSLectures/DemoAppForTests/DerivedData/DemoAppForTests/Build/Intermediates.noindex/DemoAppForTests.build/Debug-iphonesimulator/DemoAppForTests.build/Objects-normal/arm64/GeneratedAssetSymbols.dia",
+    "index-unit-output-path" : "/DemoAppForTests.build/Debug-iphonesimulator/DemoAppForTests.build/Objects-normal/arm64/GeneratedAssetSymbols.o",
+    "llvm-bc" : "/Users/d.toropkin/Developer/build/iOSLectures/DemoAppForTests/DerivedData/DemoAppForTests/Build/Intermediates.noindex/DemoAppForTests.build/Debug-iphonesimulator/DemoAppForTests.build/Objects-normal/arm64/GeneratedAssetSymbols.bc",
+    "object" : "/Users/d.toropkin/Developer/build/iOSLectures/DemoAppForTests/DerivedData/DemoAppForTests/Build/Intermediates.noindex/DemoAppForTests.build/Debug-iphonesimulator/DemoAppForTests.build/Objects-normal/arm64/GeneratedAssetSymbols.o",
+    "swift-dependencies" : "/Users/d.toropkin/Developer/build/iOSLectures/DemoAppForTests/DerivedData/DemoAppForTests/Build/Intermediates.noindex/DemoAppForTests.build/Debug-iphonesimulator/DemoAppForTests.build/Objects-normal/arm64/GeneratedAssetSymbols.swiftdeps",
+    "swiftmodule" : "/Users/d.toropkin/Developer/build/iOSLectures/DemoAppForTests/DerivedData/DemoAppForTests/Build/Intermediates.noindex/DemoAppForTests.build/Debug-iphonesimulator/DemoAppForTests.build/Objects-normal/arm64/GeneratedAssetSymbols~partial.swiftmodule"
+  }
+}

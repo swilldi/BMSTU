@@ -1,0 +1,39 @@
+{
+  "" : {
+    "dependencies" : "/Users/d.toropkin/Developer/build/iOSLectures/DemoAppForTests/DerivedData/DemoAppForTests/Index.noindex/Build/Intermediates.noindex/DemoAppForTests.build/Debug-iphonesimulator/DemoAppForTests.build/Objects-normal/arm64/DemoAppForTests-master.d",
+    "diagnostics" : "/Users/d.toropkin/Developer/build/iOSLectures/DemoAppForTests/DerivedData/DemoAppForTests/Index.noindex/Build/Intermediates.noindex/DemoAppForTests.build/Debug-iphonesimulator/DemoAppForTests.build/Objects-normal/arm64/DemoAppForTests-master.dia",
+    "emit-module-dependencies" : "/Users/d.toropkin/Developer/build/iOSLectures/DemoAppForTests/DerivedData/DemoAppForTests/Index.noindex/Build/Intermediates.noindex/DemoAppForTests.build/Debug-iphonesimulator/DemoAppForTests.build/Objects-normal/arm64/DemoAppForTests-master-emit-module.d",
+    "emit-module-diagnostics" : "/Users/d.toropkin/Developer/build/iOSLectures/DemoAppForTests/DerivedData/DemoAppForTests/Index.noindex/Build/Intermediates.noindex/DemoAppForTests.build/Debug-iphonesimulator/DemoAppForTests.build/Objects-normal/arm64/DemoAppForTests-master-emit-module.dia",
+    "swift-dependencies" : "/Users/d.toropkin/Developer/build/iOSLectures/DemoAppForTests/DerivedData/DemoAppForTests/Index.noindex/Build/Intermediates.noindex/DemoAppForTests.build/Debug-iphonesimulator/DemoAppForTests.build/Objects-normal/arm64/DemoAppForTests-master.swiftdeps"
+  },
+  "/Users/d.toropkin/Developer/build/iOSLectures/DemoAppForTests/DemoAppForTests/AppDelegate.swift" : {
+
+  },
+  "/Users/d.toropkin/Developer/build/iOSLectures/DemoAppForTests/DemoAppForTests/BusinessLayer/CoffeeService.swift" : {
+
+  },
+  "/Users/d.toropkin/Developer/build/iOSLectures/DemoAppForTests/DemoAppForTests/BusinessLayer/Models/Coffee.swift" : {
+
+  },
+  "/Users/d.toropkin/Developer/build/iOSLectures/DemoAppForTests/DemoAppForTests/BusinessLayer/Models/Order.swift" : {
+
+  },
+  "/Users/d.toropkin/Developer/build/iOSLectures/DemoAppForTests/DemoAppForTests/BusinessLayer/Models/OrderStatus.swift" : {
+
+  },
+  "/Users/d.toropkin/Developer/build/iOSLectures/DemoAppForTests/DemoAppForTests/PresentationLayer/CoffeeOrder/CoffeeCell.swift" : {
+
+  },
+  "/Users/d.toropkin/Developer/build/iOSLectures/DemoAppForTests/DemoAppForTests/PresentationLayer/CoffeeOrder/CoffeeOrderPresenter.swift" : {
+
+  },
+  "/Users/d.toropkin/Developer/build/iOSLectures/DemoAppForTests/DemoAppForTests/PresentationLayer/CoffeeOrder/CoffeeOrderViewController.swift" : {
+
+  },
+  "/Users/d.toropkin/Developer/build/iOSLectures/DemoAppForTests/DemoAppForTests/SceneDelegate.swift" : {
+
+  },
+  "/Users/d.toropkin/Developer/build/iOSLectures/DemoAppForTests/DerivedData/DemoAppForTests/Index.noindex/Build/Intermediates.noindex/DemoAppForTests.build/Debug-iphonesimulator/DemoAppForTests.build/DerivedSources/GeneratedAssetSymbols.swift" : {
+
+  }
+}

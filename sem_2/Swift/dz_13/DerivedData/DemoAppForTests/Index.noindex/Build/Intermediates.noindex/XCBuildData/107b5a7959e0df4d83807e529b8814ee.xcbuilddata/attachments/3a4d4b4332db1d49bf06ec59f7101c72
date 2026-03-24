@@ -1,0 +1,15 @@
+{
+  "" : {
+    "dependencies" : "/Users/d.toropkin/Developer/build/iOSLectures/DemoAppForTests/DerivedData/DemoAppForTests/Index.noindex/Build/Intermediates.noindex/DemoAppForTests.build/Debug-iphonesimulator/DemoAppForTestsUITests.build/Objects-normal/arm64/DemoAppForTestsUITests-master.d",
+    "diagnostics" : "/Users/d.toropkin/Developer/build/iOSLectures/DemoAppForTests/DerivedData/DemoAppForTests/Index.noindex/Build/Intermediates.noindex/DemoAppForTests.build/Debug-iphonesimulator/DemoAppForTestsUITests.build/Objects-normal/arm64/DemoAppForTestsUITests-master.dia",
+    "emit-module-dependencies" : "/Users/d.toropkin/Developer/build/iOSLectures/DemoAppForTests/DerivedData/DemoAppForTests/Index.noindex/Build/Intermediates.noindex/DemoAppForTests.build/Debug-iphonesimulator/DemoAppForTestsUITests.build/Objects-normal/arm64/DemoAppForTestsUITests-master-emit-module.d",
+    "emit-module-diagnostics" : "/Users/d.toropkin/Developer/build/iOSLectures/DemoAppForTests/DerivedData/DemoAppForTests/Index.noindex/Build/Intermediates.noindex/DemoAppForTests.build/Debug-iphonesimulator/DemoAppForTestsUITests.build/Objects-normal/arm64/DemoAppForTestsUITests-master-emit-module.dia",
+    "swift-dependencies" : "/Users/d.toropkin/Developer/build/iOSLectures/DemoAppForTests/DerivedData/DemoAppForTests/Index.noindex/Build/Intermediates.noindex/DemoAppForTests.build/Debug-iphonesimulator/DemoAppForTestsUITests.build/Objects-normal/arm64/DemoAppForTestsUITests-master.swiftdeps"
+  },
+  "/Users/d.toropkin/Developer/build/iOSLectures/DemoAppForTests/DemoAppForTestsUITests/DemoAppForTestsUITests.swift" : {
+
+  },
+  "/Users/d.toropkin/Developer/build/iOSLectures/DemoAppForTests/DemoAppForTestsUITests/DemoAppForTestsUITestsLaunchTests.swift" : {
+
+  }
+}
