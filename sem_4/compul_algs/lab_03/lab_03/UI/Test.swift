@@ -11,6 +11,7 @@ import Charts
 struct Test: View {
     @State var originPoints = [Point]()
     
+    
     var body: some View {
         
         

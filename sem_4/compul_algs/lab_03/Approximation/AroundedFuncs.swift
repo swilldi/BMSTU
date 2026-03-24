@@ -129,5 +129,7 @@ func chooseBetterFunc(_ points: [Point], _ approxFuncs: [ApproxedFunc]) -> Appro
         }
     }
     
+    print("error:")
+    print(errorResults)
     return approxFuncs[minIndex]
 }

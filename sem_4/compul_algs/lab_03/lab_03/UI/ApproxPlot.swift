@@ -7,7 +7,10 @@
 
 import SwiftUI
 import Charts
+internal import UniformTypeIdentifiers
 
+
+let startP: Double = 1
 struct ApproxPlot: View {
     enum PlotModes: String, CaseIterable, Identifiable {
         case showDifferentN = "Различные степени полинома"
@@ -18,13 +21,25 @@ struct ApproxPlot: View {
     
     @State var plotMode = PlotModes.showDifferentN
     
-    @State var originPoints = [Point]()
+    
+    @State var originPoints: [Point] = [
+        .init(x: 1, y: 1),
+        .init(x: 2.3, y: 3.26, p: startP),
+        .init(x: 3.19, y: 0.78, p: startP),
+        .init(x: 4.51, y: 3.96),
+        .init(x: 4.51, y: 4.2),
+        .init(x: 5.28, y: 2.34),
+        .init(x: 6.73, y: 3.23),
+    ]
+    
     @State var approxPoints = [Point]()
     @State var approxPointsNoWeights = [Point]()
     @State var approxDegree = 2
     
     @State var approxPointsN1 = [Point]()
     @State var approxPointsN2 = [Point]()
+    
+    @State private var showFilePicker = false
     
     var body: some View {
         HStack {
@@ -100,19 +115,7 @@ struct ApproxPlot: View {
             }
             .padding()
             .onAppear {
-                let p: Double = 1
-                let points: [Point] = [
-                    .init(x: 1, y: 1),
-                    .init(x: 2.3, y: 3.26, p: p),
-                    .init(x: 3.19, y: 0.78, p: p),
-                    .init(x: 4.51, y: 3.96),
-                    .init(x: 4.51, y: 4.2),
-                    .init(x: 5.28, y: 2.34),
-                    .init(x: 6.73, y: 3.23),
-                ]
-                
-                originPoints = points
-                updatePoints(points)
+                updatePoints(originPoints)
             }
             
             // MARK: Таблица + Степпер
@@ -126,8 +129,26 @@ struct ApproxPlot: View {
                 
                 SpinBox(value: $approxDegree, min: 0, max: originPoints.count - 1, label: "N")
                 
-                // Таблицу вот сюда
+                Button("Открыть файл") {
+                    showFilePicker = true
+                }
+                .fileImporter(
+                    isPresented: $showFilePicker,
+                    allowedContentTypes: [.plainText]
+                ) { result in
+                    switch result {
+                    case .success(let url):
+                        let points = readPoints2D(from: url)
+                        if !points.isEmpty {
+                            originPoints = points
+                            updatePoints(points)
+                        }
+                    case .failure(let error):
+                        print("Ошибка: \(error)")
+                    }
+                }
                 
+                // Таблицу вот сюда
                 Table($originPoints) {
                     TableColumn("X") { $point in
                         Text(String(format: "%.4f", point.x))

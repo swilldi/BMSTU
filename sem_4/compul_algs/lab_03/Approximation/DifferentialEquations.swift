@@ -7,6 +7,7 @@
 
 import Foundation
 
+
 private func alphaM2(x: Double) -> Double {
     -3 * pow(x, 2) + 2 * x - 2
 }
@@ -15,7 +16,7 @@ private func betaM2(x: Double) -> Double {
     -4 * pow(x, 3) + 3 * pow(x, 2) - 6 * x + 2
 }
 
-func odeM2(min: Double = 0, max: Double = 1, n: Int = 10) -> [Point] {
+func odeM2(min: Double = 0, max: Double = 1, n: Int = 10) -> (points: [Point], coef: [Double]) {
     let xValues = Array(stride(from: min, through: max, by: (max - min) / Double(n)))
     
     var sumAlpha = 0.0, sumBeta = 0.0, sumAlphaBeta = 0.0,
@@ -39,21 +40,25 @@ func odeM2(min: Double = 0, max: Double = 1, n: Int = 10) -> [Point] {
     
     var points = [Point]()
     for x in xValues {
-        var y = 1 - x
+        let u0 = 1 - x
+//        let u0 = 2.0
+        
+        var y = u0
         for (k, c) in coef.enumerated() {
             y += c * pow(x, Double(k + 1)) * (1 - x)
+//            y += c * pow(x, Double(k + 1)) * (2 - x)
         }
         points.append(Point(x: x, y: y))
     }
     
-    return points
+    return (points, coef)
 }
 
 func gammaM3(x: Double) -> Double {
     -5 * pow(x, 4) + 4 * pow(x, 3) - 12 * pow(x, 2) + 6 * x
 }
 
-func odeM3(min: Double = 0, max: Double = 1, n: Int = 10) -> [Point] {
+func odeM3(min: Double = 0, max: Double = 1, n: Int = 10) -> (points: [Point], coef: [Double]) {
     let xValues = Array(stride(from: min, through: max, by: (max - min) / Double(n)))
     
     var sumAlpha = 0.0, sumBeta = 0.0, sumGamma = 0.0,
@@ -83,12 +88,16 @@ func odeM3(min: Double = 0, max: Double = 1, n: Int = 10) -> [Point] {
     
     var points = [Point]()
     for x in xValues {
-        var y = 1 - x
+        let u0 = 1 - x
+//        let u0 = 2.0
+        
+        var y = u0
         for (k, c) in coef.enumerated() {
             y += c * pow(x, Double(k + 1)) * (1 - x)
+//            y += c * pow(x, Double(k + 1)) * (2 - x)
         }
         points.append(Point(x: x, y: y))
     }
     
-    return points
+    return (points, coef)
 }

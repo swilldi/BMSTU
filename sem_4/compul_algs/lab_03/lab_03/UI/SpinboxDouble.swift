@@ -1,9 +1,9 @@
 import SwiftUI
 
-struct SpinBox: View {
-    @Binding var value: Int
-    var min: Int = 0
-    var max: Int = 100
+struct SpinboxDouble: View {
+    @Binding var value: Double
+    var min: Double = 0
+    var max: Double = 100
     var label: String = ""
 
     @State private var text: String = ""
@@ -20,24 +20,24 @@ struct SpinBox: View {
                     .frame(width: 80)
                     .textFieldStyle(.roundedBorder)
                     .onSubmit {
-                        if let n = Int(text) {
+                        if let n = Double(text) {
                             value = Swift.min(Swift.max(n, min), max)
                         }
-                        text = "\(value)"
+                        text = String(format: "%.3f", value)
                     }
                     .onAppear {
-                        text = "\(value)"
+                        text = String(format: "%.3f", value)
                 }
             }
             VStack {
                 Button("+") {
-                    if value < max { value += 1 }
-                    text = "\(value)"
+                    if value < max { value += 0.1 }
+                    text = String(format: "%.3f", value)
                 }
                 
                 Button("-") {
-                    if value > min { value -= 1 }
-                    text = "\(value)"
+                    if value > min { value -= 0.1 }
+                    text = String(format: "%.3f", value)
                 }
             }
         }
