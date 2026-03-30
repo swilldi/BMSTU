@@ -16,6 +16,7 @@ build
 *.d
 *.dot
 *.txt
+*.pages
 .devcontainer
 !**/data/*.txt
 !**/Tisd/**/test_files/*.txt
