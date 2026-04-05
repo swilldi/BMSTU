@@ -87,6 +87,7 @@ func aprox(data: [Point], n: Int) -> [Point] {
 
     // получить коэфиенты
     let coef = getCoef(data: data, n: n)
+    print("coef (\(n)): \(coef)")
     
 //    // пары (x, F(x)) приближенной функции F(x)
 //    for point in data {

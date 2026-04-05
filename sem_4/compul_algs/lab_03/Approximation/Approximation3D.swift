@@ -84,7 +84,7 @@ private func getCoef3D(data: [Point3D], degrees degreePars: [(x: Double, y: Doub
     
     
 
-    print("Матрица A:")
+    print("\nМатрица A:")
     for row in matrOfMultFunc {
         print(row.map { String(format: "%.2f", $0) }.joined(separator: "\t"))
     }
@@ -132,6 +132,13 @@ func aprox3D(data: [Point3D], n: Int) -> ((Double, Double) -> Double) {
         
         return z
     }
+    
+    // вывод коэфициентов
+    print()
+    for (c, p) in zip(coef, degreePars) {
+        print("\(p): \(c)")
+    }
+    //
     
     return f
 }

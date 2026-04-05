@@ -125,6 +125,13 @@ class ViewController: UIViewController {
     @objc private func didClickButton() {
         // Ну конкретно тут это бесполезно, но анимашки кнопки – не самое главное
         buttonClickedAnimation()
+        
+        label?.alpha = 0
+        label?.textColor = .white
+        
+        UIView.animate(withDuration: 2.5) {
+            self.label?.alpha = 1
+        }
     }
     
     private func buttonClickedAnimation() {
@@ -157,7 +164,7 @@ class ViewController: UIViewController {
         let timeToImageAlpha = 1.0
         logoImageTop.constant = 150
         UIView.animate(withDuration: timeToImage) {
-//            self.view.backgroundColor = .systemGreen
+            self.view.backgroundColor = .darkText
             self.view.layoutIfNeeded()
         }
         UIView.animate(withDuration: timeToImageAlpha, delay: timeToImage - timeToImageAlpha) {

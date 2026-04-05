@@ -65,7 +65,9 @@ struct DiffEquationsPlot: View {
             .onAppear {
                 (approxPointsM2, coefM2) = odeM2(min: xMin, max: xMax, n: N)
                 (approxPointsM3, coefM3) = odeM3(min: xMin, max: xMax, n: N)
-                print(approxPointsM2)
+                
+                print("\nТочки при m=2: \(approxPointsM2)")
+                print("Точки при m=3: \(approxPointsM3)")
             }
             
             VStack {
@@ -99,6 +101,9 @@ struct DiffEquationsPlot: View {
     func updatePoints() {
         (approxPointsM2, coefM2) = odeM2(min: xMin, max: xMax, n: N)
         (approxPointsM3, coefM3) = odeM3(min: xMin, max: xMax, n: N)
+        
+        print("\nТочки при m=2: \(approxPointsM2.map { String($0.x) })")
+        print("Точки при m=3: \(approxPointsM3)")
     }
 }
 #Preview {

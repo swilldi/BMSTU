@@ -24,7 +24,7 @@ struct CompareApproxFunc: View {
         case v1, v2, v3, v4
     }
     
-    let additionLineStyle = StrokeStyle(lineWidth: 2, dash: [2, 10])
+    let additionLineStyle = StrokeStyle(lineWidth: 2, dash: [5, 10])
     let mainLineStyle = StrokeStyle(lineWidth: 2)
     
     
@@ -40,6 +40,11 @@ struct CompareApproxFunc: View {
     @State var f2 = variant2(startPoints)
     @State var f3 = variant3(startPoints)
     @State var f4 = variant4(startPoints)
+    
+    @State var e1 = 0.0
+    @State var e2 = 0.0
+    @State var e3 = 0.0
+    @State var e4 = 0.0
     
     var body: some View {
         HStack {
@@ -61,7 +66,7 @@ struct CompareApproxFunc: View {
                         y: .value("y", point.y)
                     )
                 }
-                .foregroundStyle(by: .value("Series", "F4(x) = \(f1)"))
+                .foregroundStyle(by: .value("Series", "F1(x) = \(f1)"))
                 .lineStyle(betterFunc == FuncNumber.v1 ? mainLineStyle : additionLineStyle)
                 
                 // ax^b
@@ -71,7 +76,7 @@ struct CompareApproxFunc: View {
                         y: .value("y", point.y)
                     )
                 }
-                .foregroundStyle(by: .value("Series", "F4(x) = \(f2)"))
+                .foregroundStyle(by: .value("Series", "F2(x) = \(f2)"))
                 .lineStyle(betterFunc == FuncNumber.v2 ? mainLineStyle : additionLineStyle)
                 
                 // a + b / x
@@ -81,7 +86,7 @@ struct CompareApproxFunc: View {
                         y: .value("y", point.y)
                     )
                 }
-                .foregroundStyle(by: .value("Series", "F4(x) = \(f3)"))
+                .foregroundStyle(by: .value("Series", "F3(x) = \(f3)"))
                 .lineStyle(betterFunc == FuncNumber.v3 ? mainLineStyle : additionLineStyle)
                 
                 // a0 / (a1 + a2 * x)
@@ -115,19 +120,20 @@ struct CompareApproxFunc: View {
                         .font(.system(size: 14))
                 }
             }
+            .chartYScale(domain: -10.0...40.0)
             .padding()
             
             VStack {
-                Text("F1(x) = " + f1.description)
+                Text("F1(x) = " + f1.description + "\nerror: \(String(format: "%.3f", e1))")
                     .bold(betterFunc == FuncNumber.v1)
                     .padding()
-                Text("F2(x) = " + f2.description)
+                Text("F2(x) = " + f2.description + "\nerror: \(String(format: "%.3f", e2))")
                     .bold(betterFunc == FuncNumber.v2)
                     .padding(.horizontal)
-                Text("F3(x) = " + f3.description)
+                Text("F3(x) = " + f3.description + "\nerror: \(String(format: "%.3f", e3))")
                     .bold(betterFunc == FuncNumber.v3)
                     .padding()
-                Text("F4(x) = " + f4.description)
+                Text("F4(x) = " + f4.description + "\nerror: \(String(format: "%.3f", e4))")
                     .bold(betterFunc == FuncNumber.v4)
                     .padding(.horizontal)
                     
@@ -155,14 +161,26 @@ struct CompareApproxFunc: View {
         }
         
 //        print(approxPointsV1)
-        let betterFun = chooseBetterFunc(originPoints, [f1, f2, f3, f4])
-        if betterFun == f1 {
+        let cmpResults = cmpFunc(originPoints, [f1, f2, f3, f4])
+        e1 = cmpResults[0]
+        e2 = cmpResults[1]
+        e3 = cmpResults[2]
+        e4 = cmpResults[3]
+        
+        var minErrorIndex = 0
+        for i in 0..<cmpResults.count {
+            if cmpResults[i] < cmpResults[minErrorIndex] {
+                minErrorIndex = i
+            }
+        }
+        
+        if minErrorIndex == 0 {
             betterFunc = .v1
-        } else if betterFun == f2 {
+        } else if minErrorIndex == 1 {
             betterFunc = .v2
-        } else if betterFun == f3 {
+        } else if minErrorIndex == 2 {
             betterFunc = .v3
-        } else if betterFun == f4 {
+        } else if minErrorIndex == 3 {
             betterFunc = .v4
         }
         

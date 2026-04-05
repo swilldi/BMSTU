@@ -8,21 +8,51 @@
 import SwiftUI
 import SceneKit
 
+
+let startPoints3D: [Point3D] = [
+    .init(x: -3.2, y: 2.220446049250313e-16, z: 5.120000000000001),
+    .init(x: -2.4, y: 0.8000000000000003, z: 3.2),
+//    .init(x: -1.5999999999999999, y: 1.6000000000000003, z: 2.5600000000000005),
+//    .init(x: 2.220446049250313e-16, y: -1.5999999999999999, z: 1.2799999999999998),
+    .init(x: 2.220446049250313e-16, y: 2.220446049250313e-16, z: 4.930380657631324e-32),
+//    .init(x: 0.8000000000000003, y: -2.4, z: 3.2),
+    .init(x: 1.6000000000000003, y: -0.7999999999999998, z: 1.6000000000000003),
+    .init(x: 4.0, y: 1.6000000000000003, z: 9.280000000000001),
+    .init(x: 4.0, y: 4.0, z: 16.0),
+]
+
+
+//var startPoints3D: [Point3D] {
+//    let percent = 10
+//    
+//    var points = [Point3D]()
+//    
+//    let xMin = -4.0, xMax = 4.0
+//    let yMin = -4.0, yMax = 4.0
+//    let step = 0.8
+//    
+//    let a2: Double = 1, b2: Double = 1, p: Double = 1
+//    let f: (Double, Double) -> Double = {x, y in
+//        (x*x / a2 + y*y / b2) / 2 / p
+//    }
+//    
+//    for x in stride(from: xMin, through: xMax, by: step) {
+//        for y in stride(from: yMin, through: yMax, by: step) {
+//            if Int.random(in: 0...100) <= percent {
+//                points.append(.init(x: x, y: y, z: f(x, y)))
+//            }
+//        }
+//    }
+//    
+//    for point in points {
+//        print(".init(x: \(point.x), y: \(point.y), z: \(point.z),")
+//    }
+//    
+//    return points
+//}
+
 struct ApproxPlot3D: View {
-    @State var originPoints: [Point3D] = [
-        .init(x: 0.2, y: 0.5, z: 0.19),
-        .init(x: 1.0, y: 0.3, z: 0.82),
-        .init(x: 1.8, y: 1.2, z: 0.54),
-        .init(x: 0.7, y: 2.1, z: 0.29),
-        .init(x: 2.5, y: 0.8, z: 0.48),
-        .init(x: 1.3, y: 1.7, z: 0.42),
-        .init(x: 0.4, y: 1.0, z: 0.34),
-        .init(x: 2.1, y: 2.4, z: -0.27),
-        .init(x: 1.6, y: 0.5, z: 0.94),
-        .init(x: 0.9, y: 2.8, z: -0.18),
-        .init(x: 2.8, y: 1.5, z: 0.12),
-        .init(x: 1.1, y: 0.9, z: 0.75),
-    ]
+    @State var originPoints: [Point3D] = startPoints3D
 
     @State var approxDegree = 1
     @State var approxFunc: ((Double, Double) -> Double)? = nil
@@ -161,9 +191,18 @@ struct SceneKitView: NSViewRepresentable {
     }
 
     func addAxes(to scene: SCNScene) {
-        let xMax = CGFloat(points.map(\.x).max()! * 1.3)
-        let yMax = CGFloat(points.map(\.y).max()! * 1.3)
-        let zMax = CGFloat(points.map(\.z).max()! * 1.3)
+        var xMax = CGFloat(points.map(\.x).max()! * 1.3)
+        if xMax < 1 {
+            xMax = 1
+        }
+        var yMax = CGFloat(points.map(\.y).max()! * 1.3)
+        if yMax < 1 {
+            yMax = 1
+        }
+        var zMax = CGFloat(points.map(\.z).max()! * 1.3)
+        if zMax < 1 {
+            zMax = 1
+        }
         let axisRadius: CGFloat = 0.015
         let fontSize: CGFloat = 0.18
         let labelOffset: CGFloat = 0.15

@@ -22,6 +22,8 @@ struct ApproxedFunc: CustomStringConvertible, Identifiable {
     }
 }
 
+let N: Int = 1
+
 // MARK: y = ax^b
 func variant1(_ originPoints: [Point]) -> ApproxedFunc {
     var linerazePoints = [Point]()
@@ -29,7 +31,7 @@ func variant1(_ originPoints: [Point]) -> ApproxedFunc {
         linerazePoints.append(.init(x: log(point.x), y: log(point.y)))
     }
     
-    let coef = getCoef(data: linerazePoints, n: 1)
+    let coef = getCoef(data: linerazePoints, n: N)
     let a = exp(coef[0]), b = coef[1]
     let f: (Double) -> Double = { x in
         a * pow(x, b)
@@ -48,7 +50,7 @@ func variant2(_ originPoints: [Point]) -> ApproxedFunc {
         linerazePoints.append(.init(x: point.x, y: log(point.y)))
     }
     
-    let coef = getCoef(data: linerazePoints, n: 1)
+    let coef = getCoef(data: linerazePoints, n: N)
     let a = exp(coef[0]), b = coef[1]
     let f = { x in
         a * pow(x, b)
@@ -66,7 +68,7 @@ func variant3(_ originPoints: [Point]) -> ApproxedFunc {
         linerazePoints.append(.init(x: 1 / point.x, y: point.y))
     }
     
-    let coef = getCoef(data: linerazePoints, n: 1)
+    let coef = getCoef(data: linerazePoints, n: N)
     let a = coef[0], b = coef[1]
     let f = { x in
         a + b / x
@@ -76,20 +78,20 @@ func variant3(_ originPoints: [Point]) -> ApproxedFunc {
     return approxFunc
 }
 
-// MARK: y = a / (b + c * x)
+// MARK: y = 1 / (a + b * x^2)
 func variant4(_ originPoints: [Point]) -> ApproxedFunc {
     var linerazePoints = [Point]()
     for point in originPoints {
-        linerazePoints.append(.init(x: 1 / point.x, y: point.y))
+        linerazePoints.append(.init(x: point.x * point.x, y: 1 / point.y))
     }
     
-    let coef = getCoef(data: linerazePoints, n: 1)
+    let coef = getCoef(data: linerazePoints, n: N)
     let a = coef[0], b = coef[1] // a + b * x; a = a1 / a0, b = a2/a0
     let f = { x in
-        1 / (a + b * x)
+        1 / (a + b * x * x)
     }
     
-    let approxFunc = ApproxedFunc(f: f, a: a, b: b, description: String(format: "1 / (%.\(digitsAfterDot)f * %.\(digitsAfterDot)f * x)", a, b))
+    let approxFunc = ApproxedFunc(f: f, a: a, b: b, description: String(format: "1 / (%.\(digitsAfterDot)f + %.\(digitsAfterDot)f * x^2)", a, b))
     return approxFunc
 }
 
@@ -108,7 +110,7 @@ func funcError(_ originPoints: [Point], _ approxPoints: [Point]) -> Double {
     return res
 }
 
-func chooseBetterFunc(_ points: [Point], _ approxFuncs: [ApproxedFunc]) -> ApproxedFunc {
+func cmpFunc(_ points: [Point], _ approxFuncs: [ApproxedFunc]) -> [Double] {
     var errorResults = [Double]()
     
     for approxFunc in approxFuncs {
@@ -120,16 +122,7 @@ func chooseBetterFunc(_ points: [Point], _ approxFuncs: [ApproxedFunc]) -> Appro
         errorResults.append(funcError(points, approxPoints))
     }
     
-    var minIndex = 0,
-        minValue = errorResults[0]
-    for i in 0..<errorResults.count {
-        if errorResults[i] < minValue {
-            minIndex = i
-            minValue = errorResults[i]
-        }
-    }
-    
-    print("error:")
-    print(errorResults)
-    return approxFuncs[minIndex]
+//    print("error:")
+//    print(errorResults)
+    return errorResults
 }

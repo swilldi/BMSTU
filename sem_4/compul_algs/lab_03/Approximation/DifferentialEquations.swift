@@ -36,7 +36,16 @@ func odeM2(min: Double = 0, max: Double = 1, n: Int = 10) -> (points: [Point], c
     ]
     let B = [sumFreePartsAlpha, sumFreePartsBeta]
     
+    print("\nДИФУР ПРИ M=2")
+    print("Матрица A:")
+    for row in A {
+        print(row.map { String(format: "%.2f", $0) }.joined(separator: "\t"))
+    }
+    print("Вектор b: \(B)")
+    
     let coef = solveMatrix(A: A, b: B)
+    
+    print("C_k: \(coef)")
     
     var points = [Point]()
     for x in xValues {
@@ -84,7 +93,15 @@ func odeM3(min: Double = 0, max: Double = 1, n: Int = 10) -> (points: [Point], c
     ]
     let B = [sumFreePartsAlpha, sumFreePartsBeta, sumFreePartsGamma]
     
+    print("\nДИФУР ПРИ M=3")
+    print("Матрица A:")
+    for row in A {
+        print(row.map { String(format: "%.2f", $0) }.joined(separator: "\t"))
+    }
+    print("Вектор b: \(B)")
+    
     let coef = solveMatrix(A: A, b: B)
+    print("C_k: \(coef)")
     
     var points = [Point]()
     for x in xValues {
