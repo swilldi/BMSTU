@@ -12,9 +12,19 @@ struct Point: Identifiable {
     var y: Double
     
     let id = UUID()
+    
+    init(x: Double, y: Double) {
+        self.x = x
+        self.y = y
+    }
+    
+    init(x: Int, y: Int) {
+        self.x = Double(x)
+        self.y = Double(y)
+    }
 }
 
-struct Edge {
+struct Edge: CustomStringConvertible {
     let p1: Point
     let p2: Point
     let color: Color
@@ -31,6 +41,9 @@ struct Edge {
         self.color = color
     }
         
+    var description: String {
+        "{ from: (\(p1.x), \(p1.y); to: (\(p2.x), \(p2.y) }"
+    }
 }
 
 let pointRadius = 3.0
@@ -40,6 +53,9 @@ struct ContentView: View {
     @State var edges = [Edge]()
     @State var fillingEdges = [Edge]()
     @State var fillingColor = Color.black
+    @State var figureIsClosed = false
+    @State var timeToComplite: Double? = nil
+    
     
     @State var cursorPoint = Point(x: 0, y: 0)
     
@@ -72,6 +88,12 @@ struct ContentView: View {
             .frame(maxWidth: 140)
             .padding(.horizontal)
             
+            GroupBox {
+                ColorSelecter(selectedColor: $fillingColor)
+                    .padding(3)
+            }
+            .padding(.trailing)
+            
             
             GroupBox {
                 VStack {
@@ -84,6 +106,7 @@ struct ContentView: View {
                         
                         if let p1 = points.last, let p2 = points.first {
                             edges.append(.init(p1: p1, p2: p2))
+                            figureIsClosed = true
                         }
                     } label: {
                         Text("Замкнуть")
@@ -103,6 +126,7 @@ struct ContentView: View {
                         points = []
                         edges = []
                         fillingEdges = []
+                        figureIsClosed = false
                     } label: {
                         Text("Очистить экран")
                             .frame(maxWidth: .infinity)
@@ -133,6 +157,16 @@ struct ContentView: View {
                             fewEdges = true
                             return
                         }
+                        
+                        let fEdges = fillingByEdgesWithFlags(points: points, edges: edges)
+
+                        Task { @MainActor in
+                            let grouped = Dictionary(grouping: fEdges, by: { $0.p1.y })
+                            for y in grouped.keys.sorted() {
+                                fillingEdges.append(contentsOf: grouped[y]!)
+                                try? await Task.sleep(nanoseconds: 5_000)
+                            }
+                        }
                     } label: {
                         Text("Заполнить с задержкой")
                             .frame(maxWidth: .infinity)
@@ -143,6 +177,8 @@ struct ContentView: View {
                             fewEdges = true
                             return
                         }
+                        
+                        (timeToComplite, fillingEdges) = timeFillingByEdgesWithFlags(points: points, edges: edges)
                     } label: {
                         Text("Время выполнения")
                             .frame(maxWidth: .infinity)
@@ -187,6 +223,10 @@ struct ContentView: View {
             .background(Color.white)
             .gesture(
                 DragGesture(minimumDistance: 0).onEnded { value in
+                    if figureIsClosed {
+                        return
+                    }
+                    
                     let x = round(value.location.x), y = round(value.location.y)
                     addPoint(x: x, y: y)
                     inputedPoint.x = x
@@ -219,14 +259,27 @@ struct ContentView: View {
         }
         .padding()
         
-        Text("\(Int(cursorPoint.x)) x \(Int(cursorPoint.y))")
-            .padding(.leading)
-            .padding(.bottom)
-            .frame(maxWidth: .infinity, alignment: .leading)
+        HStack {
+            
+            Text("\(Int(cursorPoint.x)) x \(Int(cursorPoint.y))")
+                .padding(.leading)
+                .padding(.bottom)
+                .frame(maxWidth: .infinity, alignment: .leading)
+            
+        
+            if let time = timeToComplite {
+                Text("Время выполнения: " + String(time) + " миллисекунд")
+                    .padding(.trailing)
+            } else {
+                Text("---")
+                    .padding(.trailing)
+            }
+                
+        }
     }
     
     func drawLine(context: GraphicsContext, edge: Edge, color: Color = .black) {
-        let line = lineCDA(edge.p1, edge.p2)
+        let line = lineDDA(edge.p1, edge.p2)
         
         for point in line {
             let r = CGRect(x: point.x - 0.5, y: point.y - 0.5, width: 1, height: 1)
@@ -252,22 +305,28 @@ struct ContentView: View {
     }
 }
 
-func lineCDA(_ p1: Point, _ p2: Point) -> [Point] {
-    var points = [Point]()
-    
-    let dx = p2.x - p1.x, dy = p2.y - p1.y
-    let length = max(abs(dx), abs(dy))
-    let xStep = dx / length, yStep = dy / length
-    
-    var x = p1.x, y = p1.y
-    for _ in stride(from: 0.0, through: length, by: 1) {
-        points.append(.init(x: round(x), y: round(y)))
-        x += xStep
-        y += yStep
+func lineDDA(_ p1: Point, _ p2: Point) -> [Point] {
+    let x0 = p1.x.rounded(), y0 = p1.y.rounded()
+    let x1 = p2.x.rounded(), y1 = p2.y.rounded()
+
+    let dxInt = x1 - x0
+    let dyInt = y1 - y0
+    let len = max(abs(dxInt), abs(dyInt))
+    if len == 0 { return [Point(x: x0, y: y0)] }
+
+    let dx = Double(dxInt) / Double(len)
+    let dy = Double(dyInt) / Double(len)
+
+    var x = Double(x0)
+    var y = Double(y0)
+    var pixels: [Point] = []
+
+    for _ in 0...Int(len) {
+        pixels.append(Point(x: x.rounded(), y: y.rounded()))
+        x += dx
+        y += dy
     }
-    
-    return points
-    
+    return pixels
 }
 
 #Preview {

@@ -7,53 +7,82 @@
 
 import Foundation
 
-func fillingByEdgesWithFlags(points pollygonPoints: [Point], edges pollygonEdges: [Edge]) -> [Edge] {
-    var edges = [Edge]()
-    
-    let (xMin, xMax, yMin, yMax) = boundingBox(points: pollygonPoints)
-    // Собираем пересечения сканирующих линий
-    var scanLines = [Int:Set<Int>]()
-    for edge in pollygonEdges {
-        let p1 = edge.p1, p2 = edge.p2
-        let dx = p2.x - p1.x, dy = abs(p2.y - p1.y) > 1e-5 ? p2.y - p1.y : 1
-        for y in stride(from: min(p1.y, p2.y), through: max(p1.y, p2.y) - 1, by: 1) {
-            let db = y - p1.y, da = round(Double(dx * db) / Double(dy) + 0.5)
-            scanLines[Int(y), default: []].insert(Int(p1.x + da))
-        }
-    }
-    
-    //
-    var prevPoint: Point?
-    for y in stride(from: yMin, through: yMax, by: 1) {
-        
-        var inside = false
-        for x in stride(from: xMin, through: xMax, by: 1) {
-            if scanLines[Int(y), default: []].contains(Int(x)) {
-                inside = !inside
-                if inside {
-                    prevPoint = Point(x: x, y: y)
-                } else {
-                    edges.append(.init(p1: prevPoint!, p2: .init(x: x, y: y)))
-                    prevPoint = nil
-                }
-                
-            }
-        }
-        
-        if inside {
-            edges.append(.init(p1: prevPoint!, p2: .init(x: xMax, y: y)))
-            prevPoint = nil
-        }
-        
-    }
-    
-    for k in scanLines.keys.sorted() {
-        print("\(k): \(scanLines[k, default: []])")
-    }
-    return edges
+func isExtremum(_ edge1: Edge, _ edge2: Edge) -> Bool {
+    let  y1 = edge1.p1.y, y2 = edge1.p2.y, y3 = edge2.p2.y
+    return y2 < y1 && y2 < y3 || y2 > y1 && y2 > y3
 }
 
-func boundingBox(points: [Point]) -> (Double, Double, Double, Double) {
+func scanlinePoints(_ p1: Point, _ p2: Point) -> [Point] {
+    let y1 = Int(p1.y), y2 = Int(p2.y)
+    guard y1 != y2 else { return [] }
+
+    let dy = Double(y2 - y1)
+    var pts = [Point]()
+
+    let yFrom = min(y1, y2), yTo = max(y1, y2)
+    for y in yFrom...yTo {
+        let t  = Double(y - y1) / dy
+        let x  = p1.x + t * (p2.x - p1.x)
+        pts.append(.init(x: x.rounded(), y: Double(y)))
+    }
+
+    // Порядок должен совпадать с направлением ребра (от p1 к p2)
+    if y1 > y2 { pts.reverse() }
+    return pts
+}
+
+func fillingByEdgesWithFlags(points pollygonPoints: [Point], edges pollygonEdges: [Edge]) -> [Edge] {
+    var result = [Edge]()
+
+    let (xMin, xMax, yMin, yMax) = boundingBox(points: pollygonPoints)
+    let dx = xMax - xMin
+
+    var edgesMap = Dictionary<Int,[Bool]>()
+    for i in 0..<pollygonEdges.count {
+        let edge1 = pollygonEdges[i]
+        let edge2 = pollygonEdges[(i + 1) % pollygonEdges.count]
+        
+        var points = scanlinePoints(edge1.p2, edge2.p2)
+
+        // если вершина — не экстремум, убираем общую вершину
+        if !isExtremum(edge1, edge2) {
+            points = Array(points.dropFirst())
+        }
+
+        for point in points {
+            let idx = Int(point.x) - xMin
+            edgesMap[Int(point.y), default: Array(repeating: false, count: dx + 1)][idx].toggle()
+        }
+    }
+    
+    for key in edgesMap.keys.sorted() {
+        print("\(key): \(edgesMap[key, default: []])")
+    }
+
+    // Этап 2: проход с флагом + сборка отрезков
+    for y in stride(from: Int(yMin), through: Int(yMax), by: 1) {
+        var inside = false
+        var xStart: Int = xMin
+        
+        guard let row = edgesMap[y] else { continue }
+        for x in stride(from: Int(xMin), through: Int(xMax), by: 1) where row[x - xMin] {
+            inside.toggle()
+            
+            if inside {
+                xStart = x
+            } else {
+                result.append(.init(p1: .init(x: xStart, y: y), p2: .init(x: x, y: y)))
+            }
+        }
+    }
+
+    for row in result {
+        print(row)
+    }
+    return result
+}
+
+func boundingBox(points: [Point]) -> (Int, Int, Int, Int) {
     var xMin = points[0].x, xMax = points[0].x
     var yMin = points[0].y, yMax = points[0].y
     
@@ -65,5 +94,21 @@ func boundingBox(points: [Point]) -> (Double, Double, Double, Double) {
         yMax = max(yMax, point.y)
     }
     
-    return (xMin, xMax, yMin, yMax)
+    return (Int(xMin), Int(xMax), Int(yMin), Int(yMax))
 }
+
+func timeFillingByEdgesWithFlags(points pollygonPoints: [Point], edges pollygonEdges: [Edge]) -> (Double, [Edge]) {
+    let clock = ContinuousClock()
+    
+    // замер выполнения
+    let start = clock.now
+    let edges = fillingByEdgesWithFlags(points: pollygonPoints, edges: pollygonEdges)
+    let end = clock.now
+    
+    
+    let elapsed = start.duration(to: end)
+    let time = Double(elapsed.components.seconds) * 1e3 + Double(elapsed.components.attoseconds) / 1e15
+    
+    return (time: time, edges: edges)  // ms
+}
+
