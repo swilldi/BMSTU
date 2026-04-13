@@ -17,33 +17,35 @@ template<ContainerValue T>
 class SetConstIterator final : public BaseIterator<T> {
 public:
     using iterator_category = std::forward_iterator_tag;
-    using node_type = const Set<T>::Node;
 
     // === Конструкторы ===
     SetConstIterator() noexcept = default;
-    SetConstIterator(const SetConstIterator<T>& other) = default;
-    explicit SetConstIterator(const std::shared_ptr<node_type>& pnode);
+    SetConstIterator(const SetConstIterator<T>& other);
+    explicit SetConstIterator(const std::shared_ptr<typename Set<T>::Node>& node) noexcept;
 
     // === Деструктор ===
     ~SetConstIterator() override = default;
 
     // === Операторы ===
-    SetConstIterator& operator=(const SetConstIterator& other);
-    SetConstIterator &operator=(SetConstIterator &&other);
+    SetConstIterator<T> &operator=(const SetConstIterator<T>& other);
+    SetConstIterator<T> &operator=(SetConstIterator<T> &&other) noexcept;
 
     const T& operator*() const;
-    const T* operator->() const;
+    const std::shared_ptr<T> operator->() const;
 
-    SetConstIterator &operator++();
-    SetConstIterator operator++(int);
+    SetConstIterator<T> &operator++() noexcept;
+    SetConstIterator<T> operator++(int) noexcept;
 
-    bool operator==(const SetConstIterator &other) const;
-    bool operator!=(const SetConstIterator &other) const;
+    bool operator==(const SetConstIterator<T> &other) const;
+    bool operator!=(const SetConstIterator<T> &other) const;
 
     explicit operator bool() const noexcept;
 
+    void check_expired() const;
+    void next() noexcept;
+
 private:
-    std::weak_ptr<node_type> value;
+    std::weak_ptr<typename Set<T>::Node> value;
 };
 
 #include "SetConstIterator.hpp"

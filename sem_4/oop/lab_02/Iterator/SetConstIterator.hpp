@@ -8,108 +8,90 @@
 #include "SetConstIterator.h"
 
 // === Конструкторы ===
-template <ContainerValue T>
-ConstIterator<T>::ConstIterator()
+template<ContainerValue T>
+SetConstIterator<T>::SetConstIterator(const SetConstIterator<T>& other)
 {
-    this->current.lock() = nullptr;
+    other.check_expired();
+    value = other.value;
+}
+template<ContainerValue T>
+explicit SetConstIterator<T>::SetConstIterator(const std::shared_ptr<typename Set<T>::Node>& node) noexcept
+{
+    value = node;
 }
 
-template <ContainerValue T>
-explicit ConstIterator<T>::ConstIterator(const std::shared_ptr<typename Set<T>::Node> &node)
-{
-    this->current = node;
-}
-
-template <ContainerValue T>
-ConstIterator<T>::ConstIterator(const ConstIterator<T> &other)
-{
-    other.checkExpired();
-    this->current.lock() = other.current.lock();
-}
 
 // === Операторы ===
-template <ContainerValue T>
-bool ConstIterator<T>::operator==(const ConstIterator<T> &other) const noexcept
+template<ContainerValue T>
+SetConstIterator<T> &SetConstIterator<T>::operator=(const SetConstIterator<T>& other)
 {
-    return this->current.lock() == other.current.lock();
-}
-
-template <ContainerValue T>
-bool ConstIterator<T>::operator!=(const ConstIterator<T> &other) const noexcept
-{
-    return this->current.lock() != other.current.lock();
-}
-
-template <ContainerValue T>
-ConstIterator<T> &ConstIterator<T>::operator=(const ConstIterator<T> &other) noexcept
-{
-    this->current.lock() = other.current;
+    value = other.value.lock();
     return *this;
 }
 
-template <ContainerValue T>
-ConstIterator<T> &ConstIterator<T>::operator=(ConstIterator<T> &&other) noexcept
+template<ContainerValue T>
+SetConstIterator<T> &SetConstIterator<T>::operator=(SetConstIterator<T> &&other) noexcept
 {
-    this->current.lock() = std::move(other.current.lock());
+    value = std::move(other.value);
     return *this;
 }
 
-template <ContainerValue T>
-const T &ConstIterator<T>::operator*() const
+template<ContainerValue T>
+const T& SetConstIterator<T>::operator*() const
 {
-    this->checkExpired();
-    return getCurrent().value();
+    check_expired();
+    return value.lock()->get_value();
+}
+template<ContainerValue T>
+const std::shared_ptr<T> SetConstIterator<T>::operator->() const
+{
+    check_expired();
+    return value.lock();
 }
 
-template <ContainerValue T>
-const std::shared_ptr<T> ConstIterator<T>::operator->() const
+template<ContainerValue T>
+SetConstIterator<T> &SetConstIterator<T>::operator++() noexcept
 {
-    this->checkExpired();
-    return this->current.lock()->get();
+    next();
+    return *this;
 }
-
-template <ContainerValue T>
-ConstIterator<T> &ConstIterator<T>::operator++() const noexcept
+template<ContainerValue T>
+SetConstIterator<T> SetConstIterator<T>::operator++(int) noexcept
 {
+    auto copy = *this;
     this->next();
-    return *this;
+    return copy;
 }
 
-template <ContainerValue T>
-ConstIterator<T> ConstIterator<T>::operator++(int) const noexcept
+template<ContainerValue T>
+bool SetConstIterator<T>::operator==(const SetConstIterator<T> &other) const
 {
-    auto current = *this;
-    this->next();
-    return current;
+    return value.lock() == other.value.lock();
+}
+template<ContainerValue T>
+bool SetConstIterator<T>::operator!=(const SetConstIterator<T> &other) const
+{
+    return value.lock() != other.value.lock();
 }
 
-template <ContainerValue T>
-explicit ConstIterator<T>::operator bool() const noexcept
+template<ContainerValue T>
+explicit SetConstIterator<T>::operator bool() const noexcept
 {
-    return !this->current.expired() && this->current.lock() != nullptr;
+    return value.lock() != nullptr;
 }
 
-// === Изменение итератора ===
-template <ContainerValue T>
-void ConstIterator<T>::next() noexcept
+template<ContainerValue T>
+void SetConstIterator<T>::check_expired() const
 {
-    this->checkExpired();
-    this->current = this->getCurrent().next();
+    // if (value.expired())
+    //         throw new
 }
 
-// === Проверка итератора ===
-template <ContainerValue T>
-void ConstIterator<T>::checkExpired() const
+template<ContainerValue T>
+void SetConstIterator<T>::next() noexcept
 {
-    // if (this->current.expired())
-    //     throw // Кидать ошибку
-}
-
-template <ContainerValue T>
-typename Set<T>::Node &ConstIterator<T>::getCurrent() const
-{
-    this->checkExpired();
-    return *this->current.lock();
+    if (value.lock() != nullptr)
+        value = value.lock()->get_next();
 }
 
 #endif //LAB_02_CONSTITERATOR_HPP

@@ -8,7 +8,8 @@
 #include "Concepts.h"
 #include <memory>
 
-// class Set;
+template <ContainerValue T>
+class Set;
 
 template <CopyMoveAssingable T>
 class BaseIterator {
@@ -20,9 +21,6 @@ public:
 
     BaseIterator() = default;
     virtual ~BaseIterator() = 0;
-
-// protected:
-//     std::weak_ptr<typename Set<T>::Node> current{};
 };
 
 #endif //LAB_02_BASEITERATOR_H
