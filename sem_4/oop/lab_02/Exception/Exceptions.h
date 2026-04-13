@@ -11,19 +11,22 @@
 class IteratorException : public BaseException
 {
 public:
-    IteratorException(const char *info_msg, const std::source_location &location) noexcept;
+    IteratorException(const char *info_msg, const std::source_location &location) noexcept : BaseException(
+        info_msg, location) {}
 };
 
 class SetException : public BaseException
 {
 public:
-    SetException(const char *info_msg, const std::source_location &location) noexcept;
+    SetException(const char *info_msg, const std::source_location &location) noexcept : BaseException(
+        info_msg, location) {}
 };
 
 class MemoryAllocException : public SetException
 {
 public:
-    MemoryException(const char *info_msg, const std::source_location &location) noexcept;
+    MemoryAllocException(const char *info_msg, const std::source_location &location) noexcept : SetException(
+        info_msg, location) {}
 };
 
 #endif //LAB_02_EXCEPTION_H

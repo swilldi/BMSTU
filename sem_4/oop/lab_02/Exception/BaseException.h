@@ -5,8 +5,6 @@
 #ifndef LAB_02_BASEEXCEPTION_H
 #define LAB_02_BASEEXCEPTION_H
 
-#define EXCEPTION_MSG_LEN 512
-
 #include <source_location>
 #include <exception>
 
@@ -14,10 +12,11 @@ class BaseException : public std::exception
 {
 public:
     BaseException(const char *info_msg, const std::source_location &location) noexcept;
-    virtual const char *what() const noexcept override;
+    const char *what() const noexcept override;
 
 protected:
-    char msg[EXCEPTION_MSG_LEN];
+    static const size_t msg_size = 512;
+    char msg[msg_size];
 };
 
 #include "BaseException.hpp"

@@ -24,7 +24,7 @@ public:
     virtual bool empty() const noexcept = 0;
 
 protected:
-    size_type _size;
+    size_type _size = 0;
 };
 
 #endif //LAB_02_BASECONTAINER_H

@@ -140,6 +140,15 @@ public:
         requires Convertible<typename C::value_type, T>
     Set<T> &operator=(const C &container);
 
+    // Сравнения
+    template <ContainerValue U>
+        requires Convertible<U, T>
+    bool operator==(const Set<U>& other) const;
+
+    template <ContainerValue U>
+        requires Convertible<U, T>
+    bool operator!=(const Set<U>& other) const;
+
     // Объединение
     template <Container C>
         requires Convertible<typename C::value_type, T>

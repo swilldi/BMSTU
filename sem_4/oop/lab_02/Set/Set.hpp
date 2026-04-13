@@ -34,7 +34,7 @@ Set<T>::Set(Set<T> &&other) : Set()
 
 template <ContainerValue T>
 template <ContainerValue U>
-        requires Convertible<U, T>
+    requires Convertible<U, T>
 Set<T>::Set(std::initializer_list<U> list) : Set()
 {
     for (const auto &element: list)
@@ -43,7 +43,7 @@ Set<T>::Set(std::initializer_list<U> list) : Set()
 
 template <ContainerValue T>
 template <ForwardIterator I>
-        requires Convertible<std::iter_value_t<I>, T>
+    requires Convertible<std::iter_value_t<I>, T>
 Set<T>::Set(const I &first, const I &last) : Set()
 {
     for (auto current = first; current != last; ++current)
@@ -61,7 +61,7 @@ Set<T>::Set(const C& container) : Set()
 
 template <ContainerValue T>
 template <ContainerValue U>
-        requires Convertible<U, T>
+    requires Convertible<U, T>
 Set<T>::Set(size_type size, const U *array)
 {
     if (array == nullptr)
@@ -71,7 +71,7 @@ Set<T>::Set(size_type size, const U *array)
 
     *this = Set<T>(array, array + size);
 }
-// === Деструкторы ===
+// === Деструктор ===
 template <ContainerValue T>
 Set<T>::~Set()
 {
@@ -79,7 +79,7 @@ Set<T>::~Set()
         this->head.reset();
 }
 
-// === Информация о множестве
+// === Информация о множестве ===
 template <ContainerValue T>
 Set<T>::size_type Set<T>::size() const noexcept
 {
@@ -125,7 +125,7 @@ bool Set<T>::contains(const U &value) const
 
 template <ContainerValue T>
 template <ContainerValue U>
-        requires Convertible<U, T>
+    requires Convertible<U, T>
 void Set<T>::add(const U &value)
 {
     if (!contains(value))
@@ -146,7 +146,7 @@ void Set<T>::add(const U &value)
 
 template <ContainerValue T>
 template <Container C>
-        requires Convertible<typename C::value_type, T>
+    requires Convertible<typename C::value_type, T>
 void Set<T>::add(const C &container)
 {
     for (const auto& element: container)
@@ -156,29 +156,33 @@ void Set<T>::add(const C &container)
 // Удаление
 template <ContainerValue T>
 template <ContainerValue U>
-        requires Equatable<T, U>
+    requires Equatable<T, U>
 void Set<T>::erase(const U &value)
 {
+    bool element_found = false;
+
     if (this->head != nullptr && this->head->get_value() == value)
     {
         this->head = this->head->get_next().lock();
         --this->_size;
+        element_found = true;
     }
 
-    for (auto cur = this->head; cur != nullptr && cur->get_next().lock() != nullptr; cur = cur->get_next().lock())
+    for (auto cur = this->head; !element_found && cur != nullptr && cur->get_next().lock() != nullptr; cur = cur->get_next().lock())
     {
         if (cur->get_next().lock()->get_value() == value)
         {
             auto next = cur->get_next().lock()->get_next().lock();
             cur->set_next(next);
             --this->_size;
+            element_found = true;
         }
     }
 }
 
 template <ContainerValue T>
 template <Container C>
-        requires Equatable<typename C::value_type, T>
+    requires Equatable<typename C::value_type, T>
 void Set<T>::erase(const C &container)
 {
     for (const auto& element: container)
@@ -311,6 +315,7 @@ Set<T> &Set<T>::operator=(Set<T> &&other)
     clear();
     this->head = std::move(other.head);
     this->_size = std::move(other._size);
+    other.clear();
     return *this;
 }
 
@@ -330,6 +335,24 @@ Set<T> &Set<T>::operator=(const C &container)
 {
     *this = Set<T>(container);
     return *this;
+}
+
+// Сравнения
+template <ContainerValue T>
+template <ContainerValue U>
+        requires Convertible<U, T>
+bool Set<T>::operator==(const Set<U>& other) const
+{
+    return this->_size == other.size() && std::ranges::all_of(other, [this](const auto &e) { return contains(e); });
+
+}
+
+template <ContainerValue T>
+template <ContainerValue U>
+        requires Convertible<U, T>
+bool Set<T>::operator!=(const Set<U>& other) const
+{
+    return !(*this == other);
 }
 
 // Объединение
@@ -440,13 +463,12 @@ std::ostream &operator<<(std::ostream &os, const Set<T> &set)
 {
     os << "{ ";
 
-    auto range = set | std::views::transform([](const auto &e) {
-        return std::to_string(e) + ", ";
-    });
-
-    std::ranges::copy(range, std::ostream_iterator<std::string>(os));
+    for (const auto& element: set)
+        os << element << ", ";
 
     os << "}";
+    os << " (" << set.size() << ")";
+
     return os;
 }
 

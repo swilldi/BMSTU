@@ -31,7 +31,8 @@ void test_constructor()
     std::cout << "4) Копирование – " << s4 << std::endl;
 
     // 5) Перенос
-    Set<int> s5(std::move(Set<int>{ 1, 2, 3, 4 }));
+    Set<int> tmp{ 1, 2, 3, 4 };
+    Set<int> s5(std::move(tmp));
     std::cout << "5) Перенос – " << s5 << std::endl;
 
     // 6) Итераторы
@@ -55,7 +56,7 @@ void test_assign()
     Set<int> s1, s2{ 1, 2, 3, 4 };
     std::cout << "1) Другого множества. До " << s1 << ". После ";
     s1 = s2;
-    std::cout << s2 << std::endl;
+    std::cout << s1 << std::endl;
 
     // 2) Переносом
     Set<int> s3;
@@ -104,7 +105,7 @@ void test_add()
     // 3) Добавление в непустое значения которое уже есть в множестве
     s1.add(3);
     s2.add(Set<int> {2, 5, 10});
-    std::cout << "2) Добавление в непустое множество, элементов которые уже есть" << std::endl;
+    std::cout << "3) Добавление в непустое множество, элементов которые уже есть" << std::endl;
     std::cout << "\tДобавлен элемент 3 в s1: " << s1 << std::endl;
     std::cout << "\tДобавлено множество {2, 5, 10} в s2: " << s2 << std::endl;
 
@@ -168,7 +169,7 @@ void test_unite()
     std::cout << "======= Объединение  =======" << std::endl;
 
     Set<int> s1{1, 2, 3, 4, 5}, s2{4, 5, 6, 7,}, s3;
-    std::cout << "Исходные множества:\n" << "\ts1: " << s1 << "\n\ts2:" << s2 << std::endl;
+    std::cout << "Исходные множества:\n" << "\ts1: " << s1 << "\n\ts2: " << s2 << std::endl;
 
     // 1) Объединение множеств (создание нового)
     std::cout << "1) Объединение множеств (создание нового)" << std::endl;
@@ -209,12 +210,12 @@ void test_intersect()
     std::cout << "======= Пересечение  =======" << std::endl;
 
     Set<int> s1{1, 2, 3, 4, 5}, s2{4, 5, 6, 7,}, s3;
-    std::cout << "Исходные множества:\n" << "\ts1: " << s1 << "\n\ts2:" << s2 << std::endl;
+    std::cout << "Исходные множества:\n" << "\ts1: " << s1 << "\n\ts2: " << s2 << std::endl;
 
     // 1) Пересечение множеств (создание нового)
     std::cout << "1) Пересечение множеств (создание нового)" << std::endl;
     s3 = s1 & s2;
-    std::cout << "\ts1 | s2: " << s3 << std::endl;
+    std::cout << "\ts1 & s2: " << s3 << std::endl;
 
     s3 = s1.intersect(s2);
     std::cout << "\ts1.intersect(s2): " << s3 << std::endl;
@@ -229,8 +230,8 @@ void test_intersect()
     s3.intersect_update(s2);
     std::cout << "\ts3.intersect_update(s2): " << s3 << std::endl;
 
-    // 3) Пересечение объединение
-    std::cout << "3) Пересечение объединение {1, 2, 4, 6} | {3, 4, 2, 10} | {1, 4, 2}" << std::endl;
+    // 3) Последовательное пересечение
+    std::cout << "3) Последовательное пересечение {1, 2, 4, 6} & {3, 4, 2, 10} & {1, 4, 2}" << std::endl;
     Set<int> s4{1, 2, 4, 6}, s5{3 ,4, 2, 10}, s6{1, 4, 2}, s7 = s4 & s5 & s6;
     std::cout << "\t" << s7 << std::endl;
 
@@ -243,7 +244,7 @@ void test_diff()
     std::cout << "=======  Вычитание   =======" << std::endl;
 
     Set<int> s1{ 1, 2, 3, 4 }, s2{ 3, 4, 5, 6 }, s3 {5, 6, 7, 8}, s4;
-    std::cout << "Исходные множества:\n" << "\ts1: " << s1 << "\n\ts2:" << s2 << "\n\ts3:" << s3 << std::endl;
+    std::cout << "Исходные множества:\n" << "\ts1: " << s1 << "\n\ts2: " << s2 << "\n\ts3: " << s3 << std::endl;
 
     // 1) вычитание множества из множества ()
     std::cout << "1) Есть пересечение" << std::endl;
@@ -277,7 +278,7 @@ void test_symm_diff()
     std::cout << "======= Сим.вычитание =======" << std::endl;
 
     Set<int> s1{ 1, 2, 3, 4 }, s2{ 3, 4, 5, 6 }, s3 {5, 6, 7, 8}, s4;
-    std::cout << "Исходные множества:\n" << "\ts1: " << s1 << "\n\ts2:" << s2 << "\n\ts3:" << s3 << std::endl;
+    std::cout << "Исходные множества:\n" << "\ts1: " << s1 << "\n\ts2: " << s2 << "\n\ts3: " << s3 << std::endl;
 
     // 1) вычитание множества из множества ()
     std::cout << "1) Есть пересечение" << std::endl;
@@ -313,13 +314,16 @@ int main()
     static_assert(Container<Set<int> >, "Set does not satisfy Container");
     static_assert(Container<std::vector<int> >, "Vector does not satisfy Container");
 
-    test_constructor();
-    test_assign();
-    test_add();
-    test_erase();
-    test_clear();
-    test_unite();
-    test_intersect();
-    test_diff();
-    test_symm_diff();
+    // test_constructor();
+    // test_assign();
+    // test_add();
+    // test_erase();
+    // test_clear();
+    // test_unite();
+    // test_intersect();
+    // test_diff();
+    // test_symm_diff();
+
+    // Set<int> s1 {1, 2, 3}, s2 = s1, s3 {3, 4, 5};
+
 }
