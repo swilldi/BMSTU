@@ -16,9 +16,8 @@ Set<T>::Set()
 }
 
 template <ContainerValue T>
-Set<T>::Set(const Set<T> &other)
+Set<T>::Set(const Set<T> &other) : Set()
 {
-    clear();
     for (const auto &element: other)
         add(element);
 }
@@ -34,9 +33,8 @@ Set<T>::Set(Set<T> &&other)
 template <ContainerValue T>
 template <ContainerValue U>
         requires Convertable<U, T>
-Set<T>::Set(std::initializer_list<U> list)
+Set<T>::Set(std::initializer_list<U> list) : Set()
 {
-    clear();
     for (const auto &element: list)
         add(element);
 }
@@ -72,10 +70,9 @@ Set<T>::Set(size_type size, const U *array)
     // if (size == 0)
     //     throw
 
-    Set<T> result(array, array + size);
-    return result;
+    clear();
+    *this = Set<T>(array, array + size);
 }
-
 // === Деструкторы ====
 template <ContainerValue T>
 Set<T>::~Set()
@@ -86,26 +83,26 @@ Set<T>::~Set()
 
 // === Информация о множестве
 template <ContainerValue T>
-size_type Set<T>::get_size() override
+Set<T>::size_type Set<T>::get_size() const noexcept
 {
     return size;
 }
 
 template <ContainerValue T>
-bool Set<T>::empty() override
+bool Set<T>::empty() const noexcept
 {
     return size == 0;
 }
 
 // === Итераторы ===
 template <ContainerValue T>
-const_iterator Set<T>::begin() const noexcept
+Set<T>::const_iterator Set<T>::begin() const noexcept
 {
     return const_iterator(head);
 }
 
 template <ContainerValue T>
-const_iterator Set<T>::end() const noexcept
+Set<T>::const_iterator Set<T>::end() const noexcept
 {
     return const_iterator();
 }
@@ -189,10 +186,10 @@ template <Container C>
     requires Convertable<typename C::value_type, T>
 Set<T> Set<T>::intersect(const C &container) const
 {
-    Set<T> intersect_set();
+    Set<T> intersect_set;
     for (const auto& element: container)
         if (contains(element))
-            intersect_set.add(*element);
+            intersect_set.add(element);
 
     return intersect_set;
 }
@@ -332,14 +329,6 @@ Set<T> Set<T>::operator+(const C &container) const
 
 template <ContainerValue T>
 template <Container C>
-        requires Convertable<typename C::value_type, T>
-Set<T> Set<T>::operator+(const C &container, const Set<T>& set)
-{
-    return set | container;
-}
-
-template <ContainerValue T>
-template <Container C>
     requires Convertable<typename C::value_type, T>
 Set<T> &Set<T>::operator+=(const C &container)
 {
@@ -355,13 +344,6 @@ Set<T> Set<T>::operator|(const C &container) const
     Set<T> unite_set(*this);
     unite_set |= container;
     return unite_set;
-}
-
-template <ContainerValue T, Container C>
-        requires Convertable<typename C::value_type, T>
-Set<T> operator|(const C &container, const Set<T>& set)
-{
-    return set | container;
 }
 
 template <ContainerValue T>
@@ -384,13 +366,6 @@ Set<T> Set<T>::operator&(const C &container) const
     return intersect_set;
 }
 
-template <ContainerValue T, Container C>
-    requires Convertable<typename C::value_type, T>
-Set<T> operator&(const C &container, const Set<T>& set)
-{
-    return set & container;
-}
-
 template <ContainerValue T>
 template <Container C>
     requires Convertable<typename C::value_type, T>
@@ -411,13 +386,6 @@ Set<T> Set<T>::operator-(const C &container) const
     return diff_set;
 }
 
-template <ContainerValue T, Container C>
-    requires Convertable<typename C::value_type, T>
-Set<T> operator-(const C &container, Set<T> &set)
-{
-    return set - container;
-}
-
 template <ContainerValue T>
 template <Container C>
     requires Convertable<typename C::value_type, T>
@@ -436,13 +404,6 @@ Set<T> Set<T>::operator^(const C &container) const
     Set<T> sym_diff_set(*this);
     sym_diff_set ^= container;
     return sym_diff_set;
-}
-
-template <Container C>
-    requires Convertable<typename C::value_type, T>
-Set<T> operator^(const C &container, Set<T> &set)
-{
-    return set ^ container;
 }
 
 template <ContainerValue T>

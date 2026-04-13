@@ -15,7 +15,7 @@ SetConstIterator<T>::SetConstIterator(const SetConstIterator<T>& other)
     value = other.value;
 }
 template<ContainerValue T>
-explicit SetConstIterator<T>::SetConstIterator(const std::shared_ptr<typename Set<T>::Node>& node) noexcept
+SetConstIterator<T>::SetConstIterator(const std::shared_ptr<typename Set<T>::Node>& node) noexcept
 {
     value = node;
 }
@@ -75,7 +75,7 @@ bool SetConstIterator<T>::operator!=(const SetConstIterator<T> &other) const
 }
 
 template<ContainerValue T>
-explicit SetConstIterator<T>::operator bool() const noexcept
+SetConstIterator<T>::operator bool() const noexcept
 {
     return value.lock() != nullptr;
 }

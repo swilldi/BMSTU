@@ -18,7 +18,7 @@ public:
 
     BaseContainer() = default;
 
-    virtual ~BaseContainer() = 0;
+    virtual ~BaseContainer() = default;
 
     virtual size_type get_size() const noexcept = 0;
     virtual bool empty() const noexcept = 0;
