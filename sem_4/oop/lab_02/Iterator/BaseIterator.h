@@ -11,16 +11,19 @@
 template <ContainerValue T>
 class Set;
 
-template <CopyMoveAssingable T>
+template <CopyMoveAssignable T>
 class BaseIterator {
 public:
     using value_type = T;
     using reference = T&;
-    using pointer = std::shared_ptr<T>;
+    using pointer = T*;
     using difference_type = std::ptrdiff_t;
 
     BaseIterator() = default;
     virtual ~BaseIterator() = 0;
 };
+
+template <CopyMoveAssignable T>
+inline BaseIterator<T>::~BaseIterator() {}
 
 #endif //LAB_02_BASEITERATOR_H

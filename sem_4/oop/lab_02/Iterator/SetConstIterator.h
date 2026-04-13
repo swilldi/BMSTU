@@ -31,7 +31,7 @@ public:
     SetConstIterator<T> &operator=(SetConstIterator<T> &&other) noexcept;
 
     const T& operator*() const;
-    const std::shared_ptr<T> operator->() const;
+    const T* operator->() const;
 
     SetConstIterator<T> &operator++() noexcept;
     SetConstIterator<T> operator++(int) noexcept;

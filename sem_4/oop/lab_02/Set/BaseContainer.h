@@ -20,11 +20,11 @@ public:
 
     virtual ~BaseContainer() = default;
 
-    virtual size_type get_size() const noexcept = 0;
+    virtual size_type size() const noexcept = 0;
     virtual bool empty() const noexcept = 0;
 
 protected:
-    size_type size;
+    size_type _size;
 };
 
 #endif //LAB_02_BASECONTAINER_H

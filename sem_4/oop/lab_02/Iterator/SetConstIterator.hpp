@@ -11,7 +11,6 @@
 template<ContainerValue T>
 SetConstIterator<T>::SetConstIterator(const SetConstIterator<T>& other)
 {
-    other.check_expired();
     value = other.value;
 }
 template<ContainerValue T>
@@ -43,10 +42,10 @@ const T& SetConstIterator<T>::operator*() const
     return value.lock()->get_value();
 }
 template<ContainerValue T>
-const std::shared_ptr<T> SetConstIterator<T>::operator->() const
+const T* SetConstIterator<T>::operator->() const
 {
     check_expired();
-    return value.lock();
+    return &value.lock()->get_value();
 }
 
 template<ContainerValue T>
@@ -83,8 +82,8 @@ SetConstIterator<T>::operator bool() const noexcept
 template<ContainerValue T>
 void SetConstIterator<T>::check_expired() const
 {
-    // if (value.expired())
-    //         throw new
+    if (value.expired())
+        throw std::runtime_error("Iterator: weak_ptr expired");
 }
 
 template<ContainerValue T>

@@ -13,66 +13,68 @@ template <ContainerValue T>
 class Set final : public BaseContainer<T>
 {
 public:
-    using BaseContainer<T>::size;
-
     using value_type = BaseContainer<T>::value_type;
+    using reference = value_type&;
+    using const_reference = const value_type&;
     using size_type = BaseContainer<T>::size_type;
     using iterator = SetConstIterator<T>;
     // ConstIterator тут заглушка, просто реализовывать не const не имеет смысла для множества
     using const_iterator = SetConstIterator<T>;
+    using difference_type = ptrdiff_t;
+
+    friend class SetConstIterator<T>;
 
     // === Конструкторы ===
     Set();
 
-    explicit Set(const Set<T> &other);
+    Set(const Set<T> &other);
 
     Set(Set<T> &&other);
 
     template <ContainerValue U>
-        requires Convertable<U, T>
+        requires Convertible<U, T>
     Set(std::initializer_list<U> list);
 
     template <ForwardIterator I>
-        requires Convertable<typename I::value_type, T>
+        requires Convertible<std::iter_value_t<I>, T>
     Set(const I &first, const I &last);
 
     template <Container C>
-        requires Convertable<typename C::value_type, T>
+        requires Convertible<typename C::value_type, T>
     explicit Set(const C &container);
 
     template <ContainerValue U>
-        requires Convertable<U, T>
+        requires Convertible<U, T>
     Set(size_type size, const U *array);
 
     // === Деструктор ===
     ~Set() override;
 
     // === Информация о множестве ===
-    size_type get_size() const noexcept override;
+    size_type size() const noexcept override;
 
     bool empty() const noexcept override;
 
-    // === Итератора ===
-    const_iterator begin() const noexcept;
-
-    const_iterator end() const noexcept;
+    // === Итераторы ===
+    iterator begin() const noexcept;
+    iterator end() const noexcept;
 
     // === Операции над множеством ===
-    // Очитка
+    // Очистка
     void clear();
 
     // Проверка вхождения в множество
     template <ContainerValue U>
-        requires Convertable<U, T>
+        requires Convertible<U, T>
     bool contains(const U &value) const;
 
     // Добавление
     template <ContainerValue U>
-        requires Convertable<U, T>
+        requires Convertible<U, T>
     void add(const U &value);
 
     template <Container C>
-        requires Convertable<typename C::value_type, T>
+        requires Convertible<typename C::value_type, T>
     void add(const C &container);
 
     // Удаление
@@ -80,116 +82,122 @@ public:
         requires Equatable<T, U>
     void erase(const U &value);
 
-    template <Container С>
-        requires Equatable<typename С::value_type, T>
-    void erase(const С &container);
+    template <Container C>
+        requires Equatable<typename C::value_type, T>
+    void erase(const C &container);
 
     // Пересечение
     template <Container C>
-        requires Convertable<typename C::value_type, T>
+        requires Convertible<typename C::value_type, T>
     Set<T> intersect(const C &container) const;
 
     template <Container C>
-        requires Convertable<typename C::value_type, T>
+        requires Convertible<typename C::value_type, T>
     Set<T> &intersect_update(const C &container);
 
     // Объединение
     template <Container C>
-        requires Convertable<typename C::value_type, T>
+        requires Convertible<typename C::value_type, T>
     Set<T> unite(const C &container) const;
 
     template <Container C>
-        requires Convertable<typename C::value_type, T>
+        requires Convertible<typename C::value_type, T>
     Set<T> &unite_update(const C &container);
 
     // Разность
     template <Container C>
-        requires Convertable<typename C::value_type, T>
+        requires Convertible<typename C::value_type, T>
     Set<T> difference(const C &container) const;
 
     template <Container C>
-        requires Convertable<typename C::value_type, T>
+        requires Convertible<typename C::value_type, T>
     Set<T> &difference_update(const C &container);
 
-    // Симетрическая разность
+    // Симметрическая разность
     template <Container C>
-        requires Convertable<typename C::value_type, T>
+        requires Convertible<typename C::value_type, T>
     Set<T> symmetric_difference(const C &container) const;
 
     template <Container C>
-        requires Convertable<typename C::value_type, T>
+        requires Convertible<typename C::value_type, T>
     Set<T> &symmetric_difference_update(const C &container);
 
     // === Операторы ===
     //  Присваивание
+    Set<T> &operator=(const Set<T> &other);
+
     template <ContainerValue U>
-        requires Convertable<U, T>
+        requires Convertible<U, T>
     Set<T> &operator=(const Set<U> &other);
 
     Set<T> &operator=(Set<T> &&other);
 
     template <ContainerValue U>
-        requires Convertable<U, T>
+        requires Convertible<U, T>
     Set<T> &operator=(std::initializer_list<U> list);
 
     template <Container C>
-        requires Convertable<typename C::value_type, T>
+        requires Convertible<typename C::value_type, T>
     Set<T> &operator=(const C &container);
 
     // Объединение
     template <Container C>
-        requires Convertable<typename C::value_type, T>
+        requires Convertible<typename C::value_type, T>
     Set<T> operator+(const C &container) const;
 
     template <Container C>
-        requires Convertable<typename C::value_type, T>
+        requires Convertible<typename C::value_type, T>
+             && (!std::same_as<C, Set<T>>)
     friend Set<T> operator+(const C &container, const Set<T>& set)
     {
         return set + container;
     }
 
     template <Container C>
-        requires Convertable<typename C::value_type, T>
+        requires Convertible<typename C::value_type, T>
     Set<T> &operator+=(const C &container);
 
     template <Container C>
-        requires Convertable<typename C::value_type, T>
+        requires Convertible<typename C::value_type, T>
+             && (!std::same_as<C, Set<T>>)
     friend Set<T> operator|(const C &container, const Set<T>& set)
     {
         return set | container;
     }
 
     template <Container C>
-        requires Convertable<typename C::value_type, T>
+        requires Convertible<typename C::value_type, T>
     Set<T> operator|(const C &container) const;
 
     template <Container C>
-        requires Convertable<typename C::value_type, T>
+        requires Convertible<typename C::value_type, T>
     Set<T> &operator|=(const C &container);
 
     // Пересечение
     template <Container C>
-        requires Convertable<typename C::value_type, T>
+        requires Convertible<typename C::value_type, T>
     Set<T> operator&(const C &container) const;
 
     template <Container C>
-        requires Convertable<typename C::value_type, T>
+        requires Convertible<typename C::value_type, T>
+             && (!std::same_as<C, Set<T>>)
     friend Set<T> operator&(const C &container, const Set<T>& set)
     {
         return set & container;
     }
 
     template <Container C>
-        requires Convertable<typename C::value_type, T>
+        requires Convertible<typename C::value_type, T>
     Set<T> &operator&=(const C &container);
 
     // Разность
     template <Container C>
-        requires Convertable<typename C::value_type, T>
+        requires Convertible<typename C::value_type, T>
     Set<T> operator-(const C &container) const;
 
     template <Container C>
-        requires Convertable<typename C::value_type, T>
+        requires Convertible<typename C::value_type, T>
+             && (!std::same_as<C, Set<T>>)
     friend Set<T> operator-(const C &container, Set<T> &set)
     {
         Set<T> diff_set(container);
@@ -198,26 +206,27 @@ public:
     }
 
     template <Container C>
-        requires Convertable<typename C::value_type, T>
+        requires Convertible<typename C::value_type, T>
     Set<T> &operator-=(const C &container);
 
-    // Симетрическая разность
+    // Симметрическая разность
     template <Container C>
-        requires Convertable<typename C::value_type, T>
+        requires Convertible<typename C::value_type, T>
     Set<T> operator^(const C &container) const;
 
     template <Container C>
-        requires Convertable<typename C::value_type, T>
+        requires Convertible<typename C::value_type, T>
+             && (!std::same_as<C, Set<T>>)
     friend Set<T> operator^(const C &container, Set<T> &set)
     {
         return set ^ container;
     }
 
     template <Container C>
-        requires Convertable<typename C::value_type, T>
+        requires Convertible<typename C::value_type, T>
     Set<T> &operator^=(const C &container);
 
-    operator bool() const noexcept;
+    explicit operator bool() const noexcept;
 protected:
     class Node
     {
@@ -254,6 +263,10 @@ protected:
 private:
     std::shared_ptr<Node> head;
 };
+
+template <ContainerValue T>
+std::ostream& operator<<(std::ostream& os, const Set<T>& set);
+
 
 #include "Set.hpp"
 
