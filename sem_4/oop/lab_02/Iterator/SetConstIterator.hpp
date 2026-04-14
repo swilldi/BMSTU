@@ -89,8 +89,9 @@ void SetConstIterator<T>::check_expired() const
 template<ContainerValue T>
 void SetConstIterator<T>::next() noexcept
 {
-    if (value.lock() != nullptr)
-        value = value.lock()->get_next();
+    auto node = value.lock();
+    if (node)
+        value = node->get_next();
 }
 
 #endif //LAB_02_CONSTITERATOR_HPP

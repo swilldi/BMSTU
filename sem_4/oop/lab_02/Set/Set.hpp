@@ -20,7 +20,7 @@ Set<T>::Set()
 template <ContainerValue T>
 Set<T>::Set(const Set<T> &other) : Set()
 {
-    for (const auto &element: other)
+    for (const auto &element : other)
         add(element);
 }
 
@@ -37,7 +37,7 @@ template <ContainerValue U>
     requires Convertible<U, T>
 Set<T>::Set(std::initializer_list<U> list) : Set()
 {
-    for (const auto &element: list)
+    for (const auto &element : list)
         add(element);
 }
 
@@ -53,9 +53,9 @@ Set<T>::Set(const I &first, const I &last) : Set()
 template <ContainerValue T>
 template <Container C>
     requires Convertible<typename C::value_type, T>
-Set<T>::Set(const C& container) : Set()
+Set<T>::Set(const C &container) : Set()
 {
-    for (const auto &element: container)
+    for (const auto &element : container)
         add(element);
 }
 
@@ -71,6 +71,7 @@ Set<T>::Set(size_type size, const U *array)
 
     *this = Set<T>(array, array + size);
 }
+
 // === Деструктор ===
 template <ContainerValue T>
 Set<T>::~Set()
@@ -120,7 +121,7 @@ template <ContainerValue U>
     requires Convertible<U, T>
 bool Set<T>::contains(const U &value) const
 {
-    return std::ranges::any_of(*this, [value](const auto& v) { return v == value; });
+    return std::ranges::any_of(*this, [value](const auto &v) { return v == value; });
 }
 
 template <ContainerValue T>
@@ -149,7 +150,7 @@ template <Container C>
     requires Convertible<typename C::value_type, T>
 void Set<T>::add(const C &container)
 {
-    for (const auto& element: container)
+    for (const auto &element : container)
         add(element);
 }
 
@@ -168,7 +169,8 @@ void Set<T>::erase(const U &value)
         element_found = true;
     }
 
-    for (auto cur = this->head; !element_found && cur != nullptr && cur->get_next().lock() != nullptr; cur = cur->get_next().lock())
+    for (auto cur = this->head; !element_found && cur != nullptr && cur->get_next().lock() != nullptr;
+         cur = cur->get_next().lock())
     {
         if (cur->get_next().lock()->get_value() == value)
         {
@@ -185,7 +187,7 @@ template <Container C>
     requires Equatable<typename C::value_type, T>
 void Set<T>::erase(const C &container)
 {
-    for (const auto& element: container)
+    for (const auto &element : container)
         erase(element);
 }
 
@@ -196,7 +198,7 @@ template <Container C>
 Set<T> Set<T>::intersect(const C &container) const
 {
     Set<T> intersect_set;
-    for (const auto& element: container)
+    for (const auto &element : container)
         if (contains(element))
             intersect_set.add(element);
 
@@ -209,7 +211,7 @@ template <Container C>
 Set<T> &Set<T>::intersect_update(const C &container)
 {
     Set<T> intersect_set;
-    for (const auto& element : container)
+    for (const auto &element : container)
         if (contains(element))
             intersect_set.add(element);
 
@@ -225,7 +227,7 @@ template <Container C>
 Set<T> Set<T>::unite(const C &container) const
 {
     Set<T> unite_set(*this);
-    for (const auto& element: container)
+    for (const auto &element : container)
         unite_set.add(element);
 
     return unite_set;
@@ -237,7 +239,7 @@ template <Container C>
 Set<T> &Set<T>::unite_update(const C &container)
 {
     Set<T> unite_set(*this);
-    for (const auto& element: container)
+    for (const auto &element : container)
         unite_set.add(element);
 
     *this = unite_set;
@@ -291,19 +293,23 @@ Set<T> &Set<T>::symmetric_difference_update(const C &container)
 template <ContainerValue T>
 Set<T> &Set<T>::operator=(const Set<T> &other)
 {
-    clear();
-    for (const auto& element: other)
-        add(element);
+    if (this != &other)
+    {
+        clear();
+        for (const auto &element : other)
+            add(element);
+    }
 
     return *this;
 }
+
 template <ContainerValue T>
 template <ContainerValue U>
     requires Convertible<U, T>
 Set<T> &Set<T>::operator=(const Set<U> &other)
 {
     clear();
-    for (const auto& element: other)
+    for (const auto &element : other)
         add(element);
 
     return *this;
@@ -330,7 +336,7 @@ Set<T> &Set<T>::operator=(std::initializer_list<U> list)
 
 template <ContainerValue T>
 template <Container C>
-        requires Convertible<typename C::value_type, T>
+    requires Convertible<typename C::value_type, T>
 Set<T> &Set<T>::operator=(const C &container)
 {
     *this = Set<T>(container);
@@ -340,17 +346,20 @@ Set<T> &Set<T>::operator=(const C &container)
 // Сравнения
 template <ContainerValue T>
 template <ContainerValue U>
-        requires Convertible<U, T>
-bool Set<T>::operator==(const Set<U>& other) const
+    requires Convertible<U, T>
+bool Set<T>::operator==(const Set<U> &other) const
 {
-    return this->_size == other.size() && std::ranges::all_of(other, [this](const auto &e) { return contains(e); });
+    return this->_size == other.size() && std::ranges::all_of(other, [this](const auto &e)
+    {
+        return this->contains(e);
+    });
 
 }
 
 template <ContainerValue T>
 template <ContainerValue U>
-        requires Convertible<U, T>
-bool Set<T>::operator!=(const Set<U>& other) const
+    requires Convertible<U, T>
+bool Set<T>::operator!=(const Set<U> &other) const
 {
     return !(*this == other);
 }
@@ -463,7 +472,7 @@ std::ostream &operator<<(std::ostream &os, const Set<T> &set)
 {
     os << "{ ";
 
-    for (const auto& element: set)
+    for (const auto &element : set)
         os << element << ", ";
 
     os << "}";

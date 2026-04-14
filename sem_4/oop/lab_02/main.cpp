@@ -314,16 +314,20 @@ int main()
     static_assert(Container<Set<int> >, "Set does not satisfy Container");
     static_assert(Container<std::vector<int> >, "Vector does not satisfy Container");
 
-    // test_constructor();
-    // test_assign();
-    // test_add();
-    // test_erase();
-    // test_clear();
-    // test_unite();
-    // test_intersect();
-    // test_diff();
-    // test_symm_diff();
+    test_constructor();
+    test_assign();
+    test_add();
+    test_erase();
+    test_clear();
+    test_unite();
+    test_intersect();
+    test_diff();
+    test_symm_diff();
 
     // Set<int> s1 {1, 2, 3}, s2 = s1, s3 {3, 4, 5};
+    // std::cout << s1 << std::endl;
+    // s1 = s1;
+    // std::cout << s1 << std::endl;
+
 
 }

@@ -11,7 +11,7 @@
 
 BaseException::BaseException(const char *info_msg, const std::source_location &location) noexcept
 {
-    snprintf(msg, EXCEPTION_MSG_LEN, "%s (%d:%d): '%s' -> %s\n",
+    snprintf(msg, msg_size, "%s (%d:%d): '%s' -> %s\n",
         location.file_name(), location.line(), location.column(), location.function_name(), info_msg);
 };
 
