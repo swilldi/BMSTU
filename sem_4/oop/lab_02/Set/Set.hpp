@@ -20,7 +20,16 @@ Set<T>::Set()
 }
 
 template <ContainerValue T>
-Set<T>::Set(const Set<T> &other) : Set()
+Set<T>::Set(const Set<T> &other)
+{
+    for (const auto &element : other)
+        add(element);
+}
+
+template <ContainerValue T>
+template <ContainerValue U>
+    requires Convertible<U, T>
+Set<T>::Set(const Set<U> &other) : Set()
 {
     for (const auto &element : other)
         add(element);
@@ -123,7 +132,7 @@ template <ContainerValue U>
     requires Convertible<U, T>
 bool Set<T>::contains(const U &value) const
 {
-    return std::ranges::any_of(*this, [value](const auto &v) { return v == value; });
+    return std::ranges::any_of(*this, [&value](const auto &v) { return v == value; });
 }
 
 template <ContainerValue T>
@@ -212,12 +221,12 @@ template <Container C>
     requires Convertible<typename C::value_type, T>
 Set<T> &Set<T>::intersect_update(const C &container)
 {
-    Set<T> intersect_set;
-    for (const auto &element : container)
-        if (contains(element))
-            intersect_set.add(element);
+    // Set<T> intersect_set;
+    // for (const auto &element : container)
+    //     if (contains(element))
+    //         intersect_set.add(element);
 
-    *this = intersect_set;
+    *this = intersect(container);
     return *this;
 }
 
@@ -240,11 +249,11 @@ template <Container C>
     requires Convertible<typename C::value_type, T>
 Set<T> &Set<T>::unite_update(const C &container)
 {
-    Set<T> unite_set(*this);
-    for (const auto &element : container)
-        unite_set.add(element);
+    // Set<T> unite_set(*this);
+    // for (const auto &element : container)
+    //     unite_set.add(element);
 
-    *this = unite_set;
+    *this = unite(container);
     return *this;
 }
 
@@ -355,10 +364,9 @@ Set<T> &Set<T>::operator=(const Set<U> &other)
 template <ContainerValue T>
 Set<T> &Set<T>::operator=(Set<T> &&other)
 {
-    clear();
     this->head = std::move(other.head);
     this->_size = std::move(other._size);
-    other.clear();
+    other._size = 0;
     return *this;
 }
 

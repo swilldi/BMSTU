@@ -43,10 +43,10 @@ const T& SetConstIterator<T>::operator*() const
     return value.lock()->get_value();
 }
 template<ContainerValue T>
-const T* SetConstIterator<T>::operator->() const
+const std::shared_ptr<T> SetConstIterator<T>::operator->() const
 {
     check_expired();
-    return &value.lock()->get_value();
+    return value.lock()->get_value();
 }
 
 template<ContainerValue T>
@@ -56,7 +56,7 @@ SetConstIterator<T> &SetConstIterator<T>::operator++() noexcept
     return *this;
 }
 template<ContainerValue T>
-SetConstIterator<T> SetConstIterator<T>::operator++(int) noexcept
+SetConstIterator<T> SetConstIterator<T>::operator++(int)
 {
     auto copy = *this;
     this->next();

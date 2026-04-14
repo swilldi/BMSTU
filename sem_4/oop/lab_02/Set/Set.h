@@ -18,7 +18,6 @@ public:
     using const_reference = const value_type&;
     using size_type = BaseContainer<T>::size_type;
     using iterator = SetConstIterator<T>;
-    // ConstIterator тут заглушка, просто реализовывать не const не имеет смысла для множества
     using const_iterator = SetConstIterator<T>;
     using difference_type = ptrdiff_t;
 
@@ -28,6 +27,10 @@ public:
     Set();
 
     Set(const Set<T> &other);
+
+    template <ContainerValue U>
+        requires Convertible<U, T>
+    Set(const Set<U> &other);
 
     Set(Set<T> &&other);
 

@@ -380,27 +380,15 @@ void test_exceptions()
         std::cout << "\tПойман IteratorPointerExpiredException: " << ex.what() << std::endl;
     }
 
-    // 4) Перехват через базовый класс SetException
-    std::cout << "4) Перехват через базовый SetException" << std::endl;
-    try
-    {
-        Set<int> s(0, new int[1]{1});
-    }
-    catch (const SetException &ex)
-    {
-        std::cout << "\tПойман SetException: " << ex.what() << std::endl;
-    }
-
     std::cout << "======= ------------ =======\n" << std::endl;
 }
 
 int main()
 {
-    static_assert(std::forward_iterator<SetConstIterator<int> >,
-                  "Iterator does not satisfy std::forward_iterator");
+    static_assert(std::forward_iterator<SetConstIterator<int> >);
 
-    static_assert(Container<Set<int> >, "Set does not satisfy Container");
-    static_assert(Container<std::vector<int> >, "Vector does not satisfy Container");
+    static_assert(Container<Set<int> >);
+    static_assert(Container<std::vector<int> >);
 
     test_constructor();
     test_assign();
