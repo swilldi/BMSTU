@@ -306,6 +306,36 @@ void test_symm_diff()
     std::cout << "======= ------------ =======\n" << std::endl;
 }
 
+void test_relation()
+{
+    std::cout << "======= -------------- =======" << std::endl;
+    std::cout << "======= Отношения мн-в =======" << std::endl;
+
+    Set<int> s1 {1, 2, 3, 4, 5}, s2 {2, 5}, s3 = s1, s4{10, 11};
+    // 1) Подмножества
+    std::cout << "1) Подмножество" << std::endl;
+    std::cout << "s2: " << s2 << " – подмножества s1: " << s1 << "\n";
+    std::cout << "\ts2.subset_of(s1): " << (s2.subset_of(s1) ? "Да" : "Нет") << std::endl;
+    std::cout << "s4: " << s4 << " – подмножества s1: " << s1 << "\n";
+    std::cout << "\ts4.subset_of(s1): " << (s4.subset_of(s1) ? "Да" : "Нет") << std::endl;
+    // 2) Надмножества
+    std::cout << "2) Надмножества" << std::endl;
+    std::cout << "s1: " << s1 << " – надмножества s2: " << s2 << "\n";
+    std::cout << "\ts1.superset_of(s2): " << (s1.superset_of(s2) ? "Да" : "Нет") << std::endl;
+    // 3) Равные
+    std::cout << "3) Равенство" << std::endl;
+    std::cout << "s1: " << s1 << " – равно s3: " << s3 << "\n";
+    std::cout << "\ts1.equal(s3): " << (s1.equal(s3) ? "Да" : "Нет") << std::endl;
+    std::cout << "\ts1 == s3: " << (s1 == s3 ? "Да" : "Нет") << std::endl;
+    // 4) Неравные
+    std::cout << "4) Неравенство" << std::endl;
+    std::cout << "s1: " << s1 << " – равно s2: " << s2 << "\n";
+    std::cout << "\ts1.equal(s2): " << (s1.equal(s2) ? "Да" : "Нет") << std::endl;
+    std::cout << "\ts1 == s2: " << (s1 == s2 ? "Да" : "Нет") << std::endl;
+
+    std::cout << "======= -------------- =======" << std::endl;
+}
+
 int main()
 {
     static_assert(std::forward_iterator<SetConstIterator<int> >,
@@ -314,20 +344,15 @@ int main()
     static_assert(Container<Set<int> >, "Set does not satisfy Container");
     static_assert(Container<std::vector<int> >, "Vector does not satisfy Container");
 
-    test_constructor();
-    test_assign();
-    test_add();
-    test_erase();
-    test_clear();
-    test_unite();
-    test_intersect();
-    test_diff();
-    test_symm_diff();
-
-    // Set<int> s1 {1, 2, 3}, s2 = s1, s3 {3, 4, 5};
-    // std::cout << s1 << std::endl;
-    // s1 = s1;
-    // std::cout << s1 << std::endl;
-
+    // test_constructor();
+    // test_assign();
+    // test_add();
+    // test_erase();
+    // test_clear();
+    // test_unite();
+    // test_intersect();
+    // test_diff();
+    // test_symm_diff();
+    // test_relation();
 
 }

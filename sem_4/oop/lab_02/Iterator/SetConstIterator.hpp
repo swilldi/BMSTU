@@ -6,6 +6,7 @@
 #define LAB_02_CONSTITERATOR_HPP
 
 #include "SetConstIterator.h"
+#include "Exceptions.h"
 
 // === Конструкторы ===
 template<ContainerValue T>
@@ -83,7 +84,7 @@ template<ContainerValue T>
 void SetConstIterator<T>::check_expired() const
 {
     if (value.expired())
-        throw std::runtime_error("Iterator: weak_ptr expired");
+        throw IteratorPointerExpiredException(std::source_location::current());
 }
 
 template<ContainerValue T>

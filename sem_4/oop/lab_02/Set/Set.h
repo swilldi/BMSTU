@@ -122,6 +122,23 @@ public:
         requires Convertible<typename C::value_type, T>
     Set<T> &symmetric_difference_update(const C &container);
 
+    // Отношения множеств
+    template <ContainerValue U>
+        requires Convertible<U, T>
+    bool subset_of(const Set<U> &other) const noexcept;
+
+    template <ContainerValue U>
+        requires Convertible<U, T>
+    bool superset_of(const Set<U> &other) const noexcept;
+
+    template <ContainerValue U>
+        requires Convertible<U, T>
+    bool equal(const Set<U> &other) const noexcept;
+
+    template <ContainerValue U>
+        requires Convertible<U, T>
+    bool not_equal(const Set<U> &other) const noexcept;
+
     // === Операторы ===
     //  Присваивание
     Set<T> &operator=(const Set<T> &other);

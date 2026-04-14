@@ -9,6 +9,8 @@
 #include "SetNode.hpp"
 #include <ranges>
 #include <iostream>
+#include <source_location>
+#include "Exceptions.h"
 
 template <ContainerValue T>
 Set<T>::Set()
@@ -65,9 +67,9 @@ template <ContainerValue U>
 Set<T>::Set(size_type size, const U *array)
 {
     if (array == nullptr)
-        throw std::invalid_argument("Set: array pointer is null");
+        throw SetArrayNullptrException(std::source_location::current());
     if (size == 0)
-        throw std::invalid_argument("Set: size is 0");
+        throw SetArrayZeroSizeException(std::source_location::current());
 
     *this = Set<T>(array, array + size);
 }
@@ -140,7 +142,7 @@ void Set<T>::add(const U &value)
         }
         catch (const std::bad_alloc &ex)
         {
-            throw;
+            throw SetMemoryAllocException(std::source_location::current());
         }
     }
 }
@@ -288,6 +290,41 @@ Set<T> &Set<T>::symmetric_difference_update(const C &container)
     return *this;
 }
 
+
+
+// Отношения множеств
+template <ContainerValue T>
+template <ContainerValue U>
+        requires Convertible<U, T>
+bool Set<T>::subset_of(const Set<U> &other) const noexcept
+{
+    return std::ranges::all_of(*this, [&other](const auto& e) { return other.contains(e); });
+}
+
+template <ContainerValue T>
+template <ContainerValue U>
+    requires Convertible<U, T>
+bool Set<T>::superset_of(const Set<U> &other) const noexcept
+{
+    return this->_size >= other.size() && other.subset_of(*this);
+}
+
+template <ContainerValue T>
+template <ContainerValue U>
+    requires Convertible<U, T>
+bool Set<T>::equal(const Set<U> &other) const noexcept
+{
+    return this->_size == other.size() && this->subset_of(other);
+}
+
+template <ContainerValue T>
+template <ContainerValue U>
+    requires Convertible<U, T>
+bool Set<T>::not_equal(const Set<U> &other) const noexcept
+{
+    return !this->equal(other);
+}
+
 // === Операторы ===
 //  Присваивание
 template <ContainerValue T>
@@ -349,11 +386,7 @@ template <ContainerValue U>
     requires Convertible<U, T>
 bool Set<T>::operator==(const Set<U> &other) const
 {
-    return this->_size == other.size() && std::ranges::all_of(other, [this](const auto &e)
-    {
-        return this->contains(e);
-    });
-
+    return this->equal(other);
 }
 
 template <ContainerValue T>
@@ -361,7 +394,7 @@ template <ContainerValue U>
     requires Convertible<U, T>
 bool Set<T>::operator!=(const Set<U> &other) const
 {
-    return !(*this == other);
+    return this->not_equal(other);
 }
 
 // Объединение
