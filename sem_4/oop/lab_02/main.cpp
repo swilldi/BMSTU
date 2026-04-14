@@ -1,4 +1,5 @@
 #include "Set.h"
+#include "Exceptions.h"
 
 #include <iostream>
 #include <ranges>
@@ -333,7 +334,64 @@ void test_relation()
     std::cout << "\ts1.equal(s2): " << (s1.equal(s2) ? "Да" : "Нет") << std::endl;
     std::cout << "\ts1 == s2: " << (s1 == s2 ? "Да" : "Нет") << std::endl;
 
-    std::cout << "======= -------------- =======" << std::endl;
+    std::cout << "======= -------------- =======\n" << std::endl;
+}
+
+void test_exceptions()
+{
+    std::cout << "======= ------------ =======" << std::endl;
+    std::cout << "=======  Исключения  =======" << std::endl;
+
+    // 1) Конструктор из массива — nullptr
+    std::cout << "1) Set(size, nullptr)" << std::endl;
+    try
+    {
+        Set<int> s(5, static_cast<int *>(nullptr));
+    }
+    catch (const SetArrayNullptrException &ex)
+    {
+        std::cout << "\tПойман SetArrayNullptrException: " << ex.what() << std::endl;
+    }
+
+    // 2) Конструктор из массива — size = 0
+    std::cout << "2) Set(0, array)" << std::endl;
+    try
+    {
+        int arr[] = {1, 2, 3};
+        Set<int> s(0, arr);
+    }
+    catch (const SetArrayZeroSizeException &ex)
+    {
+        std::cout << "\tПойман SetArrayZeroSizeException: " << ex.what() << std::endl;
+    }
+
+    // 3) Разыменование невалидного итератора
+    std::cout << "3) *iterator после удаления элемента" << std::endl;
+    try
+    {
+        Set<int> s{1, 2, 3};
+        auto it = s.begin();
+        s.clear();
+        auto val = *it;
+        std::cout << "\tНе должно дойти сюда: " << val << std::endl;
+    }
+    catch (const IteratorPointerExpiredException &ex)
+    {
+        std::cout << "\tПойман IteratorPointerExpiredException: " << ex.what() << std::endl;
+    }
+
+    // 4) Перехват через базовый класс SetException
+    std::cout << "4) Перехват через базовый SetException" << std::endl;
+    try
+    {
+        Set<int> s(0, new int[1]{1});
+    }
+    catch (const SetException &ex)
+    {
+        std::cout << "\tПойман SetException: " << ex.what() << std::endl;
+    }
+
+    std::cout << "======= ------------ =======\n" << std::endl;
 }
 
 int main()
@@ -344,15 +402,15 @@ int main()
     static_assert(Container<Set<int> >, "Set does not satisfy Container");
     static_assert(Container<std::vector<int> >, "Vector does not satisfy Container");
 
-    // test_constructor();
-    // test_assign();
-    // test_add();
-    // test_erase();
-    // test_clear();
-    // test_unite();
-    // test_intersect();
-    // test_diff();
-    // test_symm_diff();
-    // test_relation();
-
+    test_constructor();
+    test_assign();
+    test_add();
+    test_erase();
+    test_clear();
+    test_unite();
+    test_intersect();
+    test_diff();
+    test_symm_diff();
+    test_relation();
+    test_exceptions();
 }

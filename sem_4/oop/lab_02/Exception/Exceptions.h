@@ -19,7 +19,7 @@ class IteratorPointerExpiredException : public IteratorException
 {
 public:
     IteratorPointerExpiredException(const std::source_location &location) noexcept : IteratorException(
-        "wear_ptr expired", location) {}
+        "weak_ptr expired", location) {}
 };
 
 class SetException : public BaseException
