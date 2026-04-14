@@ -19,6 +19,4 @@ protected:
     char msg[msg_size];
 };
 
-#include "BaseException.hpp"
-
 #endif //LAB_02_BASEEXCEPTION_H

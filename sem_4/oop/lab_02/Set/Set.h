@@ -224,7 +224,7 @@ public:
     template <Container C>
         requires Convertible<typename C::value_type, T>
              && (!std::same_as<C, Set<T>>)
-    friend Set<T> operator-(const C &container, Set<T> &set)
+    friend Set<T> operator-(const C &container, const Set<T>& set)
     {
         Set<T> diff_set(container);
         diff_set.difference_update(set);
@@ -243,7 +243,7 @@ public:
     template <Container C>
         requires Convertible<typename C::value_type, T>
              && (!std::same_as<C, Set<T>>)
-    friend Set<T> operator^(const C &container, Set<T> &set)
+    friend Set<T> operator^(const C &container, const Set<T>& set)
     {
         return set ^ container;
     }

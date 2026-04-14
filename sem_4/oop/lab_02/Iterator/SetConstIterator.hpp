@@ -25,7 +25,7 @@ SetConstIterator<T>::SetConstIterator(const std::shared_ptr<typename Set<T>::Nod
 template<ContainerValue T>
 SetConstIterator<T> &SetConstIterator<T>::operator=(const SetConstIterator<T>& other)
 {
-    value = other.value.lock();
+    value = other.value;
     return *this;
 }
 
