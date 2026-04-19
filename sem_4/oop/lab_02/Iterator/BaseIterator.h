@@ -15,8 +15,8 @@ template <CopyMoveAssignable T>
 class BaseIterator {
 public:
     using value_type = T;
-    using reference = T&;
-    using pointer = T*;
+    using reference = const T&;
+    using pointer = const std::shared_ptr<T>;
     using difference_type = std::ptrdiff_t;
 
     BaseIterator() = default;

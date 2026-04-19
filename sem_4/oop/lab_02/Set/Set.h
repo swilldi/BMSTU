@@ -5,21 +5,17 @@
 #ifndef LAB_02_SET_H
 #define LAB_02_SET_H
 
-#include "BaseContainer.h"
+#include "BaseSet.h"
 #include "SetConstIterator.h"
 #include "Concepts.h"
 
 template <ContainerValue T>
-class Set final : public BaseContainer<T>
+class Set final : public BaseSet
 {
 public:
-    using value_type = BaseContainer<T>::value_type;
-    using reference = value_type&;
-    using const_reference = const value_type&;
-    using size_type = BaseContainer<T>::size_type;
+    using value_type = T;
     using iterator = SetConstIterator<T>;
     using const_iterator = SetConstIterator<T>;
-    using difference_type = ptrdiff_t;
 
     friend class SetConstIterator<T>;
 
@@ -27,27 +23,39 @@ public:
     Set();
 
     Set(const Set<T> &other);
+    Set<T> &operator=(const Set<T> &other);
 
-    template <ContainerValue U>
-        requires Convertible<U, T>
-    Set(const Set<U> &other);
+    template <ConvertableContainerValue<T> U>
+    explicit Set(const Set<U> &other);
 
-    Set(Set<T> &&other);
+    template <ConvertableContainerValue<T> U>
+    Set<T> &operator=(const Set<U> &other);
 
-    template <ContainerValue U>
-        requires Convertible<U, T>
+    Set(Set<T> &&other) noexcept(std::is_nothrow_move_constructible_v<T>);
+    Set<T> &operator=(Set<T> &&other) noexcept(std::is_nothrow_move_constructible_v<T>);
+
+    template <ConvertableContainerValue<T> U>
     Set(std::initializer_list<U> list);
 
-    template <ForwardIterator I>
-        requires Convertible<std::iter_value_t<I>, T>
-    Set(const I &first, const I &last);
+    template <ConvertableContainerValue<T> U>
+    Set<T> &operator=(std::initializer_list<U> list);
 
-    template <Container C>
-        requires Convertible<typename C::value_type, T>
+    template <ConvertableContainer<T> C>
     explicit Set(const C &container);
 
-    template <ContainerValue U>
-        requires Convertible<U, T>
+    template <ConvertableContainer<T> C>
+    Set<T> &operator=(const C &container);
+
+    template <ConvertibleRange<T> R>
+    explicit Set(const R &range);
+
+    template <ConvertibleRange<T> R>
+    Set<T> &operator=(const R &range);
+
+    template <ConvertableForwardIterator<T> I, Sentinel<I> S>
+    Set(const I &first, const S &last);
+
+    template <ConvertableContainerValue<T> U>
     Set(size_type size, const U *array);
 
     // === Деструктор ===
@@ -61,200 +69,141 @@ public:
     // === Итераторы ===
     iterator begin() const noexcept;
     iterator end() const noexcept;
+    const_iterator cbegin() const noexcept;
+    const_iterator cend() const noexcept;
 
     // === Операции над множеством ===
     // Очистка
-    void clear();
+    void clear() noexcept;
 
     // Проверка вхождения в множество
-    template <ContainerValue U>
-        requires Convertible<U, T>
-    bool contains(const U &value) const;
+    template <ConvertableContainerValue<T> U>
+    bool contains(const U &value) const noexcept;
 
     // Добавление
-    template <ContainerValue U>
-        requires Convertible<U, T>
-    void add(const U &value);
+    template <ConvertableContainerValue<T> U>
+    bool add(const U &value);
 
-    template <Container C>
-        requires Convertible<typename C::value_type, T>
-    void add(const C &container);
+    template <ConvertableContainer<T> C>
+    bool add(const C &container);
 
     // Удаление
-    template <ContainerValue U>
-        requires Equatable<T, U>
-    void erase(const U &value);
+    template <EquatableContainerValue<T> U>
+    bool erase(const U &value) noexcept;
 
-    template <Container C>
-        requires Equatable<typename C::value_type, T>
-    void erase(const C &container);
+    template <EquatableContainer<T> C>
+    bool erase(const C &container) noexcept;
 
     // Пересечение
-    template <Container C>
-        requires Convertible<typename C::value_type, T>
-    Set<T> intersect(const C &container) const;
+    template <EquatableContainer<T> C>
+    Set<T> &intersect_update(const C &container) noexcept;
 
-    template <Container C>
-        requires Convertible<typename C::value_type, T>
-    Set<T> &intersect_update(const C &container);
+    template <EquatableContainer<T> C>
+    Set<T> &operator&=(const C &container) noexcept;
 
-    // Объединение
-    template <Container C>
-        requires Convertible<typename C::value_type, T>
-    Set<T> unite(const C &container) const;
+    template <CommonContainer<T> C>
+    Set<std::common_type_t<T, typename C::value_type>> intersect(const C &container) const;
 
-    template <Container C>
-        requires Convertible<typename C::value_type, T>
-    Set<T> &unite_update(const C &container);
+    template <CommonContainer<T> C>
+    Set<std::common_type_t<T, typename C::value_type>> operator&(const C &container) const;
 
-    // Разность
-    template <Container C>
-        requires Convertible<typename C::value_type, T>
-    Set<T> difference(const C &container) const;
-
-    template <Container C>
-        requires Convertible<typename C::value_type, T>
-    Set<T> &difference_update(const C &container);
-
-    // Симметрическая разность
-    template <Container C>
-        requires Convertible<typename C::value_type, T>
-    Set<T> symmetric_difference(const C &container) const;
-
-    template <Container C>
-        requires Convertible<typename C::value_type, T>
-    Set<T> &symmetric_difference_update(const C &container);
-
-    // Отношения множеств
-    template <ContainerValue U>
-        requires Convertible<U, T>
-    bool subset_of(const Set<U> &other) const noexcept;
-
-    template <ContainerValue U>
-        requires Convertible<U, T>
-    bool superset_of(const Set<U> &other) const noexcept;
-
-    template <ContainerValue U>
-        requires Convertible<U, T>
-    bool equal(const Set<U> &other) const noexcept;
-
-    template <ContainerValue U>
-        requires Convertible<U, T>
-    bool not_equal(const Set<U> &other) const noexcept;
-
-    // === Операторы ===
-    //  Присваивание
-    Set<T> &operator=(const Set<T> &other);
-
-    template <ContainerValue U>
-        requires Convertible<U, T>
-    Set<T> &operator=(const Set<U> &other);
-
-    Set<T> &operator=(Set<T> &&other);
-
-    template <ContainerValue U>
-        requires Convertible<U, T>
-    Set<T> &operator=(std::initializer_list<U> list);
-
-    template <Container C>
-        requires Convertible<typename C::value_type, T>
-    Set<T> &operator=(const C &container);
-
-    // Сравнения
-    template <ContainerValue U>
-        requires Convertible<U, T>
-    bool operator==(const Set<U>& other) const;
-
-    template <ContainerValue U>
-        requires Convertible<U, T>
-    bool operator!=(const Set<U>& other) const;
-
-    // Объединение
-    template <Container C>
-        requires Convertible<typename C::value_type, T>
-    Set<T> operator+(const C &container) const;
-
-    template <Container C>
-        requires Convertible<typename C::value_type, T>
-             && (!std::same_as<C, Set<T>>)
-    friend Set<T> operator+(const C &container, const Set<T>& set)
-    {
-        return set + container;
-    }
-
-    template <Container C>
-        requires Convertible<typename C::value_type, T>
-    Set<T> &operator+=(const C &container);
-
-    template <Container C>
-        requires Convertible<typename C::value_type, T>
-             && (!std::same_as<C, Set<T>>)
-    friend Set<T> operator|(const C &container, const Set<T>& set)
-    {
-        return set | container;
-    }
-
-    template <Container C>
-        requires Convertible<typename C::value_type, T>
-    Set<T> operator|(const C &container) const;
-
-    template <Container C>
-        requires Convertible<typename C::value_type, T>
-    Set<T> &operator|=(const C &container);
-
-    // Пересечение
-    template <Container C>
-        requires Convertible<typename C::value_type, T>
-    Set<T> operator&(const C &container) const;
-
-    template <Container C>
-        requires Convertible<typename C::value_type, T>
-             && (!std::same_as<C, Set<T>>)
-    friend Set<T> operator&(const C &container, const Set<T>& set)
+    template <NotSetCommonContainer<T> C>
+    friend Set<std::common_type_t<T, typename C::value_type>> operator&(const C &container, const Set<T>& set)
     {
         return set & container;
     }
 
-    template <Container C>
-        requires Convertible<typename C::value_type, T>
-    Set<T> &operator&=(const C &container);
+    // Объединение
+    template <ConvertableContainer<T> C>
+    Set<T> &unite_update(const C &container);
+
+    template <ConvertableContainer<T> C>
+    Set<T> &operator|=(const C &container);
+
+    template <ConvertableContainer<T> C>
+    Set<T> &operator+=(const C &container);
+
+    template <CommonContainer<T> C>
+    Set<std::common_type_t<T, typename C::value_type>> unite(const C &container) const;
+
+    template <CommonContainer<T> C>
+    Set<std::common_type_t<T, typename C::value_type>> operator|(const C &container) const;
+
+    template <CommonContainer<T> C>
+    Set<std::common_type_t<T, typename C::value_type>> operator+(const C &container) const;
+
+    template <NotSetCommonContainer<T> C>
+    friend Set<std::common_type_t<T, typename C::value_type>> operator|(const C &container, const Set<T>& set)
+    {
+        return set | container;
+    }
+
+    template <NotSetCommonContainer<T> C>
+    friend Set<std::common_type_t<T, typename C::value_type>> operator+(const C &container, const Set<T>& set)
+    {
+        return set + container;
+    }
 
     // Разность
-    template <Container C>
-        requires Convertible<typename C::value_type, T>
-    Set<T> operator-(const C &container) const;
+    template <ConvertableContainer<T> C>
+    Set<T> &difference_update(const C &container);
 
-    template <Container C>
-        requires Convertible<typename C::value_type, T>
-             && (!std::same_as<C, Set<T>>)
-    friend Set<T> operator-(const C &container, const Set<T>& set)
+    template <ConvertableContainer<T> C>
+    Set<T> &operator-=(const C &container);
+
+    template <CommonContainer<T> C>
+    Set<std::common_type_t<T, typename C::value_type>> difference(const C &container) const;
+
+    template <CommonContainer<T> C>
+    Set<std::common_type_t<T, typename C::value_type>> operator-(const C &container) const;
+
+    template <NotSetConvertableContainer<T> C>
+    friend Set<std::common_type_t<T, typename C::value_type>> operator-(const C &container, const Set<T>& set)
     {
-        Set<T> diff_set(container);
+        Set<std::common_type_t<T, typename C::value_type>> diff_set(container);
         diff_set.difference_update(set);
         return diff_set;
     }
 
-    template <Container C>
-        requires Convertible<typename C::value_type, T>
-    Set<T> &operator-=(const C &container);
-
     // Симметрическая разность
-    template <Container C>
-        requires Convertible<typename C::value_type, T>
-    Set<T> operator^(const C &container) const;
+    template <ConvertableContainer<T> C>
+    Set<T> &symmetric_difference_update(const C &container);
 
-    template <Container C>
-        requires Convertible<typename C::value_type, T>
-             && (!std::same_as<C, Set<T>>)
-    friend Set<T> operator^(const C &container, const Set<T>& set)
+    template <ConvertableContainer<T> C>
+    Set<T> &operator^=(const C &container);
+
+    template <CommonContainer<T> C>
+    Set<std::common_type_t<T, typename C::value_type>> symmetric_difference(const C &container) const;
+
+    template <CommonContainer<T> C>
+    Set<std::common_type_t<T, typename C::value_type>> operator^(const C &container) const;
+
+    template <NotSetConvertableContainer<T> C>
+    friend Set<std::common_type_t<T, typename C::value_type>> operator^(const C &container, const Set<T>& set)
     {
         return set ^ container;
     }
 
-    template <Container C>
-        requires Convertible<typename C::value_type, T>
-    Set<T> &operator^=(const C &container);
+    // Отношения множеств
+    template <EquatableContainerValue<T> U>
+    bool subset_of(const Set<U> &other) const noexcept;
 
+    template <EquatableContainerValue<T> U>
+    bool superset_of(const Set<U> &other) const noexcept;
+
+    template <EquatableContainerValue<T> U>
+    bool equal(const Set<U> &other) const noexcept;
+
+    template <EquatableContainerValue<T> U>
+    bool operator==(const Set<U> &other) const;
+
+    template <EquatableContainerValue<T> U>
+    bool not_equal(const Set<U> &other) const noexcept;
+
+    template <EquatableContainerValue<T> U>
+    std::partial_ordering operator<=>(const Set<U> &other) const noexcept;
+
+    // === Операторы ===
     explicit operator bool() const noexcept;
 protected:
     class Node
@@ -291,6 +240,9 @@ protected:
 
 private:
     std::shared_ptr<Node> head;
+    std::shared_ptr<Node> tail;
+
+    bool add(std::shared_ptr<Node> &node);
 };
 
 template <ContainerValue T>

@@ -331,8 +331,8 @@ void test_relation()
     // 4) Неравные
     std::cout << "4) Неравенство" << std::endl;
     std::cout << "s1: " << s1 << " – равно s2: " << s2 << "\n";
-    std::cout << "\ts1.equal(s2): " << (s1.equal(s2) ? "Да" : "Нет") << std::endl;
-    std::cout << "\ts1 == s2: " << (s1 == s2 ? "Да" : "Нет") << std::endl;
+    std::cout << "\ts1.equal(s2): " << (s1.not_equal(s2) ? "Да" : "Нет") << std::endl;
+    std::cout << "\ts1 == s2: " << (s1 != s2 ? "Да" : "Нет") << std::endl;
 
     std::cout << "======= -------------- =======\n" << std::endl;
 }
@@ -387,18 +387,31 @@ int main()
 {
     static_assert(std::forward_iterator<SetConstIterator<int> >);
 
-    static_assert(Container<Set<int> >);
+    static_assert(Container<Set<int>>);
     static_assert(Container<std::vector<int> >);
 
-    test_constructor();
-    test_assign();
-    test_add();
-    test_erase();
-    test_clear();
-    test_unite();
-    test_intersect();
-    test_diff();
-    test_symm_diff();
-    test_relation();
-    test_exceptions();
+    // test_constructor();
+    // test_assign();
+    // test_add();
+    // test_erase();
+    // test_clear();
+    // test_unite();
+    // test_intersect();
+    // test_diff();
+    // test_symm_diff();
+    // test_relation();
+    // test_exceptions();
+
+
+    Set<int> a = { 1, 2, 3};
+    Set<double> b = { 2.0, 5.3, 7.0 };
+    std::vector<int> v{ 3, 4, 5 };
+    auto c = a | b;
+    auto d = v | a;
+
+    std::cout << c << std::endl;
+    std::cout << d << std::endl;
+
+    // std::cout << typeid(c).name() << std::endl;
+    // std::cout << typeid(a).name();
 }

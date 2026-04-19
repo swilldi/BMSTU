@@ -5,20 +5,16 @@
 #ifndef LAB_02_BASECONTAINER_H
 #define LAB_02_BASECONTAINER_H
 
-#include "Concepts.h"
 #include <cstddef>
 
-
-template <ContainerValue T>
-class BaseContainer
+class BaseSet
 {
 public:
-    using value_type = T;
     using size_type = size_t;
 
-    BaseContainer() = default;
+    BaseSet() = default;
 
-    virtual ~BaseContainer() = default;
+    virtual ~BaseSet() = default;
 
     virtual size_type size() const noexcept = 0;
     virtual bool empty() const noexcept = 0;
