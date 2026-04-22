@@ -20,14 +20,6 @@ Set<T>::Node::Node(T &&value) : value(std::move(value)), next(nullptr)
 { }
 
 template <ContainerValue T>
-Set<T>::Node::Node(const Node& node) : value(node.value), next(node.next)
-{ }
-
-template <ContainerValue T>
-Set<T>::Node::Node(Node &&node) : value(std::move(node.value)), next(std::move(node.next))
-{ }
-
-template <ContainerValue T>
 Set<T>::Node::Node(std::shared_ptr<Node> node) : value(node->value), next(node->next)
 { }
 
@@ -64,25 +56,13 @@ std::weak_ptr<typename Set<T>::Node> Set<T>::Node::get_next() const
 template <ContainerValue T>
 bool Set<T>::Node::operator==(const Node &node) const
 {
-    return (value == node.value && next == node.next);
+    return value == node.value;
 }
 
 template <ContainerValue T>
 bool Set<T>::Node::operator==(const std::shared_ptr<Node> &node) const
 {
     return *this == *node;
-}
-
-template <ContainerValue T>
-bool Set<T>::Node::operator!=(const Node &node) const
-{
-    return !(*this == node);
-}
-
-template <ContainerValue T>
-bool Set<T>::Node::operator!=(const std::shared_ptr<Node> &node) const
-{
-    return !(*this == *node);
 }
 
 #endif //LAB_02_SETNODE_HPP

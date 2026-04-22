@@ -16,6 +16,10 @@ class Set;
 template<ContainerValue T>
 class SetConstIterator final : public BaseIterator<T> {
 public:
+    using typename BaseIterator<T>::value_type;
+    using typename BaseIterator<T>::reference;
+    using typename BaseIterator<T>::pointer;
+    using typename BaseIterator<T>::difference_type;
     using iterator_category = std::forward_iterator_tag;
 
     // === Конструкторы ===
@@ -30,21 +34,20 @@ public:
     SetConstIterator<T> &operator=(const SetConstIterator<T>& other);
     SetConstIterator<T> &operator=(SetConstIterator<T> &&other) noexcept;
 
-    const T& operator*() const;
-    const std::shared_ptr<T> operator->() const;
+    reference operator*() const;
+    pointer operator->() const;
 
     SetConstIterator<T> &operator++() noexcept;
-    SetConstIterator<T> operator++(int);
+    SetConstIterator<T> operator++(int) noexcept;
 
-    bool operator==(const SetConstIterator<T> &other) const;
-    bool operator!=(const SetConstIterator<T> &other) const;
+    bool operator==(const SetConstIterator<T> &other) const noexcept;
 
     explicit operator bool() const noexcept;
 
-    void check_expired() const;
     void next() noexcept;
 
 private:
+    void check_expired() const;
     std::weak_ptr<typename Set<T>::Node> value;
 };
 

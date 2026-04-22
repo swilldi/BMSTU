@@ -16,7 +16,7 @@ class BaseIterator {
 public:
     using value_type = T;
     using reference = const T&;
-    using pointer = const std::shared_ptr<T>;
+    using pointer = const T*;
     using difference_type = std::ptrdiff_t;
 
     BaseIterator() = default;

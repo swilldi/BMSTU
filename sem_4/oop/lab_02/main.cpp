@@ -390,27 +390,27 @@ int main()
     static_assert(Container<Set<int>>);
     static_assert(Container<std::vector<int> >);
 
-    // test_constructor();
-    // test_assign();
-    // test_add();
-    // test_erase();
-    // test_clear();
-    // test_unite();
-    // test_intersect();
-    // test_diff();
-    // test_symm_diff();
-    // test_relation();
-    // test_exceptions();
+    test_constructor();
+    test_assign();
+    test_add();
+    test_erase();
+    test_clear();
+    test_unite();
+    test_intersect();
+    test_diff();
+    test_symm_diff();
+    test_relation();
+    test_exceptions();
 
 
-    Set<int> a = { 1, 2, 3};
-    Set<double> b = { 2.0, 5.3, 7.0 };
-    std::vector<int> v{ 3, 4, 5 };
-    auto c = a | b;
-    auto d = v | a;
-
-    std::cout << c << std::endl;
-    std::cout << d << std::endl;
+    // Set<int> a = { 1, 2, 3};
+    // Set<double> b = { 2.0, 5.3, 7.0 };
+    // std::vector<int> v{ 3, 4, 5 };
+    // auto c = a | b;
+    // auto d = v | a;
+    //
+    // std::cout << c << std::endl;
+    // std::cout << d << std::endl;
 
     // std::cout << typeid(c).name() << std::endl;
     // std::cout << typeid(a).name();

@@ -37,16 +37,16 @@ SetConstIterator<T> &SetConstIterator<T>::operator=(SetConstIterator<T> &&other)
 }
 
 template<ContainerValue T>
-const T& SetConstIterator<T>::operator*() const
+SetConstIterator<T>::reference SetConstIterator<T>::operator*() const
 {
     check_expired();
     return value.lock()->get_value();
 }
 template<ContainerValue T>
-const std::shared_ptr<T> SetConstIterator<T>::operator->() const
+SetConstIterator<T>::pointer SetConstIterator<T>::operator->() const
 {
     check_expired();
-    return value.lock()->get_value();
+    return &value.lock()->get_value();
 }
 
 template<ContainerValue T>
@@ -56,7 +56,7 @@ SetConstIterator<T> &SetConstIterator<T>::operator++() noexcept
     return *this;
 }
 template<ContainerValue T>
-SetConstIterator<T> SetConstIterator<T>::operator++(int)
+SetConstIterator<T> SetConstIterator<T>::operator++(int) noexcept
 {
     auto copy = *this;
     this->next();
@@ -64,14 +64,9 @@ SetConstIterator<T> SetConstIterator<T>::operator++(int)
 }
 
 template<ContainerValue T>
-bool SetConstIterator<T>::operator==(const SetConstIterator<T> &other) const
+bool SetConstIterator<T>::operator==(const SetConstIterator<T> &other) const noexcept
 {
     return value.lock() == other.value.lock();
-}
-template<ContainerValue T>
-bool SetConstIterator<T>::operator!=(const SetConstIterator<T> &other) const
-{
-    return value.lock() != other.value.lock();
 }
 
 template<ContainerValue T>

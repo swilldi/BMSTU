@@ -19,20 +19,20 @@ public:
 
     friend class SetConstIterator<T>;
 
-    // === Конструкторы ===
-    Set();
-
+    // === Правило 5-и ===
+    // Копирование
     Set(const Set<T> &other);
     Set<T> &operator=(const Set<T> &other);
 
-    template <ConvertableContainerValue<T> U>
-    explicit Set(const Set<U> &other);
-
-    template <ConvertableContainerValue<T> U>
-    Set<T> &operator=(const Set<U> &other);
-
+    // Перенос
     Set(Set<T> &&other) noexcept(std::is_nothrow_move_constructible_v<T>);
     Set<T> &operator=(Set<T> &&other) noexcept(std::is_nothrow_move_constructible_v<T>);
+
+    //Деструктор
+    ~Set() override;
+
+    // === Конструкторы ===
+    Set() noexcept;
 
     template <ConvertableContainerValue<T> U>
     Set(std::initializer_list<U> list);
@@ -58,9 +58,6 @@ public:
     template <ConvertableContainerValue<T> U>
     Set(size_type size, const U *array);
 
-    // === Деструктор ===
-    ~Set() override;
-
     // === Информация о множестве ===
     size_type size() const noexcept override;
 
@@ -84,15 +81,9 @@ public:
     template <ConvertableContainerValue<T> U>
     bool add(const U &value);
 
-    template <ConvertableContainer<T> C>
-    bool add(const C &container);
-
     // Удаление
     template <EquatableContainerValue<T> U>
     bool erase(const U &value) noexcept;
-
-    template <EquatableContainer<T> C>
-    bool erase(const C &container) noexcept;
 
     // Пересечение
     template <EquatableContainer<T> C>
@@ -107,13 +98,13 @@ public:
     template <CommonContainer<T> C>
     Set<std::common_type_t<T, typename C::value_type>> operator&(const C &container) const;
 
-    template <NotSetCommonContainer<T> C>
-    friend Set<std::common_type_t<T, typename C::value_type>> operator&(const C &container, const Set<T>& set)
-    {
-        return set & container;
-    }
-
     // Объединение
+    template <ConvertableContainer<T> C>
+    bool add(const C &container);
+
+    template <ConvertibleRange<T> R>
+    bool add(const R &range);
+
     template <ConvertableContainer<T> C>
     Set<T> &unite_update(const C &container);
 
@@ -132,38 +123,30 @@ public:
     template <CommonContainer<T> C>
     Set<std::common_type_t<T, typename C::value_type>> operator+(const C &container) const;
 
-    template <NotSetCommonContainer<T> C>
-    friend Set<std::common_type_t<T, typename C::value_type>> operator|(const C &container, const Set<T>& set)
-    {
-        return set | container;
-    }
-
-    template <NotSetCommonContainer<T> C>
-    friend Set<std::common_type_t<T, typename C::value_type>> operator+(const C &container, const Set<T>& set)
-    {
-        return set + container;
-    }
-
     // Разность
+    template <EquatableContainer<T> C>
+    bool erase(const C &container) noexcept;
+
+    template <EquatableRange<T> R>
+    bool erase(const R &range) noexcept;
+
     template <ConvertableContainer<T> C>
     Set<T> &difference_update(const C &container);
 
+    template <ConvertibleRange<T> R>
+    Set<T> &difference_update(const R &range);
+
     template <ConvertableContainer<T> C>
     Set<T> &operator-=(const C &container);
+
+    template <ConvertibleRange<T> R>
+    Set<T> &operator-=(const R &range);
 
     template <CommonContainer<T> C>
     Set<std::common_type_t<T, typename C::value_type>> difference(const C &container) const;
 
     template <CommonContainer<T> C>
     Set<std::common_type_t<T, typename C::value_type>> operator-(const C &container) const;
-
-    template <NotSetConvertableContainer<T> C>
-    friend Set<std::common_type_t<T, typename C::value_type>> operator-(const C &container, const Set<T>& set)
-    {
-        Set<std::common_type_t<T, typename C::value_type>> diff_set(container);
-        diff_set.difference_update(set);
-        return diff_set;
-    }
 
     // Симметрическая разность
     template <ConvertableContainer<T> C>
@@ -178,18 +161,18 @@ public:
     template <CommonContainer<T> C>
     Set<std::common_type_t<T, typename C::value_type>> operator^(const C &container) const;
 
-    template <NotSetConvertableContainer<T> C>
-    friend Set<std::common_type_t<T, typename C::value_type>> operator^(const C &container, const Set<T>& set)
-    {
-        return set ^ container;
-    }
-
     // Отношения множеств
     template <EquatableContainerValue<T> U>
     bool subset_of(const Set<U> &other) const noexcept;
 
     template <EquatableContainerValue<T> U>
     bool superset_of(const Set<U> &other) const noexcept;
+
+    template <EquatableContainerValue<T> U>
+    bool comparable(const Set<U> &other) const noexcept;
+
+    template <EquatableContainerValue<T> U>
+    bool not_comparable(const Set<U> &other) const noexcept;
 
     template <EquatableContainerValue<T> U>
     bool equal(const Set<U> &other) const noexcept;
@@ -215,8 +198,7 @@ protected:
         Node();
         explicit Node(const T &value);
         explicit Node(T &&value);
-        Node(const Node &node);
-        Node(Node &&node);
+        Node(const T &value, const std::shared_ptr<Node>& next_node);
         explicit Node(std::shared_ptr<Node> node);
 
         ~Node() = default;
@@ -230,8 +212,6 @@ protected:
 
         bool operator==(const Node &node) const;
         bool operator==(const std::shared_ptr<Node> &node) const;
-        bool operator!=(const Node &node) const;
-        bool operator!=(const std::shared_ptr<Node> &node) const;
 
     private:
         T value;
@@ -247,6 +227,21 @@ private:
 
 template <ContainerValue T>
 std::ostream& operator<<(std::ostream& os, const Set<T>& set);
+
+template <ContainerValue T, NotSetCommonContainer<T> C>
+Set<std::common_type_t<T, typename C::value_type>> operator&(const C &container, const Set<T>& set);
+
+template <ContainerValue T, NotSetCommonContainer<T> C>
+Set<std::common_type_t<T, typename C::value_type>> operator|(const C &container, const Set<T>& set);
+
+template <ContainerValue T, NotSetCommonContainer<T> C>
+Set<std::common_type_t<T, typename C::value_type>> operator+(const C &container, const Set<T>& set);
+
+template <ContainerValue T, NotSetCommonContainer<T> C>
+Set<std::common_type_t<T, typename C::value_type>> operator^(const C &container, const Set<T>& set);
+
+template <ContainerValue T, NotSetCommonContainer<T> C>
+Set<std::common_type_t<T, typename C::value_type>> operator-(const C &container, const Set<T>& set);
 
 
 #include "Set.hpp"

@@ -117,4 +117,8 @@ concept Range = std::ranges::input_range<R> && !Container<R>;
 template <typename R, typename T>
 concept ConvertibleRange = Range<R> && Convertible<std::ranges::range_value_t<R>, T>;
 
+template <typename C, typename T>
+concept EquatableRange = Range<C> && Equatable<typename C::value_type, T> &&
+                             CommonType<typename C::value_type, T>;
+
 #endif //LAB_02_CONCEPTS_H

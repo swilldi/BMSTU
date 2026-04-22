@@ -13,7 +13,7 @@
 #include "Exceptions.h"
 
 template <ContainerValue T>
-Set<T>::Set()
+Set<T>::Set() noexcept
 {
     // std::cout << "1" << std::endl;
     this->head = nullptr;
@@ -42,26 +42,6 @@ Set<T> &Set<T>::operator=(const Set<T> &other)
 }
 
 template <ContainerValue T>
-template <ConvertableContainerValue<T> U>
-
-Set<T>::Set(const Set<U> &other) : Set()
-{
-    for (const auto &element : other)
-        add(element);
-}
-
-template <ContainerValue T>
-template <ConvertableContainerValue<T> U>
-Set<T> &Set<T>::operator=(const Set<U> &other)
-{
-    clear();
-    for (const auto &element : other)
-        add(element);
-
-    return *this;
-}
-
-template <ContainerValue T>
 Set<T>::Set(Set<T> &&other) noexcept(std::is_nothrow_move_constructible_v<T>) : Set()
 {
     this->head = std::move(other.head);
@@ -73,11 +53,13 @@ Set<T>::Set(Set<T> &&other) noexcept(std::is_nothrow_move_constructible_v<T>) : 
 template <ContainerValue T>
 Set<T> &Set<T>::operator=(Set<T> &&other) noexcept(std::is_nothrow_move_constructible_v<T>)
 {
-    this->head = std::move(other.head);
-    this->_size = std::move(other._size);
-    this->tail = std::move(other.tail);
-
-    other._size = 0;
+    if (this != &other)
+    {
+        this->head = std::move(other.head);
+        this->tail = std::move(other.tail);
+        this->_size = std::move(other._size);
+        other._size = 0;
+    }
     return *this;
 }
 
@@ -194,7 +176,7 @@ Set<T>::const_iterator Set<T>::cbegin() const noexcept
 template <ContainerValue T>
 Set<T>::const_iterator Set<T>::cend() const noexcept
 {
-    return this->tail ?  const_iterator(tail->get_next()) : const_iterator();
+    return iterator();
 }
 
 // === Операции над множеством ===
@@ -280,8 +262,8 @@ bool Set<T>::erase(const U &value) noexcept
     if (this->head != nullptr && this->head->get_value() == value)
     {
         this->head = this->head->get_next().lock();
-        if (this->head == nullptr)  // список стал пустым
-            this->tail = nullptr;   // ← обновить tail
+        if (this->head == nullptr)
+            this->tail = nullptr;
         --this->_size;
         element_found = true;
     }
@@ -324,18 +306,25 @@ template <ContainerValue T>
 template <EquatableContainer<T> C>
 Set<T> &Set<T>::intersect_update(const C &container) noexcept
 {
-    bool found = false;
-    for (const auto &element_this : *this)
+    auto cur = this->head;
+    while (cur != nullptr)
     {
-        found = false;
+        auto next = cur->get_next().lock();
+
+        bool found = false;
         for (const auto &element_container : container)
         {
-            if (element_container == element_container)
+            if (cur->get_value() == element_container)
+            {
                 found = true;
+                break;
+            }
         }
 
         if (!found)
-            this->erase(element_this);
+            erase(cur->get_value());
+
+        cur = next;
     }
     return *this;
 }
@@ -501,6 +490,20 @@ bool Set<T>::superset_of(const Set<U> &other) const noexcept
 
 template <ContainerValue T>
 template <EquatableContainerValue<T> U>
+bool Set<T>::comparable(const Set<U> &other) const noexcept
+{
+    return (*this <=> other) != std::partial_ordering::unordered;
+}
+
+template <ContainerValue T>
+template <EquatableContainerValue<T> U>
+bool Set<T>::not_comparable(const Set<U> &other) const noexcept
+{
+    return !comparable(other);
+}
+
+template <ContainerValue T>
+template <EquatableContainerValue<T> U>
 bool Set<T>::equal(const Set<U> &other) const noexcept
 {
     return this->_size == other.size() && this->subset_of(other);
@@ -554,6 +557,38 @@ std::ostream &operator<<(std::ostream &os, const Set<T> &set)
     os << " (" << set.size() << ")";
 
     return os;
+}
+
+template <ContainerValue T, NotSetCommonContainer<T> C>
+Set<std::common_type_t<T, typename C::value_type>> operator&(const C &container, const Set<T>& set)
+{
+    return set & container;
+}
+
+template <ContainerValue T, NotSetCommonContainer<T> C>
+Set<std::common_type_t<T, typename C::value_type>> operator|(const C &container, const Set<T>& set)
+{
+    return set | container;
+}
+
+template <ContainerValue T, NotSetCommonContainer<T> C>
+Set<std::common_type_t<T, typename C::value_type>> operator+(const C &container, const Set<T>& set)
+{
+    return set + container;
+}
+
+template <ContainerValue T, NotSetCommonContainer<T> C>
+Set<std::common_type_t<T, typename C::value_type>> operator^(const C &container, const Set<T>& set)
+{
+    return set ^ container;
+}
+
+template <ContainerValue T, NotSetCommonContainer<T> C>
+Set<std::common_type_t<T, typename C::value_type>> operator-(const C &container, const Set<T>& set)
+{
+    Set<std::common_type_t<T, typename C::value_type>> diff_set(container);
+    diff_set.difference_update(set);
+    return diff_set;
 }
 
 #endif //LAB_02_SET_HPP
