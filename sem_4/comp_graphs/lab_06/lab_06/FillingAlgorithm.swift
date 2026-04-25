@@ -6,20 +6,7 @@
 //
 
 import Foundation
-
-func boundingBox(points: [Point]) -> (Int, Int, Int, Int) {
-    var xMin = points[0].x, xMax = points[0].x
-    var yMin = points[0].y, yMax = points[0].y
-
-    for point in points {
-        xMin = min(xMin, point.x)
-        xMax = max(xMax, point.x)
-        yMin = min(yMin, point.y)
-        yMax = max(yMax, point.y)
-    }
-
-    return (Int(xMin), Int(xMax), Int(yMin), Int(yMax))
-}
+import CoreGraphics
 
 // MARK: - Затравочный алгоритм заполнения со строчным сканированием
 
@@ -27,16 +14,29 @@ private func pixelKey(_ x: Int, _ y: Int) -> Int64 {
     Int64(x) << 32 | Int64(UInt32(bitPattern: Int32(y)))
 }
 
-func scanlineSeedFill(seed: Point, polygonEdges: [Edge], bounds: (Int, Int, Int, Int)) -> [Edge] {
-    let (xMin, xMax, yMin, yMax) = bounds
-
-    // Растеризуем границу многоугольника в набор пикселей
+private func rasterizeBorder(_ polygonEdges: [Edge]) -> Set<Int64> {
     var borderSet = Set<Int64>()
     for edge in polygonEdges {
-        for pt in lineDDA(edge.p1, edge.p2) {
+        let pts = lineDDA(edge.p1, edge.p2)
+        for pt in pts {
             borderSet.insert(pixelKey(Int(pt.x), Int(pt.y)))
         }
+
+        for i in 1..<pts.count {
+            let px = Int(pts[i-1].x), py = Int(pts[i-1].y)
+            let cx = Int(pts[i].x),   cy = Int(pts[i].y)
+            if abs(cx - px) == 1 && abs(cy - py) == 1 {
+                borderSet.insert(pixelKey(cx, py))
+            }
+        }
     }
+    return borderSet
+}
+
+func scanlineSeedFill(seed: Point, polygonEdges: [Edge], canvasSize: CGSize) -> [Edge] {
+    let xMax = Int(canvasSize.width), yMax = Int(canvasSize.height)
+    let (xMin, yMin) = (0, 0)
+    let borderSet = rasterizeBorder(polygonEdges)
 
     var filledSet = Set<Int64>()
     var result = [Edge]()
@@ -47,7 +47,6 @@ func scanlineSeedFill(seed: Point, polygonEdges: [Edge], bounds: (Int, Int, Int,
     while !stack.isEmpty {
         let (x, y) = stack.removeLast()
 
-        // Пропускаем уже обработанные пиксели и границу
         if borderSet.contains(pixelKey(x, y)) || filledSet.contains(pixelKey(x, y)) { continue }
         if x < xMin || x > xMax || y < yMin || y > yMax { continue }
 
@@ -99,10 +98,10 @@ private func scanForNewSeeds(xLeft: Int, xRight: Int, y: Int,
     }
 }
 
-func timeScanlineSeedFill(seed: Point, polygonEdges: [Edge], bounds: (Int, Int, Int, Int)) -> (Double, [Edge]) {
+func timeScanlineSeedFill(seed: Point, polygonEdges: [Edge], canvasSize: CGSize) -> (Double, [Edge]) {
     let clock = ContinuousClock()
     let start = clock.now
-    let edges = scanlineSeedFill(seed: seed, polygonEdges: polygonEdges, bounds: bounds)
+    let edges = scanlineSeedFill(seed: seed, polygonEdges: polygonEdges, canvasSize: canvasSize)
     let end = clock.now
 
     let elapsed = start.duration(to: end)

@@ -66,6 +66,7 @@ struct ContentView: View {
     // Затравочный алгоритм
     @State var seedFillMode = false
     @State var seedPoint: Point? = nil
+    @State var canvasSize: CGSize = CGSize(width: 2000, height: 2000)
     
     var body: some View {
         HStack {
@@ -166,8 +167,7 @@ struct ContentView: View {
                         if edges.count < 2 { fewEdges = true; return }
                         guard let seed = seedPoint else { return }
                         fillingEdges = []
-                        let bounds = boundingBox(points: points)
-                        let fEdges = scanlineSeedFill(seed: seed, polygonEdges: edges, bounds: bounds)
+                        let fEdges = scanlineSeedFill(seed: seed, polygonEdges: edges, canvasSize: canvasSize)
 
                         // Показываем отрезки в порядке работы алгоритма (стековый порядок).
                         // Батч ~1% от общего числа отрезков за кадр (~16 мс), не менее 1.
@@ -190,9 +190,8 @@ struct ContentView: View {
                     Button {
                         if edges.count < 2 { fewEdges = true; return }
                         guard let seed = seedPoint else { return }
-                        let bounds = boundingBox(points: points)
                         (timeToComplite, fillingEdges) = timeScanlineSeedFill(
-                            seed: seed, polygonEdges: edges, bounds: bounds)
+                            seed: seed, polygonEdges: edges, canvasSize: canvasSize)
                     } label: {
                         Text("Время выполнения")
                             .frame(maxWidth: .infinity)
@@ -241,18 +240,16 @@ struct ContentView: View {
 //                addPoint(x: 100, y: 100)
             }
             .background(Color.white)
+            .onGeometryChange(for: CGSize.self, of: { $0.size }) { canvasSize = $1 }
             .gesture(
                 DragGesture(minimumDistance: 0).onEnded { value in
                     let x = round(value.location.x), y = round(value.location.y)
 
                     if seedFillMode {
-                        // Режим затравки: клик задаёт точку и запускает заполнение
                         let seed = Point(x: x, y: y)
-                        seedPoint = seed
                         seedFillMode = false
-                        let bounds = boundingBox(points: points)
-                        fillingEdges = scanlineSeedFill(
-                            seed: seed, polygonEdges: edges, bounds: bounds)
+                        seedPoint = seed
+                        fillingEdges = scanlineSeedFill(seed: seed, polygonEdges: edges, canvasSize: canvasSize)
                         return
                     }
 
