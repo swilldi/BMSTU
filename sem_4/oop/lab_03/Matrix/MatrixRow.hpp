@@ -9,7 +9,8 @@
 #include "Matrix.h"
 
 template <ConvertibleToDouble T>
-T &Matrix<T>::MatrixRow::operator[](size_t index) {
+T &Matrix<T>::MatrixRow::operator[](size_t index)
+{
     if (index >= _size)
         throw MatrixOutOfRange();
 
@@ -17,7 +18,8 @@ T &Matrix<T>::MatrixRow::operator[](size_t index) {
 }
 
 template <ConvertibleToDouble T>
-const T &Matrix<T>::MatrixRow::operator[](size_t index) const {
+const T &Matrix<T>::MatrixRow::operator[](size_t index) const
+{
     if (index >= _size)
         throw MatrixOutOfRange();
 
@@ -25,13 +27,15 @@ const T &Matrix<T>::MatrixRow::operator[](size_t index) const {
 }
 
 template <ConvertibleToDouble T>
-void Matrix<T>::MatrixRow::reset() {
+void Matrix<T>::MatrixRow::reset()
+{
     _size = 0;
     _row.reset();
 }
 
 template <ConvertibleToDouble T>
-void Matrix<T>::MatrixRow::reset(T *row, size_t size) {
+void Matrix<T>::MatrixRow::reset(T *row, size_t size)
+{
     _size = size;
     _row = row;
 }

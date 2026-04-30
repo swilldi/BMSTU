@@ -9,7 +9,8 @@
 #include "Concepts/Concepts.h"
 
 template <ConvertibleToDouble T>
-class Vector3D {
+class Vector3D
+{
 public:
     // === Конструкторы ===
     Vector3D();

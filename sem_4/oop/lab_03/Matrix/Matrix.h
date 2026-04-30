@@ -69,18 +69,22 @@ public:
 
     // === Доступ к элементам матрицы ===
     Matrix &operator[](size_t row);
+
     const Matrix &operator[](size_t row) const;
 
 protected:
-    class MatrixRow {
+    class MatrixRow
+    {
     public:
-        MatrixRow(T *row, const size_t size) : _row(row), _size(size) { }
-        MatrixRow() : _row(nullptr), _size(0) { }
+        MatrixRow(T *row, const size_t size) : _row(row), _size(size) {}
+        MatrixRow() : _row(nullptr), _size(0) {}
 
         T &operator[](size_t index);
+
         const T &operator[](size_t index) const;
 
         void reset();
+
         void reset(T *row, size_t size);
 
     private:
@@ -89,8 +93,9 @@ protected:
     };
 
 private:
-    std::unique_ptr<T[]> _matrix = nullptr;
-    std::unique_ptr<T[]> allocMatrix(size_t rows, size_t cols);
+    std::shared_ptr<T[]> _matrix = nullptr;
+
+    std::shared_ptr<MatrixRow[]> allocMatrix(size_t rows, size_t cols);
 
     size_t _rows, _cols;
 };
