@@ -8,6 +8,7 @@
 
 class SceneObject: public BaseObject
 {
+public:
     SceneObject() = default;
     virtual ~SceneObject() = default;
 
