@@ -23,10 +23,12 @@ public:
 };
 
 class MatrixIncompatibleDimensions : public MatrixException {
+public:
     MatrixIncompatibleDimensions(const location &loc = location::current()) noexcept;
 };
 
 class MatrixOutOfRange : public MatrixException {
+public:
     MatrixOutOfRange(const location &loc = location::current()) noexcept;
 };
 
