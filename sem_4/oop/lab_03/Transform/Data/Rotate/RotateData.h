@@ -6,11 +6,11 @@
 #define LAB_03_ROTATEDATA_H
 #include "Component/SceneObject/Model/Point/Point.h"
 
-class RotationData
+class RotateData
 {
 public:
-    RotationData() noexcept = default;
-    RotationData(double angle_x, double angle_y, double angle_z, const Point &center) noexcept;
+    RotateData() noexcept = default;
+    RotateData(double angle_x, double angle_y, double angle_z, const Point &center) noexcept;
 
     double get_angle_x() const noexcept;
     double get_angle_y() const noexcept;
