@@ -23,8 +23,8 @@ public:
     virtual std::vector<Edge> get_edges() const noexcept = 0;
     virtual Point get_center() noexcept = 0;
 
-    virtual std::vector<Point> &get_points() noexcept = 0;
-    virtual Point &get_center() noexcept = 0;
+    virtual std::vector<Point> &get_points() const noexcept = 0;
+    virtual Point &get_center() const noexcept = 0;
 
     virtual void transform(std::shared_ptr<TransformAction> action) = 0;
 
