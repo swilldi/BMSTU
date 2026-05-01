@@ -12,6 +12,9 @@
 template <ConvertibleToDouble T>
 class Matrix
 {
+protected:
+    class MatrixRow;
+
 public:
     // === Конструкторы ===
     Matrix() = delete;
@@ -64,19 +67,19 @@ public:
     Matrix<T> operator*(const T &elem) const;
 
     // Умножение матрицы на вектор
-    Vector3D<T> product(const Vector3D<T> &other) const noexcept;
-    Vector3D<T> operator*(const Vector3D<T> &other) const noexcept;
+    Vector3D<T> product(const Vector3D<T> &other) const;
+    Vector3D<T> operator*(const Vector3D<T> &other) const;
 
     // === Доступ к элементам матрицы ===
-    Matrix &operator[](size_t row);
+    MatrixRow &operator[](size_t index);
 
-    const Matrix &operator[](size_t row) const;
+    const MatrixRow &operator[](size_t index) const;
 
 protected:
     class MatrixRow
     {
     public:
-        MatrixRow(T *row, const size_t size) : _row(row), _size(size) {}
+        MatrixRow(std::shared_ptr<T> row, const size_t size) : _row(row), _size(size) {}
         MatrixRow() : _row(nullptr), _size(0) {}
 
         T &operator[](size_t index);
@@ -85,7 +88,7 @@ protected:
 
         void reset();
 
-        void reset(T *row, size_t size);
+        void reset(std::shared_ptr<T> row, size_t size);
 
     private:
         std::shared_ptr<T[]> _row;
@@ -93,9 +96,9 @@ protected:
     };
 
 private:
-    std::shared_ptr<T[]> _matrix = nullptr;
+    std::shared_ptr<MatrixRow[]> _matrix = nullptr;
 
-    std::shared_ptr<MatrixRow[]> allocMatrix(size_t rows, size_t cols);
+    std::shared_ptr<MatrixRow[]> alloc_matrix(size_t rows, size_t cols);
 
     size_t _rows, _cols;
 };
