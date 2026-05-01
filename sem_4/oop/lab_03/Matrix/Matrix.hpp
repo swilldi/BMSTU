@@ -25,7 +25,7 @@ Matrix<T>::Matrix(size_t rows, size_t cols, const T &filler) : Matrix(rows, cols
 }
 
 template <ConvertibleToDouble T>
-Matrix<T>::Matrix(std::initializer_list<std::initializer_list<T> > list)
+Matrix<T>::Matrix(std::initializer_list<std::initializer_list<T>> list)
 {
     size_t rows_count = list.size();
     auto it = list.begin();
@@ -50,7 +50,7 @@ Matrix<T>::Matrix(std::initializer_list<std::initializer_list<T> > list)
 }
 
 template <ConvertibleToDouble T>
-Matrix<T> &Matrix<T>::operator=(std::initializer_list<std::initializer_list<T> > list)
+Matrix<T> &Matrix<T>::operator=(std::initializer_list<std::initializer_list<T>> list)
 {
     *this = Matrix(list);
     return *this;
@@ -218,9 +218,6 @@ Matrix<T> Matrix<T>::operator*(const Matrix<T> &other) const
 template <ConvertibleToDouble T>
 Matrix<T> &Matrix<T>::multiply(const T &elem) noexcept
 {
-    if (_rows != other._rows || _cols != other._cols)
-        throw MatrixIncompatibleDimensions();
-
     for (size_t i = 0; i < _rows; ++i)
         for (size_t j = 0; j < _cols; ++j)
             _matrix[i][j] *= elem;

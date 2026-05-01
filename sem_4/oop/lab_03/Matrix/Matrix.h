@@ -13,7 +13,24 @@ template <ConvertibleToDouble T>
 class Matrix
 {
 protected:
-    class MatrixRow;
+    class MatrixRow
+    {
+    public:
+        MatrixRow(std::shared_ptr<T> row, const size_t size) : _row(row), _size(size) {}
+        MatrixRow() : _row(nullptr), _size(0) {}
+
+        T &operator[](size_t index);
+
+        const T &operator[](size_t index) const;
+
+        void reset();
+
+        void reset(std::shared_ptr<T[]> row, size_t size);
+
+    private:
+        std::shared_ptr<T[]> _row;
+        size_t _size;
+    };
 
 public:
     // === Конструкторы ===
@@ -74,26 +91,6 @@ public:
     MatrixRow &operator[](size_t index);
 
     const MatrixRow &operator[](size_t index) const;
-
-protected:
-    class MatrixRow
-    {
-    public:
-        MatrixRow(std::shared_ptr<T> row, const size_t size) : _row(row), _size(size) {}
-        MatrixRow() : _row(nullptr), _size(0) {}
-
-        T &operator[](size_t index);
-
-        const T &operator[](size_t index) const;
-
-        void reset();
-
-        void reset(std::shared_ptr<T> row, size_t size);
-
-    private:
-        std::shared_ptr<T[]> _row;
-        size_t _size;
-    };
 
 private:
     std::shared_ptr<MatrixRow[]> _matrix = nullptr;

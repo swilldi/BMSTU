@@ -34,7 +34,7 @@ void Matrix<T>::MatrixRow::reset()
 }
 
 template <ConvertibleToDouble T>
-void Matrix<T>::MatrixRow::reset(std::shared_ptr<T> row, size_t size)
+void Matrix<T>::MatrixRow::reset(std::shared_ptr<T[]> row, size_t size)
 {
     _size = size;
     _row = row;
