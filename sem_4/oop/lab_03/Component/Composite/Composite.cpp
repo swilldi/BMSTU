@@ -70,6 +70,7 @@ std::shared_ptr<BaseObject> Composite::get_object(const size_t id) const
     return object;
 }
 
+// TODO
 void Composite::accept(std::shared_ptr<BaseVisitor> visitor)
 {
     for (auto &[id, component]: _objects)

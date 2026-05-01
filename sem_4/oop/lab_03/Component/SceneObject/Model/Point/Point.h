@@ -14,12 +14,12 @@ class Point
 {
 public:
     Point() noexcept = default;
-    Point(double x, double y, double z);
+    Point(double x, double y, double z) noexcept;
 
-    explicit Point(const Point &other) = default;
+    Point(const Point &other) = default;
     Point &operator=(const Point &other) = default;
     Point(Point &&other) = default;
-    Point &operator=(const Point &&other) = default;
+    Point &operator=(Point &&other) = default;
 
     ~Point() = default;
 

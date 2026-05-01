@@ -9,6 +9,8 @@
 #include <memory>
 #include <cstddef>
 
+#include "Component/SceneObject/Model/Point/Point.h"
+
 class BaseObject;
 using mapObjects = std::map<size_t, std::shared_ptr<BaseObject>>;
 

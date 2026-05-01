@@ -113,6 +113,31 @@ Point Point::operator+(const Point &other) const noexcept
     return sum(other);
 }
 
+Point &Point::subtract(const Point &other) noexcept
+{
+    _x -= other._x;
+    _y -= other._y;
+    _z -= other._z;
+
+    return *this;
+}
+Point &Point::operator-=(const Point &other) noexcept
+{
+    subtract(other);
+    return *this;
+}
+
+Point Point::diff(const Point &other) const noexcept
+{
+    Point tmp(*this);
+    tmp.subtract(other);
+    return tmp;
+}
+Point Point::operator-(const Point &other) const noexcept
+{
+    return diff(other);
+}
+
 std::ostream &operator<<(std::ostream &os, const Point &point)
 {
     os << "(" << point.get_x() << ", " << point.get_y() << ", " << point.get_z() << ")";

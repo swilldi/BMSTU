@@ -5,6 +5,7 @@
 #ifndef LAB_03_BASEMODEL_H
 #define LAB_03_BASEMODEL_H
 #include "Component/SceneObject/SceneObject.h"
+#include "Component/SceneObject/Model/Structure/BaseStructure.h"
 
 
 class BaseModel : public SceneObject
