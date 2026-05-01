@@ -64,6 +64,7 @@ std::shared_ptr<BaseObject> Composite::get_object(const size_t id) const
     }
     catch (const std::out_of_range &e)
     {
+        // TODO
         throw nullptr;
     }
 

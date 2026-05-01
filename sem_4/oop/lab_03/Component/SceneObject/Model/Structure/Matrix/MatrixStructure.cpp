@@ -20,6 +20,7 @@ void MatrixStructure::add_edge(const Edge &edge)
     size_t id_to = edge.get_to();
 
     if (id_from >= _point_count || id_to >= _point_count)
+        // TODO
         throw nullptr;
 
     _adjacency_matrix[id_from][id_to] = true;
