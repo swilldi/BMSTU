@@ -11,7 +11,7 @@ class Composite final: public BaseObject
 {
 public:
     Composite() = default;
-    explicit Composite(const mapObjects &objects);
+    explicit Composite(const MapObjects &objects);
 
     iterator begin() override;
     iterator end() override;
@@ -30,7 +30,7 @@ public:
     bool is_visible() const noexcept override;
 
 private:
-    mapObjects _objects;
+    MapObjects _objects;
     size_t _count;
 };
 

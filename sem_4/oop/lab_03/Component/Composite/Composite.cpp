@@ -4,7 +4,7 @@
 
 #include "Composite.h"
 
-Composite::Composite(const mapObjects &objects): _objects(objects) { }
+Composite::Composite(const MapObjects &objects): _objects(objects) { }
 
 BaseObject::iterator Composite::begin()
 {
