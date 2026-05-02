@@ -16,7 +16,7 @@ public:
     virtual ~BaseProjection() = default;
 
     virtual void project(std::shared_ptr<const BaseStructure> structure, std::shared_ptr<BaseCamera> camera,
-        std::vector<Point> &projected);
+        std::vector<Point> &projected) = 0;
 
 };
 
