@@ -13,13 +13,13 @@
 #include "Visitor/BaseVisitor.h"
 
 class BaseObject;
-using mapObjects = std::map<size_t, std::shared_ptr<BaseObject>>;
+using MapObjects = std::map<size_t, std::shared_ptr<BaseObject>>;
 
 class BaseObject
 {
 public:
-    using iterator = mapObjects::iterator;
-    using const_iterator = mapObjects::const_iterator;
+    using iterator = MapObjects::iterator;
+    using const_iterator = MapObjects::const_iterator;
 
     BaseObject() = default;
     virtual ~BaseObject() = default;
