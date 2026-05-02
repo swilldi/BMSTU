@@ -15,6 +15,7 @@ public:
     // === Конструкторы ===
     Vector3D();
     Vector3D(T x, T y, T z);
+    Vector3D(const Point &point);
     explicit Vector3D(T value);
 
     // === Деструктор ===

@@ -17,6 +17,9 @@ template <ConvertibleToDouble T>
 Vector3D<T>::Vector3D(T x, T y, T z) : _x(x), _y(y), _z(z) {}
 
 template <ConvertibleToDouble T>
+Vector3D<T>::Vector3D(const Point &point) : _x(point.get_x()), _y(point.get_y()), _z(point.get_z()) { }
+
+template <ConvertibleToDouble T>
 Vector3D<T>::Vector3D(T value) : _x(value), _y(value), _z(value) {}
 
 // === Доступ к значениям вектора ===
