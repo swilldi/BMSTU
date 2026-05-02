@@ -8,6 +8,7 @@
 
 class DefaultProjection : public BaseProjection
 {
+public:
     DefaultProjection() = default;
     virtual ~DefaultProjection() override = default;
 
