@@ -7,8 +7,9 @@
 
 #include "Component/SceneObject/Camera/BaseCamera.h"
 #include "Vector3D/Vector3D.h"
+#include "Visitor/BaseVisitor.h"
 
-class DefaultCamera : public BaseCamera
+class DefaultCamera final : public BaseCamera
 {
 public:
     DefaultCamera();
