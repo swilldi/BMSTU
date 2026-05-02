@@ -22,4 +22,6 @@ public:
 
 };
 
+#include "CoordinateConvertCreator.hpp"
+
 #endif //LAB_03_COORDINATECONVERTCREATOR_H
