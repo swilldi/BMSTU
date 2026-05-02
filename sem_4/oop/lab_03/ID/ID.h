@@ -17,7 +17,7 @@ enum ReaderID: size_t
     BoneReaderID = 0,
 };
 
-enum ModelRepresentation: size_t
+enum ModelRepresentationID: size_t
 {
     ListRepresentationID = 0,
     MatrixRepresentationID,
