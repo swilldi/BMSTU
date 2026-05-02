@@ -7,7 +7,7 @@
 #include "Transform/Action/Move/MoveAction.h"
 
 // TODO мб тут сложение?
-RotateAction::RotateAction(const RotateData &data) : TransformAcction()
+RotateAction::RotateAction(const RotateData &data) : TransformAction()
 {
     MoveAction to_center({ -data.get_center_x(), -data.get_center_y(), -data.get_center_z() });
     _matrix *= to_center.get_matrix();

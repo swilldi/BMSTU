@@ -7,7 +7,7 @@
 #include "Transform/Action/TransformAction.h"
 #include "Transform/Data/Move/MoveData.h"
 
-class MoveAction : public TransformAcction
+class MoveAction : public TransformAction
 {
 public:
     MoveAction() = default;

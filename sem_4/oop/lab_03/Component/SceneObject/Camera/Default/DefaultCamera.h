@@ -20,7 +20,7 @@ public:
     const Matrix<double> get_projection_matrix(double ratio) const override;
     Point get_center() const noexcept override;
 
-    void transform(const std::shared_ptr<const TransformAcction> action) override;
+    void transform(const std::shared_ptr<const TransformAction> action) override;
     void accept(std::shared_ptr<BaseVisitor> visitor) override;
 
 private:

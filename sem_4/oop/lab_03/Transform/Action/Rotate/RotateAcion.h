@@ -8,7 +8,7 @@
 #include "Transform/Data/Rotate/RotateData.h"
 
 
-class RotateAction : public TransformAcction
+class RotateAction : public TransformAction
 {
 public:
     RotateAction() = default;

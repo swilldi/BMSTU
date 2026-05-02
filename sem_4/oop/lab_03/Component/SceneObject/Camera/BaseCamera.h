@@ -15,7 +15,7 @@ public:
 
     virtual const Matrix<double> get_look_matrix() const noexcept = 0;
     virtual const Matrix<double> get_projection_matrix(double ration) const = 0;
-    virtual void transform(const std::shared_ptr<const TransformAcction> action) = 0;
+    virtual void transform(const std::shared_ptr<const TransformAction> action) = 0;
 
     bool is_visible() const noexcept override { return false; }
 };

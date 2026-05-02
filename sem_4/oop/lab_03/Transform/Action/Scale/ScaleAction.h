@@ -7,7 +7,7 @@
 #include "Transform/Action/TransformAction.h"
 #include "Transform/Data/Scale/ScaleData.h"
 
-class ScaleAction : public TransformAcction
+class ScaleAction : public TransformAction
 {
 public:
     ScaleAction() = default;

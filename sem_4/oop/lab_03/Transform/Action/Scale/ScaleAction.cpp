@@ -6,7 +6,7 @@
 #include "Transform/Action/Move/MoveAction.h"
 #include "Transform/Data/Scale/ScaleData.h"
 
-ScaleAction::ScaleAction(const ScaleData &data) : TransformAcction()
+ScaleAction::ScaleAction(const ScaleData &data) : TransformAction()
 {
     MoveAction to_center({ -data.get_center_x(), -data.get_center_y(), -data.get_center_z() });
     _matrix *= to_center.get_matrix();

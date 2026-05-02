@@ -5,7 +5,7 @@
 #include "MoveAction.h"
 #include "Transform/Data/Move/MoveData.h"
 
-MoveAction::MoveAction(const MoveData &data) noexcept : TransformAcction()
+MoveAction::MoveAction(const MoveData &data) noexcept : TransformAction()
 {
     _matrix[0][3] = data.get_dx();
     _matrix[1][3] = data.get_dy();

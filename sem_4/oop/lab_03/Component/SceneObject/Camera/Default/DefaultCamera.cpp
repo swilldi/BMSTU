@@ -57,7 +57,7 @@ Point DefaultCamera::get_center() const noexcept
     return _viewpoint;
 }
 
-void DefaultCamera::transform(const std::shared_ptr<const TransformAcction> action)
+void DefaultCamera::transform(const std::shared_ptr<const TransformAction> action)
 {
     if (action->is_move_action())
     {

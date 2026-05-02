@@ -8,11 +8,11 @@
 #include "Component/SceneObject/Model/Point/Point.h"
 #include "Matrix/Matrix.h"
 
-class TransformAcction
+class TransformAction
 {
 public:
-    TransformAcction();
-    virtual ~TransformAcction() = default;
+    TransformAction();
+    virtual ~TransformAction() = default;
 
     Point &transform(Point &point) const noexcept;
 
