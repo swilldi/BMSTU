@@ -6,6 +6,8 @@
 #define LAB_03_COORDINATECONVERTCREATOR_H
 
 #include "Concepts/Concepts.h"
+#include "Strategies/CoordinateConvert/BaseCoordinateConvert.h"
+#include "Strategies/CoordinateConvert/Default/DefaultCoordinateConvert.h"
 
 #include <memory>
 
@@ -23,5 +25,7 @@ public:
 };
 
 #include "CoordinateConvertCreator.hpp"
+
+using DefaultCoordinateConvertCreator = CoordinateConvertCreator<BaseCoordinateConvert, DefaultCoordinateConver>;
 
 #endif //LAB_03_COORDINATECONVERTCREATOR_H

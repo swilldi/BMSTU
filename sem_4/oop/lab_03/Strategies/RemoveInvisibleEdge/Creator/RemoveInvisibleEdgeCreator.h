@@ -6,6 +6,8 @@
 #define LAB_03_REMOVEINVISIBLEEDGECREATOR_H
 
 #include "Concepts/Concepts.h"
+#include "Strategies/RemoveInvisibleEdge/BaseRemoveInvisibleEdge.h"
+#include "Strategies/RemoveInvisibleEdge/RayCasting/RayCastingRemoveInvisibleEdge.h"
 
 #include <memory>
 
@@ -22,5 +24,7 @@ public:
 };
 
 #include "RemoveInvisibleEdgeCreator.hpp"
+
+using RayCastingRemoveInvisibleEdgeCreator = RemoveInvisibleEdgeCreator<BaseRemoveInvisibleEdge, RayCastingRemoveInvisibleEdge>;
 
 #endif //LAB_03_REMOVEINVISIBLEEDGECREATOR_H

@@ -7,6 +7,7 @@
 
 #include "Concepts/Concepts.h"
 #include "Strategies/Projection/BaseProjection.h"
+#include "Strategies/Projection/Default/DefaultProjection.h"
 
 #include <memory>
 
@@ -23,5 +24,6 @@ class ProjectionCreator
 
 #include "ProjectionCreator.hpp"
 
+using DefaultProjectionCreator = ProjectionCreator<BaseProjection, DefaultProjection>;
 
 #endif //LAB_03_PROJECTIONCREATOR_H
