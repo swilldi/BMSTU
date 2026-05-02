@@ -123,7 +123,7 @@ bool Vector3D<T>::operator==(const Vector3D &other) const
 }
 
 template <ConvertibleToDouble T>
-Vector3D<T> Vector3D<T>::operator*(T value, const Vector3D<T> &vector)
+Vector3D<T> operator*(T value, const Vector3D<T> &vector)
 {
     return vector * value;
 }
@@ -133,6 +133,34 @@ std::ostream &operator<<(std::ostream &os, const Vector3D<T> vector)
 {
     os << "(" << vector.get_x() << ", " << vector.get_y() << ", " << vector.get_z() << ")";
     return os;
+}
+
+template <ConvertibleToDouble T>
+Vector3D<T> Vector3D<T>::zero()
+{
+    return Vector3D(0, 0, 0);
+}
+
+template <ConvertibleToDouble T>
+Vector3D<T> Vector3D<T>::one()
+{
+    return Vector3D(1, 1, 1);
+}
+template <ConvertibleToDouble T>
+Vector3D<T> Vector3D<T>::up()
+{
+    return Vector3D(0, 1, 0);
+}
+template <ConvertibleToDouble T>
+Vector3D<T> Vector3D<T>::right()
+{
+    return Vector3D(1, 0, 0);
+}
+
+template <ConvertibleToDouble T>
+Vector3D<T> Vector3D<T>::forward()
+{
+    return Vector3D(0, 0, -1);
 }
 
 #endif //LAB_03_VECTOR3D_HH

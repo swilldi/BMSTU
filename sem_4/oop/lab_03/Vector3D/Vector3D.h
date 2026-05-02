@@ -43,6 +43,12 @@ public:
 
     bool operator==(const Vector3D &other) const;
 
+    static Vector3D zero();
+    static Vector3D one();
+    static Vector3D up();
+    static Vector3D right();
+    static Vector3D forward();
+
 private:
     T _x, _y, _z;
 };
