@@ -15,6 +15,7 @@ template <typename BaseProjection, Derivative<BaseProjection> DeriveProjection, 
     requires ConstructableWith<DeriveProjection, Args ...>
 class ProjectionCreator
 {
+public:
     ProjectionCreator() = default;
     ~ProjectionCreator() = default;
 
