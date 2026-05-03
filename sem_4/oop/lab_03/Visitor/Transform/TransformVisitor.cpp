@@ -17,7 +17,7 @@ void TransformVisitor::visit(BaseCamera &camera) const
         camera.transform(_action);
 }
 
-void TransformVisitor::visit(std::shared_ptr<BaseStructure> &structure) const
+void TransformVisitor::visit(std::shared_ptr<BaseStructure> structure) const
 {
     if (_action)
         structure->transform(_action);
