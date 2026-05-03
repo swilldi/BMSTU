@@ -6,6 +6,7 @@
 #define LAB_03_BUILDERCREATOR_H
 
 #include "Builders/BaseBuilder.h"
+#include "Builders/Model/Bone/BoneModelBuilder.h"
 #include "Concepts/Concepts.h"
 
 #include <memory>
