@@ -7,6 +7,7 @@
 
 #include "Component/SceneObject/Model/Point/Point.h"
 #include "Component/SceneObject/Model/Edge/Edge.h"
+#include "Transform/Action/TransformAction.h"
 
 class BaseStructure
 {
