@@ -41,16 +41,16 @@ private:
 class RemoveCameraCommand : public CameraCommand
 {
 public:
-    RemoveCameraCommand(const CameraID &id);
+    RemoveCameraCommand(size_t id);
     virtual ~RemoveCameraCommand() override = default;
 
     void execute() override;
 
 private:
-    using Action = void (CameraManager::*)(const CameraID &);
+    using Action = void (CameraManager::*)(size_t);
 
     Action _action;
-    CameraID _id;
+    size_t _id;
     std::shared_ptr<CameraManager> _camera_manager;
 
 };
@@ -60,16 +60,16 @@ private:
 class SetCameraCommand : public CameraCommand
 {
 public:
-    SetCameraCommand(const CameraID &id);
+    SetCameraCommand(size_t id);
     virtual ~SetCameraCommand() override = default;
 
     void execute() override;
 
 private:
-    using Action = void (CameraManager::*)(const CameraID &);
+    using Action = void (CameraManager::*)(size_t);
 
     Action _action;
-    CameraID _id;
+    size_t _id;
     std::shared_ptr<CameraManager> _camera_manager;
 };
 
@@ -78,16 +78,16 @@ private:
 class MoveCameraCommand : public CameraCommand
 {
 public:
-    MoveCameraCommand(const CameraID &id, const MoveData &data);
+    MoveCameraCommand(size_t id, const MoveData &data);
     virtual ~MoveCameraCommand() override = default;
 
     void execute() override;
 
 private:
-    using Action = void (CameraManager::*)(const CameraID &, const MoveData &);
+    using Action = void (TransformManager::*)(size_t, const MoveData &);
 
     Action _action;
-    CameraID _id;
+    size_t _id;
     MoveData _data;
     std::shared_ptr<TransformManager> _transform_manager;
 };
@@ -97,17 +97,17 @@ private:
 class RotateCameraCommand : public CameraCommand
 {
 public:
-    RotateCameraCommand(const CameraID &id, const RotateData &data);
+    RotateCameraCommand(size_t id, const RotateData &data);
     virtual ~RotateCameraCommand() override = default;
 
     void execute() override;
 
 private:
-    using Action = void (CameraManager::*)(const CameraID &, const RotateData &);
+    using Action = void (TransformManager::*)(size_t, const RotateData &);
 
     Action _action;
-    CameraID _id;
-    MoveData _data;
+    size_t _id;
+    RotateData _data;
     std::shared_ptr<TransformManager> _transform_manager;
 };
 
