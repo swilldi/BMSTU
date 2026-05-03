@@ -24,7 +24,7 @@ public:
     void visit(std::shared_ptr<BaseStructure> structure) const override;
 
 private:
-    std::shared_ptr<BaseDrawer> _painter;
+    std::shared_ptr<BaseDrawer> _drawer;
     std::shared_ptr<BaseCamera> _camera;
 
     std::shared_ptr<BaseProjection> _projection;
