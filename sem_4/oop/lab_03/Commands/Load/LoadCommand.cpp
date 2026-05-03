@@ -6,7 +6,7 @@
 
 #include "Managers/ManagerSolution.h"
 
-BoneLoadCommand::BoneLoadCommand(ModelRepresentationID representation_id,const std::pmr::string &filename) :
+BoneLoadCommand::BoneLoadCommand(ModelRepresentationID representation_id, const std::string &filename) :
     _action(&LoadManager::load), _representation_id(representation_id), _filename(filename),
     _load_manager(ManagerSolution::get_load_manager()) { }
 

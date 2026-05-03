@@ -4,6 +4,7 @@
 
 #include "CameraManager.h"
 
+#include "Exceptions/Manager/Camera/CameraManagerException.h"
 #include "Factories/Camera/CameraFactory.h"
 #include "Managers/ManagerSolution.h"
 
@@ -14,7 +15,7 @@ void CameraManager::set_active_camera(size_t id)
     auto camera = std::dynamic_pointer_cast<BaseCamera>(camera_obj);
 
     if (!camera)
-        throw nullptr;
+        throw CameraManagerInvalidID();
 
     _active_camera = camera;
     _active_camera_id = id;

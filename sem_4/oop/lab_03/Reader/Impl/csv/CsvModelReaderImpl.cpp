@@ -3,6 +3,9 @@
 //
 
 #include "CsvModelReaderImpl.h"
+
+#include "Exceptions/Model/ModelException.h"
+
 #include <sstream>
 
 CsvModelReaderImpl::CsvModelReaderImpl(const std::string &filename) : BaseModelReaderImpl(filename) { }
@@ -31,7 +34,7 @@ std::shared_ptr<std::vector<Point> > CsvModelReaderImpl::read_points()
     }
 
     if (points.empty())
-        throw nullptr;
+        throw ModelInvalidPointCountException();
 
     return std::make_shared<std::vector<Point>>(points);
 }

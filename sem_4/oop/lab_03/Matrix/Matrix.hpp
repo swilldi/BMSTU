@@ -88,6 +88,7 @@ Matrix<T> &Matrix<T>::operator=(Matrix<T> &&other) noexcept
         _cols = other._cols;
         _matrix = std::move(other._matrix);
     }
+    return *this;
 }
 
 // === Информация о матрице ===

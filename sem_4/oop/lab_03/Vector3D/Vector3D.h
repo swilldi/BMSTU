@@ -30,12 +30,12 @@ public:
     void set_y(const T &value) noexcept;
     void set_z(const T &value) noexcept;
 
-    Vector3D operator+(const Vector3D &other) const;
-    Vector3D operator-(const Vector3D &other) const;
-    Vector3D operator*(const Vector3D &other) const;
+    Vector3D<T> operator+(const Vector3D &other) const noexcept;
+    Vector3D operator-(const Vector3D &other) const noexcept;
+    Vector3D operator*(const Vector3D &other) const noexcept;
 
     Vector3D operator*(const T &value) const noexcept;
-    Vector3D operator/(const T &value) const noexcept;
+    Vector3D operator/(const T &value) const;
 
     T dot(const Vector3D &other) const noexcept;
     Vector3D cross(const Vector3D &other) const noexcept;

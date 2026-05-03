@@ -13,7 +13,7 @@ RotateAction::RotateAction(const RotateData &data) : TransformAction()
     _matrix *= to_center.get_matrix();
 
     Matrix<double> rotate_matrix = create_rotation_by_x(data.get_angle_x()) *
-                                   create_rotation_by_y(data.get_center_y()) * create_rotation_by_z(
+                                   create_rotation_by_y(data.get_angle_y()) * create_rotation_by_z(
                                        data.get_angle_z());
 
     _matrix *= rotate_matrix;
@@ -31,6 +31,8 @@ Matrix<double> RotateAction::create_rotation_by_x(double angle)
     matrix[2][1] = -sin(angle);
     matrix[2][2] = cos(angle);
     matrix[3][3] = 1;
+
+    return matrix;
 }
 
 Matrix<double> RotateAction::create_rotation_by_y(double angle)

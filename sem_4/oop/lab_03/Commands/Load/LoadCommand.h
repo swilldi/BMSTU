@@ -7,7 +7,7 @@
 #include "Commands/BaseCommand.h"
 #include "ID/ID.h"
 #include "Managers/Load/LoadManager.h"
-#include <__fwd/string.h>
+#include <string>
 
 class LoadCommand : public BaseCommand
 {
@@ -20,7 +20,7 @@ public:
 class BoneLoadCommand : public LoadCommand
 {
 public:
-    BoneLoadCommand(ModelRepresentationID representation_id, const std::pmr::string &filename);
+    BoneLoadCommand(ModelRepresentationID representation_id, const std::string &filename);
     virtual ~BoneLoadCommand() override = default;
 
     void execute() override;

@@ -4,6 +4,8 @@
 
 #include "Scene.h"
 
+#include "Exceptions/Scene/SceneException.h"
+
 size_t Scene::add_component(std::shared_ptr<BaseObject> object)
 {
     _objects.insert(MapObjects::value_type(_object_count++, object));
@@ -18,7 +20,7 @@ std::shared_ptr<BaseObject> Scene::get_component(size_t id)
     }
     catch (const std::out_of_range &e)
     {
-        throw nullptr;
+        throw SceneInvalidObjectID();
     }
 }
 
@@ -34,4 +36,9 @@ std::shared_ptr<Scene> Scene::get_scene()
 
     static std::shared_ptr<Scene> scene = std::make_shared<Proxy>();
     return scene;
+}
+
+void Scene::remove_component(size_t id)
+{
+    _objects.erase(id);
 }

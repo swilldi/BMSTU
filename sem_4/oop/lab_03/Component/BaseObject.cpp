@@ -26,6 +26,8 @@ BaseObject::const_iterator BaseObject::end() const
 
 void BaseObject::add(std::shared_ptr<BaseObject> object) { }
 
+void BaseObject::remove(size_t id) noexcept { }
+
 std::shared_ptr<BaseObject> BaseObject::get_object(const size_t /*id*/) const
 {
     return nullptr;

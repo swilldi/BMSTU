@@ -6,6 +6,7 @@
 
 #include "Component/SceneObject/Model/Bone/BoneModel.h"
 #include "Component/SceneObject/Model/Structure/BaseStructure.h"
+#include "Exceptions/Builder/Model/ModelBuilderException.h"
 
 BoneModelBuilder::BoneModelBuilder(std::shared_ptr<ModelReader> reader,
                                    std::shared_ptr<BaseStructure> structure) : BaseModelBuilder(reader), _structure(structure)
@@ -74,11 +75,11 @@ bool BoneModelBuilder::build_center()
 std::shared_ptr<BaseObject> BoneModelBuilder::create_product()
 {
     if (!build_points())
-        throw nullptr;
+        throw ModelBuilderPointsException();
     if (!build_edges())
-        throw nullptr;
+        throw ModelBuilderEdgesException();
     if (!build_center())
-        throw nullptr;
+        throw ModelBuilderCenterException();
 
     return std::make_shared<BoneModel>(_structure);
 }

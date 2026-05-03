@@ -10,6 +10,7 @@
 
 
 class Facade {
+public:
     Facade() = default;
     ~Facade() = default;
 

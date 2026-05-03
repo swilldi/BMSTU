@@ -4,6 +4,8 @@
 
 #include "TxtModelReaderImpl.h"
 
+#include "Exceptions/Model/ModelException.h"
+
 TxtModelReaderImpl::TxtModelReaderImpl(const std::string &filename) : BaseModelReaderImpl(filename) { }
 
 std::shared_ptr<std::vector<Point> > TxtModelReaderImpl::read_points()
@@ -13,17 +15,17 @@ std::shared_ptr<std::vector<Point> > TxtModelReaderImpl::read_points()
 
     size_t point_count;
     if (!(_file >> point_count))
-        throw nullptr;
+        throw ModelInvalidPointCountException();
 
     if (point_count <= 0)
-        throw nullptr;
+        throw ModelInvalidPointCountException();
 
     std::vector<Point> points(point_count);
     double x, y, z;
     for (size_t i = 0; i < point_count; ++i)
     {
         if (!(_file >> x >> y >> z))
-            throw nullptr;
+            throw ModelInvalidPointException();
 
         points[i] = Point(x, y, z);
     }
@@ -38,29 +40,29 @@ std::shared_ptr<std::vector<Edge> > TxtModelReaderImpl::read_edges()
 
     size_t point_count;
     if (!(_file >> point_count))
-        throw nullptr;
+        throw ModelInvalidPointCountException();
 
     if (point_count <= 0)
-        throw nullptr;
+        throw ModelInvalidPointCountException();
 
     double x, y, z;
     for (size_t i = 0; i < point_count; ++i)
         if (!(_file >> x >> y >> z))
-            throw nullptr;
+            throw ModelInvalidPointException();
 
     size_t edge_count;
     if (!(_file >> edge_count))
-        throw nullptr;
+        throw ModelInvalidEdgeCountException();
 
     if (edge_count <= 0)
-        throw nullptr;
+        throw ModelInvalidEdgeCountException();
 
     std::vector<Edge> edges(edge_count);
     size_t id_1, id_2;
     for (size_t i = 0; i < edge_count; ++i)
     {
         if (!(_file >> id_1 >> id_2))
-            throw nullptr;
+            throw ModelInvalidEdgeException();
 
         edges[i] = Edge(id_1, id_2);
     }

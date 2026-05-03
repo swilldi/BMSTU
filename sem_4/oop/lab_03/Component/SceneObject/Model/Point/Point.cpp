@@ -9,7 +9,7 @@
 
 #define EPS 1e-9
 
-Point::Point(double x, double y, double z) : _x(x), _y(y), _z(z), _w(0) {}
+Point::Point(double x, double y, double z) noexcept: _x(x), _y(y), _z(z), _w(0) {}
 
 // === Геттеры ===
 double Point::get_x() const noexcept

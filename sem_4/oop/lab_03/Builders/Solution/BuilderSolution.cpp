@@ -5,6 +5,7 @@
 #include "BuilderSolution.h"
 
 #include "Builders/Creator/BuilderCreator.h"
+#include "Exceptions/Solution/Builder/BuilderSolutionException.h"
 
 std::shared_ptr<BaseBuilder> BuilderSolution::create(
     std::shared_ptr<ModelReader> reader, ModelRepresentationID representation_id)
@@ -13,5 +14,5 @@ std::shared_ptr<BaseBuilder> BuilderSolution::create(
     if (it != _map.end())
         return BoneBuilderCreator::create(reader, it->second());
 
-    throw nullptr;
+    throw BuilderSolutionUnknowRepresentation();
 }

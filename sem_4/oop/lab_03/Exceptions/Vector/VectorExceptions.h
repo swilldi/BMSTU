@@ -2,8 +2,8 @@
 // Created by Dmitriy Dudurev on 29.04.2026.
 //
 
-#ifndef LAB_03_VECTORECEPTIONS_H
-#define LAB_03_VECTORECEPTIONS_H
+#ifndef LAB_03_VECTOREXCEPTIONS_H
+#define LAB_03_VECTOREXCEPTIONS_H
 #include "Exceptions/BaseException.h"
 
 class VectorException : public BaseException {
@@ -16,4 +16,4 @@ public:
     VectorDivisionByZero(const location &loc = location::current()) noexcept;
 };
 
-#endif //LAB_03_VECTORECEPTIONS_H
+#endif //LAB_03_VECTOREXCEPTIONS_H

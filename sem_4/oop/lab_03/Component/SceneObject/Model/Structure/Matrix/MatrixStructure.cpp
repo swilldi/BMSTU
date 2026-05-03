@@ -4,6 +4,8 @@
 
 #include "MatrixStructure.h"
 
+#include "Exceptions/Model/ModelException.h"
+
 MatrixStructure::MatrixStructure() : _point_count(0) { }
 
 void MatrixStructure::add_point(const Point &point)
@@ -21,7 +23,7 @@ void MatrixStructure::add_edge(const Edge &edge)
 
     if (id_from >= _point_count || id_to >= _point_count)
         // TODO
-        throw nullptr;
+        throw ModelInvalidEdgeIDException();
 
     _adjacency_matrix[id_from][id_to] = true;
     _adjacency_matrix[id_to][id_from] = true;

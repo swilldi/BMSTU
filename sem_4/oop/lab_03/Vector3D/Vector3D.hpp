@@ -60,31 +60,31 @@ void Vector3D<T>::set_z(const T &value) noexcept
 }
 
 template <ConvertibleToDouble T>
-Vector3D Vector3D<T>::operator+(const Vector3D &other) const noexcept
+Vector3D<T> Vector3D<T>::operator+(const Vector3D &other) const noexcept
 {
     return Vector3D(_x + other._x(), _y + other._y(), _z + other._z());
 }
 
 template <ConvertibleToDouble T>
-Vector3D Vector3D<T>::operator-(const Vector3D &other) const noexcept
+Vector3D<T> Vector3D<T>::operator-(const Vector3D &other) const noexcept
 {
     return Vector3D(_x - other._x(), _y - other._y(), _z - other._z());
 }
 
 template <ConvertibleToDouble T>
-Vector3D Vector3D<T>::operator*(const Vector3D &other) const noexcept
+Vector3D<T> Vector3D<T>::operator*(const Vector3D &other) const noexcept
 {
     return Vector3D(_x * other._x, _y * other._y, _z * other._z);
 }
 
 template <ConvertibleToDouble T>
-Vector3D Vector3D<T>::operator*(const T &value) const noexcept
+Vector3D<T> Vector3D<T>::operator*(const T &value) const noexcept
 {
     return Vector3D(_x * value, _y * value, _z * value);
 }
 
 template <ConvertibleToDouble T>
-Vector3D Vector3D<T>::operator/(const T &value) const noexcept
+Vector3D<T> Vector3D<T>::operator/(const T &value) const
 {
     if (std::abs(value) <= 1e-6)
         throw VectorDivisionByZero();
@@ -98,7 +98,7 @@ T Vector3D<T>::dot(const Vector3D &other) const noexcept
 }
 
 template <ConvertibleToDouble T>
-Vector3D Vector3D<T>::cross(const Vector3D &other) const noexcept
+Vector3D<T> Vector3D<T>::cross(const Vector3D &other) const noexcept
 {
     return Vector3D(_y * other._z - _z * other._y, _z * other._x - _x * other._z,
                     _x * other._y - _y * other._x);
@@ -111,7 +111,7 @@ T Vector3D<T>::length() const noexcept
 }
 
 template <ConvertibleToDouble T>
-Vector3D Vector3D<T>::normalized() const
+Vector3D<T> Vector3D<T>::normalized() const
 {
     T len = length();
     if (len == 0)
