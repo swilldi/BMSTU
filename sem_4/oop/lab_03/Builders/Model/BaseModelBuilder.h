@@ -26,7 +26,7 @@ public:
     virtual bool build_edges() = 0;
     virtual bool build_center() = 0;
 
-private:
+protected:
     std::shared_ptr<ModelReader> _reader;
 };
 
