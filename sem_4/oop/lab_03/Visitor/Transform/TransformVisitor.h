@@ -15,7 +15,7 @@ public:
     virtual ~TransformVisitor() = 0;
 
     void visit(BaseCamera &camera) const override;
-    void visit(std::shared_ptr<BaseStructure> &structure) const override;
+    void visit(std::shared_ptr<BaseStructure> structure) const override;
 
 protected:
     std::shared_ptr<TransformAction> _action;

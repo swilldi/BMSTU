@@ -21,7 +21,7 @@ public:
     virtual ~DrawVisitor() override = default;
 
     void visit(BaseCamera &camera) const override;
-    void visit(std::shared_ptr<BaseStructure> &structure) const override;
+    void visit(std::shared_ptr<BaseStructure> structure) const override;
 
 private:
     std::shared_ptr<BaseDrawer> _painter;

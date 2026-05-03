@@ -16,7 +16,7 @@ public:
     virtual  ~BaseVisitor() = default;
 
     virtual void visit(BaseCamera &camera) const = 0;
-    virtual void visit(std::shared_ptr<BaseStructure> &structure) const = 0;
+    virtual void visit(std::shared_ptr<BaseStructure> structure) const = 0;
 
 };
 
