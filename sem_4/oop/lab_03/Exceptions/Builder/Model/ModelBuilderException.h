@@ -7,26 +7,26 @@
 #include "Exceptions/Builder/BaseBuilderException.h"
 
 
-class ModelBuilderException : BaseBuilderException
+class ModelBuilderException : public BaseBuilderException
 {
 public:
     ModelBuilderException(const char *info,
                           const std::source_location &loc = std::source_location::current()) noexcept;
 };
 
-class ModelBuilderPointsException : ModelBuilderException
+class ModelBuilderPointsException : public ModelBuilderException
 {
 public:
     ModelBuilderPointsException(const std::source_location &loc = std::source_location::current()) noexcept;
 };
 
-class ModelBuilderEdgesException : ModelBuilderException
+class ModelBuilderEdgesException : public ModelBuilderException
 {
 public:
     ModelBuilderEdgesException(const std::source_location &loc = std::source_location::current()) noexcept;
 };
 
-class ModelBuilderCenterException : ModelBuilderException
+class ModelBuilderCenterException : public ModelBuilderException
 {
 public:
     ModelBuilderCenterException(const std::source_location &loc = std::source_location::current()) noexcept;
