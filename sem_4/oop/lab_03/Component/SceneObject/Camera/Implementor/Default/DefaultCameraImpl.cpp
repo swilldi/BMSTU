@@ -1,15 +1,17 @@
 //
-// Created by Dmitriy Dudurev on 02.05.2026.
-//
+// Created by Dmitriy Dudurev on 05.05.2026.
 
-#include "DefaultCamera.h"
+#include "DefaultCameraImpl.h"
 
-DefaultCamera::DefaultCamera() : _viewpoint(0, 0, 500), _up(Vector3D<double>::up()),
+DefaultCameraImpl::DefaultCameraImpl() : _viewpoint(0, 0, 500), _up(Vector3D<double>::up()),
     _right(Vector3D<double>::right()), _forward(Vector3D<double>::forward()), _fov(90), _near(0.1), _far(100.0) { }
 
-DefaultCamera::DefaultCamera(const Point &point) : _viewpoint(point) { }
+DefaultCameraImpl::DefaultCameraImpl(const Point &point) : DefaultCameraImpl()
+{
+    _viewpoint = point;
+}
 
-const Matrix<double> DefaultCamera::get_look_matrix() const noexcept
+const Matrix<double> DefaultCameraImpl::get_look_matrix() const noexcept
 {
     Vector3D<double> forward = _forward.normalized();
     Vector3D<double> right = _forward.cross(_up).normalized();
@@ -36,7 +38,7 @@ const Matrix<double> DefaultCamera::get_look_matrix() const noexcept
     return look_matrix;
 }
 
-const Matrix<double> DefaultCamera::get_projection_matrix(double ratio) const
+const Matrix<double> DefaultCameraImpl::get_projection_matrix(double ratio) const
 {
     Matrix<double> projection_matrix(4, 4, 0);
 
@@ -52,12 +54,12 @@ const Matrix<double> DefaultCamera::get_projection_matrix(double ratio) const
     return projection_matrix;
 }
 
-Point DefaultCamera::get_center() const noexcept
+Point DefaultCameraImpl::get_center() const noexcept
 {
     return _viewpoint;
 }
 
-void DefaultCamera::transform(const std::shared_ptr<const TransformAction> action)
+void DefaultCameraImpl::transform(const std::shared_ptr<const TransformAction> action)
 {
     if (action->is_move_action())
     {
@@ -80,7 +82,3 @@ void DefaultCamera::transform(const std::shared_ptr<const TransformAction> actio
     }
 }
 
-void DefaultCamera::accept(std::shared_ptr<BaseVisitor> visitor)
-{
-    visitor->visit(*this);
-}

@@ -31,8 +31,16 @@ BaseObject::const_iterator Composite::end() const
 // TODO
 Point Composite::get_center() const noexcept
 {
-    // Point center = { 0, 0, 0};
-    // for (conat auto &point )
+    Point center = { 0, 0, 0};
+    double count = 0;
+
+    for (const auto& obj : *this)
+    {
+        center += obj.second->get_center();
+        ++count;
+    }
+
+    return { center.get_x() / count, center.get_y() / count, center.get_z() / count };
 }
 
 bool Composite::is_composite() const noexcept

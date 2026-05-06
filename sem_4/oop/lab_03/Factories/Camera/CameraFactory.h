@@ -6,6 +6,7 @@
 #define LAB_03_CAMERAFACTORY_H
 #include "Component/SceneObject/Camera/BaseCamera.h"
 #include "Component/SceneObject/Camera/Default/DefaultCamera.h"
+#include "Component/SceneObject/Camera/Implementor/Default/DefaultCameraImpl.h"
 #include "ID/ID.h"
 
 #include <memory>
@@ -20,7 +21,9 @@ public:
 
 private:
     const CreatorMap _map {
-        { DefaultCameraID, [](){ return std::make_shared<DefaultCamera>(); }}
+        { DefaultCameraID, []() {
+            return std::make_shared<DefaultCamera>(std::make_shared<DefaultCameraImpl>());
+        }}
     };
 };
 
