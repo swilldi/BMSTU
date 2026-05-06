@@ -6,6 +6,7 @@
 #define LAB_03_DIRECTORSOLUTION_HPP
 
 #include "Concepts/Concepts.h"
+#include "DirectorSolution.h"
 
 template <typename... SupportedArgs>
 template <Derivative<BaseDirector> Derived, typename... Args> requires
