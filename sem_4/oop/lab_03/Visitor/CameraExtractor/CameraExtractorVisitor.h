@@ -13,17 +13,13 @@ public:
     CameraExtractorVisitor() = default;
     virtual ~CameraExtractorVisitor() override = default;
 
-    void visit(std::shared_ptr<BaseCameraImpl> impl) const override
-    {
-        _impl = impl;
-    }
+    void visit(std::shared_ptr<BaseCameraImpl> impl) override;
+    void visit(std::shared_ptr<BaseModelImpl>) override;
 
-    void visit(std::shared_ptr<BaseModelImpl>) const override {}
-
-    std::shared_ptr<BaseCameraImpl> get_impl() const noexcept { return _impl; }
+    std::shared_ptr<BaseCameraImpl> get_impl() const noexcept;
 
 private:
-    mutable  std::shared_ptr<BaseCameraImpl> _impl;
+    std::shared_ptr<BaseCameraImpl> _impl;
 };
 
 #endif //LAB_03_CAMERAEXTRACTORVISITOR_H

@@ -20,8 +20,8 @@ public:
 
     virtual ~DrawVisitor() override = default;
 
-    void visit(std::shared_ptr<BaseCameraImpl> impl) const override;
-    void visit(std::shared_ptr<BaseModelImpl> impl) const override;
+    void visit(std::shared_ptr<BaseCameraImpl> impl) override;
+    void visit(std::shared_ptr<BaseModelImpl> impl) override;
 
 private:
     std::shared_ptr<BaseDrawer> _drawer;

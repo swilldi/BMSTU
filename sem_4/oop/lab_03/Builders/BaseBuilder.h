@@ -18,8 +18,8 @@ public:
     std::shared_ptr<Product> get_product();
 
 protected:
-    std::shared_ptr<Product> _product;
-    size_t _part;
+    std::shared_ptr<Product> _product{ nullptr };
+    size_t _part{ 0 };
 
     virtual std::shared_ptr<Product> create_product() = 0;
 };

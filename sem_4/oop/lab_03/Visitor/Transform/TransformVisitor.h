@@ -14,8 +14,8 @@ public:
     TransformVisitor(std::shared_ptr<TransformAction> action);
     virtual ~TransformVisitor() = 0;
 
-    void visit(std::shared_ptr<BaseCameraImpl> impl) const override;
-    void visit(std::shared_ptr<BaseModelImpl> impl) const override;
+    void visit(std::shared_ptr<BaseCameraImpl> impl) override;
+    void visit(std::shared_ptr<BaseModelImpl> impl) override;
 
 protected:
     std::shared_ptr<TransformAction> _action;

@@ -13,9 +13,9 @@ DrawVisitor::DrawVisitor(std::shared_ptr<BaseProjection> projection,
                                                                _coordinate_convert(coordinate_convert),
                                                                _drawer(drawer), _camera(camera) {}
 
-void DrawVisitor::visit(std::shared_ptr<BaseCameraImpl> /*impl*/) const { }
+void DrawVisitor::visit(std::shared_ptr<BaseCameraImpl> /*impl*/) { }
 
-void DrawVisitor::visit(std::shared_ptr<BaseModelImpl> impl) const
+void DrawVisitor::visit(std::shared_ptr<BaseModelImpl> impl)
 {
     std::vector<Point> projection;
     _projection->project(impl, _camera, projection);

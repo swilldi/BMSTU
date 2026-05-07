@@ -11,13 +11,13 @@ TransformVisitor::TransformVisitor(std::shared_ptr<TransformAction> action) : _a
 
 TransformVisitor::~TransformVisitor() {}
 
-void TransformVisitor::visit(std::shared_ptr<BaseCameraImpl> impl) const
+void TransformVisitor::visit(std::shared_ptr<BaseCameraImpl> impl)
 {
     if (_action)
         impl->transform(_action);
 }
 
-void TransformVisitor::visit(std::shared_ptr<BaseModelImpl> impl) const
+void TransformVisitor::visit(std::shared_ptr<BaseModelImpl> impl)
 {
     if (_action)
         impl->transform(_action);

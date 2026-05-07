@@ -15,8 +15,8 @@ public:
     BaseVisitor() = default;
     virtual  ~BaseVisitor() = default;
 
-    virtual void visit(std::shared_ptr<BaseCameraImpl> impl) const = 0;
-    virtual void visit(std::shared_ptr<BaseModelImpl> impl) const = 0;
+    virtual void visit(std::shared_ptr<BaseCameraImpl> impl) = 0;
+    virtual void visit(std::shared_ptr<BaseModelImpl> impl) = 0;
 
 };
 

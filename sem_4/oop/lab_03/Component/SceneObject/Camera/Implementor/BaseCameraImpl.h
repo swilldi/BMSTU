@@ -5,7 +5,6 @@
 #ifndef LAB_03_BASECAMERAIMPL_H
 #define LAB_03_BASECAMERAIMPL_H
 #include "Transform/Action/TransformAction.h"
-#include "Visitor/BaseVisitor.h"
 
 class BaseCameraImpl
 {
