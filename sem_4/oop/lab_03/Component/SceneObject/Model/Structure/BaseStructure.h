@@ -9,11 +9,11 @@
 #include "Component/SceneObject/Model/Edge/Edge.h"
 #include "Transform/Action/TransformAction.h"
 
-class BaseStructure
+class BaseModelImpl
 {
 public:
-    BaseStructure() = default;
-    virtual ~BaseStructure() = default;
+    BaseModelImpl() = default;
+    virtual ~BaseModelImpl() = default;
 
     virtual void add_point(const Point& point) = 0;
     virtual void add_edge(const Edge& edge) = 0;

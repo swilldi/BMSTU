@@ -6,11 +6,11 @@
 #define LAB_03_LISTSTRUCTURE_H
 #include "Component/SceneObject/Model/Structure/BaseStructure.h"
 
-class ListStructure final : public BaseStructure
+class ListModelImpl final : public BaseModelImpl
 {
 public:
-    ListStructure();
-    virtual ~ListStructure() override = default;
+    ListModelImpl();
+    virtual ~ListModelImpl() override = default;
 
     void add_point(const Point &point) override;
     void add_edge(const Edge &edge) override;

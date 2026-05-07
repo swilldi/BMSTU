@@ -5,8 +5,8 @@
 #ifndef LAB_03_BASEREMOVEINVISIABLEEDGE_H
 #define LAB_03_BASEREMOVEINVISIABLEEDGE_H
 
-#include "Component/SceneObject/Model/BaseModel.h"
-#include "Component/SceneObject/Camera/BaseCamera.h"
+#include "Component/SceneObject/Camera/Implementor/BaseCameraImpl.h"
+#include "Component/SceneObject/Model/Edge/Edge.h"
 #include "Component/SceneObject/Model/Point/Point.h"
 
 class BaseRemoveInvisibleEdge
@@ -18,7 +18,7 @@ public:
     virtual ~BaseRemoveInvisibleEdge() = default;
 
     virtual void prepare(const std::vector<Point> &points, const std::vector<Edge> &edges,
-        std::shared_ptr<const BaseCamera> camera, std::vector<Edge2D> &visible_edges) = 0;
+        std::shared_ptr<const BaseCameraImpl> camera, std::vector<Edge2D> &visible_edges) = 0;
 
 protected:
     struct Face

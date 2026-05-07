@@ -4,8 +4,8 @@
 
 #include "DefaultProjection.h"
 
-void DefaultProjection::project(std::shared_ptr<const BaseStructure> structure,
-                                std::shared_ptr<BaseCamera> camera, std::vector<Point> &projected)
+void DefaultProjection::project(std::shared_ptr<const BaseModelImpl> structure,
+                                std::shared_ptr<BaseCameraImpl> camera, std::vector<Point> &projected)
 {
     projected.clear();
 

@@ -14,7 +14,7 @@ public:
     virtual ~RayCastingRemoveInvisibleEdge() override = default;
 
     void prepare(const std::vector<Point> &points, const std::vector<Edge> &edges,
-        std::shared_ptr<const BaseCamera> camera, std::vector<Edge2D> &visible_edges) override;
+        std::shared_ptr<const BaseCameraImpl> camera, std::vector<Edge2D> &visible_edges) override;
 
 private:
     std::vector<Face> _faces;

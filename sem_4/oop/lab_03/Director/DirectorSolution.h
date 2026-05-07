@@ -18,21 +18,21 @@ public:
 
     ~DirectorSolution() = default;
 
-    template <Derivative<BaseDirector> Derived, typename... Args> requires
+    template <Derivative<BaseModelDirector> Derived, typename... Args> requires
         (IsSupportedArgs<Args, SupportedArgs...> && ...) && ConstructableWith<Derived, Args...>
     void registrate(size_t id);
 
     template <typename ... Args> requires (IsSupportedArgs<Args, SupportedArgs...> && ...)
-    std::unique_ptr<BaseDirector> create(size_t id, Args && ...);
+    std::unique_ptr<BaseModelDirector> create(size_t id, Args && ...);
 
 private:
-    using CreatorFunction = std::function<std::unique_ptr<BaseDirector>(
+    using CreatorFunction = std::function<std::unique_ptr<BaseModelDirector>(
         const std::tuple<SupportedArgs...> &)>;
     std::map<size_t, CreatorFunction> _creators;
 };
 
 #include "DirectorSolution.hpp"
 
-using BaseDirectorSolution = DirectorSolution<std::shared_ptr<BaseBuilder>>;
+using BaseDirectorSolution = DirectorSolution<std::shared_ptr<BaseBuilder<BaseModelImpl>>>;
 
 #endif //LAB_03_DIRECTORSOLUTION_H

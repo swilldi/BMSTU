@@ -9,7 +9,11 @@
 
 class Scene {
 public:
+    using ObjectId = MapObjects::key_type;
+    using ObjectPtr = MapObjects::mapped_type;
+    using Size = MapObjects::size_type;
     using iterator = MapObjects::iterator;
+    using const_iterator = MapObjects::const_iterator;
 
     Scene(const Scene &other) = delete;
     Scene(Scene &&other) = delete;
@@ -20,18 +24,21 @@ public:
 
     iterator begin();
     iterator end();
+    const_iterator begin() const;
+    const_iterator end() const;
 
-    size_t add_component(std::shared_ptr<BaseObject> object);
-    std::shared_ptr<BaseObject> get_component(size_t id);
-    void remove_component(size_t id);
+    ObjectId add_component(ObjectPtr object);
+    iterator get_component(ObjectId id);
+    const_iterator get_component(ObjectId id) const;
+    void remove_component(ObjectId id);
 
     void accept(std::shared_ptr<BaseVisitor> visitor);
 
 private:
-    size_t _object_count;
+    ObjectId _object_count;
     MapObjects _objects;
 
-    Scene() = default;
+    Scene();
 };
 
 

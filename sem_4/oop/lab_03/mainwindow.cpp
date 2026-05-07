@@ -6,8 +6,8 @@
 #include "Commands/Model/ModelCommand.h"
 #include "Commands/Scene/SceneCommand.h"
 #include "Exceptions/BaseException.h"
+#include "Factories/Draw/Creators/DrawerCreator.h"
 #include "Factories/Draw/DrawSolution.hpp"
-#include "Factories/Draw/QtDraw/QtDrawFactory.h"
 #include "ID/ID.h"
 #include "Managers/ManagerSolution.h"
 
@@ -100,9 +100,9 @@ void MainWindow::create_scene()
     ui->graphicsView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     ui->graphicsView->setScene(_scene.get());
 
-    std::unique_ptr<BaseDrawer> drawer = DrawSolution::create_drawer<QtDrawFactory>(_scene);
+    auto drawer = DrawSolution::create_drawer<QtDrawerCreator>(_scene);
     auto draw_manager = ManagerSolution::get_draw_manager();
-    draw_manager->set_drawer(std::shared_ptr<BaseDrawer>(std::move(drawer)));
+    draw_manager->set_drawer(drawer);
 }
 
 void MainWindow::insert_row(size_t obj_id, const QString &name, const Point &center, const QString &type)

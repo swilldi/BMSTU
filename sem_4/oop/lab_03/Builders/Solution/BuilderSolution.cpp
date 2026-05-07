@@ -7,12 +7,11 @@
 #include "Builders/Creator/BuilderCreator.h"
 #include "Exceptions/Solution/Builder/BuilderSolutionException.h"
 
-std::shared_ptr<BaseBuilder> BuilderSolution::create(
+std::shared_ptr<BaseBuilder<BaseModelImpl>> BuilderSolution::create(
     std::shared_ptr<ModelReader> reader, ModelRepresentationID representation_id)
 {
-    auto it = _map.find(representation_id);
-    if (it != _map.end())
-        return BoneBuilderCreator::create(reader, it->second());
+    if (representation_id == ListRepresentationID || representation_id == MatrixRepresentationID)
+        return BoneBuilderCreator::create(reader);
 
     throw BuilderSolutionUnknowRepresentation();
 }

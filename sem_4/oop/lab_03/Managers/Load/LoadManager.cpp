@@ -12,7 +12,7 @@
 LoadManager::LoadManager()
 {
     _director_solution = std::make_shared<BaseDirectorSolution>();
-    _director_solution->registrate<BoneDirector, std::shared_ptr<BaseBuilder>>(DirectorID::BoneDirectorID);
+    _director_solution->registrate<BoneDirector, std::shared_ptr<BaseBuilder<BaseModelImpl>>>(DirectorID::BoneDirectorID);
 }
 
 void LoadManager::load(ModelRepresentationID representation_id, const std::string &filename)

@@ -4,8 +4,10 @@
 
 #include "RayCastingRemoveInvisibleEdge.h"
 
+#include <map>
+
 void RayCastingRemoveInvisibleEdge::prepare(const std::vector<Point> &points, const std::vector<Edge> &edges,
-                                            std::shared_ptr<const BaseCamera> camera,
+                                            std::shared_ptr<const BaseCameraImpl> camera,
                                             std::vector<Edge2D> &visible_edges)
 {
     find_faces(points, edges);

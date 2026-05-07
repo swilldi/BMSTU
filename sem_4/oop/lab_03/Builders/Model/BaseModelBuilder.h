@@ -6,9 +6,10 @@
 #define LAB_03_BASEMODELBUILDER_H
 
 #include "Builders/BaseBuilder.h"
+#include "Component/SceneObject/Model/Structure/BaseStructure.h"
 #include "Reader/ModelReader.h"
 
-class BaseModelBuilder : public BaseBuilder
+class BaseModelBuilder : public BaseBuilder<BaseModelImpl>
 {
 public:
     enum Part : size_t

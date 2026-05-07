@@ -12,7 +12,7 @@ public:
     DefaultProjection() = default;
     virtual ~DefaultProjection() override = default;
 
-    void project(std::shared_ptr<const BaseStructure> structure, std::shared_ptr<BaseCamera> camera,
+    void project(std::shared_ptr<const BaseModelImpl> structure, std::shared_ptr<BaseCameraImpl> camera,
                  std::vector<Point> &projected) override;
 };
 

@@ -4,7 +4,7 @@
 
 #ifndef LAB_03_BASEPROJECTION_H
 #define LAB_03_BASEPROJECTION_H
-#include "Component/SceneObject/Camera/BaseCamera.h"
+#include "Component/SceneObject/Camera/Implementor/BaseCameraImpl.h"
 #include "Component/SceneObject/Model/Structure/BaseStructure.h"
 
 #include <memory>
@@ -15,7 +15,7 @@ public:
     BaseProjection() = default;
     virtual ~BaseProjection() = default;
 
-    virtual void project(std::shared_ptr<const BaseStructure> structure, std::shared_ptr<BaseCamera> camera,
+    virtual void project(std::shared_ptr<const BaseModelImpl> structure, std::shared_ptr<BaseCameraImpl> camera,
         std::vector<Point> &projected) = 0;
 
 };

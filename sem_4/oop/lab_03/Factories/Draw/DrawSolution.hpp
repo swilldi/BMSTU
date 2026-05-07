@@ -5,13 +5,13 @@
 #ifndef LAB_03_DRAWSOLUTION_HPP
 #define LAB_03_DRAWSOLUTION_HPP
 #include "DrawSolution.h"
-#include "BaseDrawFactory.h"
 
-template <typename Factory, typename Scene>
-std::unique_ptr<BaseDrawer> DrawSolution::create_drawer(std::shared_ptr<Scene> scene)
+#include <utility>
+
+template <typename Creator, typename ... Args>
+std::shared_ptr<BaseDrawer> DrawSolution::create_drawer(Args && ... args)
 {
-    std::shared_ptr<BaseDrawFactory> factory = std::make_shared<Factory>(scene);
-    return factory->create_drawer();
+    return Creator::create(std::forward<Args>(args)...);
 }
 
 #endif //LAB_03_DRAWSOLUTION_HPP

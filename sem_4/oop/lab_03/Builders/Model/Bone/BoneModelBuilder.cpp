@@ -4,12 +4,10 @@
 
 #include "BoneModelBuilder.h"
 
-#include "Component/SceneObject/Model/Bone/BoneModel.h"
-#include "Component/SceneObject/Model/Structure/BaseStructure.h"
 #include "Exceptions/Builder/Model/ModelBuilderException.h"
 
-BoneModelBuilder::BoneModelBuilder(std::shared_ptr<ModelReader> reader,
-                                   std::shared_ptr<BaseStructure> structure) : BaseModelBuilder(reader), _structure(structure)
+BoneModelBuilder::BoneModelBuilder(std::shared_ptr<ModelReader> reader)
+    : BaseModelBuilder(reader), _impl(std::make_shared<ListModelImpl>())
 {
     _part = 0;
 }
@@ -21,7 +19,7 @@ bool BoneModelBuilder::build_points()
 
     auto points = _reader->read_points();
     for (const auto &point : *points)
-        _structure->add_point(point);
+        _impl->add_point(point);
 
     ++_part;
     return true;
@@ -34,7 +32,7 @@ bool BoneModelBuilder::build_edges()
 
     auto edges = _reader->read_edges();
     for (const auto &edge : *edges)
-        _structure->add_edge(edge);
+        _impl->add_edge(edge);
 
     ++_part;
     return true;
@@ -45,7 +43,7 @@ bool BoneModelBuilder::build_center()
     if (_part != CENTER)
         return false;
 
-    const auto &points = _structure->get_points();
+    const auto &points = _impl->get_points();
     double x_min = points[0].get_x(), x_max = points[0].get_x(),
            y_min = points[0].get_y(), y_max = points[0].get_y(),
            z_min = points[0].get_z(), z_max = points[0].get_z();
@@ -66,20 +64,13 @@ bool BoneModelBuilder::build_center()
            cy = (y_min + y_max) / 2,
            cz = (z_min + z_max) / 2;
 
-    _structure->set_center({ cx, cy, cz });
+    _impl->set_center({ cx, cy, cz });
 
     _part = POINTS;
     return true;
 }
 
-std::shared_ptr<BaseObject> BoneModelBuilder::create_product()
+std::shared_ptr<BaseModelImpl> BoneModelBuilder::create_product()
 {
-    if (!build_points())
-        throw ModelBuilderPointsException();
-    if (!build_edges())
-        throw ModelBuilderEdgesException();
-    if (!build_center())
-        throw ModelBuilderCenterException();
-
-    return std::make_shared<BoneModel>(_structure);
+    return _impl;
 }

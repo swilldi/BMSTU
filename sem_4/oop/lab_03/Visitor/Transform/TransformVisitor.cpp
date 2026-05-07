@@ -4,21 +4,21 @@
 
 #include "TransformVisitor.h"
 
-#include "Component/SceneObject/Camera/BaseCamera.h"
+#include "Component/SceneObject/Camera/Implementor/BaseCameraImpl.h"
 #include "Component/SceneObject/Model/Structure/BaseStructure.h"
 
 TransformVisitor::TransformVisitor(std::shared_ptr<TransformAction> action) : _action(action) {}
 
 TransformVisitor::~TransformVisitor() {}
 
-void TransformVisitor::visit(BaseCamera &camera) const
+void TransformVisitor::visit(std::shared_ptr<BaseCameraImpl> impl) const
 {
     if (_action)
-        camera.transform(_action);
+        impl->transform(_action);
 }
 
-void TransformVisitor::visit(std::shared_ptr<BaseStructure> structure) const
+void TransformVisitor::visit(std::shared_ptr<BaseModelImpl> impl) const
 {
     if (_action)
-        structure->transform(_action);
+        impl->transform(_action);
 }

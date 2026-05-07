@@ -5,13 +5,14 @@
 #ifndef LAB_03_BONEMODELBUILDER_H
 #define LAB_03_BONEMODELBUILDER_H
 #include "Builders/Model/BaseModelBuilder.h"
+#include "Component/SceneObject/Model/Structure/List/ListStructure.h"
 
 
 class BoneModelBuilder : public BaseModelBuilder
 {
 public:
     BoneModelBuilder() = delete;
-    BoneModelBuilder(std::shared_ptr<ModelReader> reader, std::shared_ptr<BaseStructure> structure);
+    explicit BoneModelBuilder(std::shared_ptr<ModelReader> reader);
 
     virtual ~BoneModelBuilder() override = default;
 
@@ -19,10 +20,10 @@ public:
     bool build_edges() override;
     bool build_center() override;
 
-    std::shared_ptr<BaseObject> create_product() override;
+    std::shared_ptr<BaseModelImpl> create_product() override;
 
 private:
-    std::shared_ptr<BaseStructure> _structure;
+    std::shared_ptr<BaseModelImpl> _impl;
 };
 
 

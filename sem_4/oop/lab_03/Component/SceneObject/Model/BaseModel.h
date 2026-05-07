@@ -13,16 +13,14 @@ class BaseModel : public SceneObject
 public:
     BaseModel() = default;
 
-    explicit BaseModel(std::shared_ptr<BaseStructure> structure) : _structure(structure) {}
+    explicit BaseModel(std::shared_ptr<BaseModelImpl> impl) : _impl(impl) {}
 
     virtual ~BaseModel() override = default;
-
-    virtual std::shared_ptr<BaseStructure> get_structure() const = 0;
 
     bool is_visible() const noexcept override { return true; }
 
 protected:
-    std::shared_ptr<BaseStructure> _structure;
+    std::shared_ptr<BaseModelImpl> _impl;
 };
 
 #endif //LAB_03_BASEMODEL_H

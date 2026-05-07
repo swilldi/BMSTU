@@ -4,23 +4,26 @@
 
 #ifndef LAB_03_BASEBUILDER_H
 #define LAB_03_BASEBUILDER_H
-#include "Component/BaseObject.h"
 
+#include <cstddef>
 #include <memory>
+
+template <typename Product>
 class BaseBuilder
 {
 public:
     BaseBuilder() = default;
     virtual ~BaseBuilder() = default;
 
-    std::shared_ptr<BaseObject> get_product();
+    std::shared_ptr<Product> get_product();
 
 protected:
-    std::shared_ptr<BaseObject> _product;
+    std::shared_ptr<Product> _product;
     size_t _part;
 
-    virtual std::shared_ptr<BaseObject> create_product() = 0;
+    virtual std::shared_ptr<Product> create_product() = 0;
 };
 
+#include "BaseBuilder.hpp"
 
 #endif //LAB_03_BASEBUILDER_H

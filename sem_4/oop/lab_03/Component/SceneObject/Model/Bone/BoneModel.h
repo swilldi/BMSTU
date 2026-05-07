@@ -12,12 +12,10 @@ class BoneModel final : public BaseModel
 {
 public:
     BoneModel() = default;
-    explicit BoneModel(std::shared_ptr<BaseStructure> structure);
-
+    explicit BoneModel(std::shared_ptr<BaseModelImpl> impl);
     virtual ~BoneModel() override = default;
 
     Point get_center() const noexcept override;
-    std::shared_ptr<BaseStructure> get_structure() const override;
 
     void accept(std::shared_ptr<BaseVisitor> visitor) override;
 };

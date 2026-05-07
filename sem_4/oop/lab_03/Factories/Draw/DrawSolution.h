@@ -6,11 +6,13 @@
 #define LAB_03_DRAWSOLUTION_H
 #include "Products/BaseDrawer.h"
 
+#include <memory>
+
 class DrawSolution
 {
 public:
-    template <typename Factory, typename Scene>
-    static std::unique_ptr<BaseDrawer> create_drawer(std::shared_ptr<Scene> scene);
+    template <typename Creator, typename ... Args>
+    static std::shared_ptr<BaseDrawer> create_drawer(Args && ... args);
 };
 
 #endif //LAB_03_DRAWSOLUTION_H

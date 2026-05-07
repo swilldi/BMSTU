@@ -10,7 +10,7 @@ SceneManager::SceneManager() : _scene(Scene::get_scene()) {}
 
 std::shared_ptr<BaseObject> SceneManager::get_object(size_t id)
 {
-    return _scene->get_component(id);
+    return _scene->get_component(id)->second;
 }
 
 void SceneManager::add_object(std::shared_ptr<BaseObject> object)
@@ -25,7 +25,7 @@ void SceneManager::remove_object(size_t id)
 
 void SceneManager::get_center(size_t id, Point &center) const
 {
-    auto object = _scene->get_component(id);
+    auto object = _scene->get_component(id)->second;
     center = object->get_center();
 }
 
@@ -34,7 +34,7 @@ void SceneManager::compose(std::vector<size_t> ids)
     auto composite = std::make_shared<Composite>();
 
     for (const size_t &id : ids)
-        composite->add(_scene->get_component(id));
+        composite->add(_scene->get_component(id)->second);
 
     _scene->add_component(composite);
 }

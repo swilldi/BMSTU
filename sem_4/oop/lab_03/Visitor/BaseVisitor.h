@@ -6,8 +6,8 @@
 #define LAB_03_BASEVISITOR_H
 #include <memory>
 
-class BaseCamera;
-class BaseStructure;
+class BaseCameraImpl;
+class BaseModelImpl;
 
 class BaseVisitor
 {
@@ -15,8 +15,8 @@ public:
     BaseVisitor() = default;
     virtual  ~BaseVisitor() = default;
 
-    virtual void visit(BaseCamera &camera) const = 0;
-    virtual void visit(std::shared_ptr<BaseStructure> structure) const = 0;
+    virtual void visit(std::shared_ptr<BaseCameraImpl> impl) const = 0;
+    virtual void visit(std::shared_ptr<BaseModelImpl> impl) const = 0;
 
 };
 

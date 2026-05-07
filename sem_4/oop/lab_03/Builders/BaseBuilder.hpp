@@ -4,7 +4,8 @@
 
 #include "BaseBuilder.h"
 
-std::shared_ptr<BaseObject> BaseBuilder::get_product()
+template <typename Product>
+std::shared_ptr<Product> BaseBuilder<Product>::get_product()
 {
     if (!_product)
         _product = create_product();

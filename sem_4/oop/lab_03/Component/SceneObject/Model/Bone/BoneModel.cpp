@@ -4,19 +4,14 @@
 
 #include "BoneModel.h"
 
-BoneModel::BoneModel(std::shared_ptr<BaseStructure> structure) : BaseModel(structure) { }
+BoneModel::BoneModel(std::shared_ptr<BaseModelImpl> impl) : BaseModel(impl) { }
 
 Point BoneModel::get_center() const noexcept
 {
-    return _structure->get_center();
-}
-
-std::shared_ptr<BaseStructure> BoneModel::get_structure() const
-{
-    return _structure;
+    return _impl->get_center();
 }
 
 void BoneModel::accept(std::shared_ptr<BaseVisitor> visitor)
 {
-    visitor->visit(get_structure());
+    visitor->visit(_impl);
 }

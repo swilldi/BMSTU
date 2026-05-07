@@ -6,11 +6,11 @@
 #define LAB_03_MATRIXSTRUCTURE_H
 #include "Component/SceneObject/Model/Structure/BaseStructure.h"
 
-class MatrixStructure : public BaseStructure
+class MatrixModelImpl : public BaseModelImpl
 {
 public:
-    MatrixStructure();
-    virtual ~MatrixStructure() override = default;
+    MatrixModelImpl();
+    virtual ~MatrixModelImpl() override = default;
 
     void add_point(const Point &point) override;
     void add_edge(const Edge &edge) override;
