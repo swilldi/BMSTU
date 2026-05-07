@@ -6,7 +6,7 @@
 #define LAB_03_BUILDERCREATOR_H
 
 #include "Builders/BaseBuilder.h"
-#include "Builders/Model/Bone/BoneModelBuilder.h"
+#include "Builders/Model/ModelBuilder.h"
 #include "Concepts/Concepts.h"
 
 #include <memory>
@@ -27,5 +27,8 @@ public:
 
 using BoneBuilderCreator =
     BuilderCreator<BaseBuilder<BaseModelImpl>, BoneModelBuilder, std::shared_ptr<ModelReader>>;
+
+using MatrixBuilderCreator =
+    BuilderCreator<BaseBuilder<BaseModelImpl>, MatrixModelBuilder, std::shared_ptr<ModelReader>>;
 
 #endif //LAB_03_BUILDERCREATOR_H

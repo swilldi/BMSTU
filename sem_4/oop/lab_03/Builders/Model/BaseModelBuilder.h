@@ -6,7 +6,7 @@
 #define LAB_03_BASEMODELBUILDER_H
 
 #include "Builders/BaseBuilder.h"
-#include "Component/SceneObject/Model/Structure/BaseStructure.h"
+#include "../../Component/SceneObject/Model/Implementor/BaseModelImpl.h"
 #include "Reader/ModelReader.h"
 
 class BaseModelBuilder : public BaseBuilder<BaseModelImpl>

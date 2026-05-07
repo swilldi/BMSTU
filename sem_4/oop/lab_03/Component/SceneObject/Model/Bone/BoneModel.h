@@ -6,7 +6,7 @@
 #define LAB_03_BONEMODEL_H
 
 #include "Component/SceneObject/Model/BaseModel.h"
-#include "Component/SceneObject/Model/Structure/BaseStructure.h"
+#include "../Implementor/BaseModelImpl.h"
 
 class BoneModel final : public BaseModel
 {

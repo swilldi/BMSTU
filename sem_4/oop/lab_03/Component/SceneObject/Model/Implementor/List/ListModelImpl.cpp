@@ -2,7 +2,7 @@
 // Created by Dmitriy Dudurev on 01.05.2026.
 //
 
-#include "ListStructure.h"
+#include "ListModelImpl.h"
 
 
 ListModelImpl::ListModelImpl() : _points(std::vector<Point>()), _edges(std::vector<Edge>()) { }

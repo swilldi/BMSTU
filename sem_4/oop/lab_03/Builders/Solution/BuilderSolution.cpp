@@ -10,8 +10,10 @@
 std::shared_ptr<BaseBuilder<BaseModelImpl>> BuilderSolution::create(
     std::shared_ptr<ModelReader> reader, ModelRepresentationID representation_id)
 {
-    if (representation_id == ListRepresentationID || representation_id == MatrixRepresentationID)
+    if (representation_id == ListRepresentationID)
         return BoneBuilderCreator::create(reader);
+    if (representation_id == MatrixRepresentationID)
+        return MatrixBuilderCreator::create(reader);
 
     throw BuilderSolutionUnknowRepresentation();
 }

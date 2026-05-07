@@ -5,7 +5,7 @@
 #ifndef LAB_03_BASEPROJECTION_H
 #define LAB_03_BASEPROJECTION_H
 #include "Component/SceneObject/Camera/Implementor/BaseCameraImpl.h"
-#include "Component/SceneObject/Model/Structure/BaseStructure.h"
+#include "../../Component/SceneObject/Model/Implementor/BaseModelImpl.h"
 
 #include <memory>
 

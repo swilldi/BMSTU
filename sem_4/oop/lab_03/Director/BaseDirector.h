@@ -6,7 +6,7 @@
 #define LAB_03_BASEDIRECTOR_H
 #include "Builders/BaseBuilder.h"
 #include "Component/BaseObject.h"
-#include "Component/SceneObject/Model/Structure/BaseStructure.h"
+#include "../Component/SceneObject/Model/Implementor/BaseModelImpl.h"
 
 #include <memory>
 

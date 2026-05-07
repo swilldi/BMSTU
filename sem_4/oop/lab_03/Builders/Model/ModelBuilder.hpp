@@ -1,18 +1,18 @@
 //
-// Created by Dmitriy Dudurev on 03.05.2026.
+// Created by Dmitriy Dudurev on 07.05.2026.
 //
 
-#include "BoneModelBuilder.h"
+#include "Concepts/Concepts.h"
+#include "ModelBuilder.h"
 
-#include "Exceptions/Builder/Model/ModelBuilderException.h"
-
-BoneModelBuilder::BoneModelBuilder(std::shared_ptr<ModelReader> reader)
-    : BaseModelBuilder(reader), _impl(std::make_shared<ListModelImpl>())
+template <Derivative<BaseModelImpl> Impl>
+ModelBuilder<Impl>::ModelBuilder(std::shared_ptr<ModelReader> reader)
+    : BaseModelBuilder(reader), _impl(std::make_shared<Impl>())
 {
-    _part = 0;
 }
 
-bool BoneModelBuilder::build_points()
+template <Derivative<BaseModelImpl> Impl>
+bool ModelBuilder<Impl>::build_points()
 {
     if (_part != POINTS)
         return false;
@@ -25,7 +25,8 @@ bool BoneModelBuilder::build_points()
     return true;
 }
 
-bool BoneModelBuilder::build_edges()
+template <Derivative<BaseModelImpl> Impl>
+bool ModelBuilder<Impl>::build_edges()
 {
     if (_part != EDGES)
         return false;
@@ -38,7 +39,8 @@ bool BoneModelBuilder::build_edges()
     return true;
 }
 
-bool BoneModelBuilder::build_center()
+template <Derivative<BaseModelImpl> Impl>
+bool ModelBuilder<Impl>::build_center()
 {
     if (_part != CENTER)
         return false;
@@ -70,7 +72,8 @@ bool BoneModelBuilder::build_center()
     return true;
 }
 
-std::shared_ptr<BaseModelImpl> BoneModelBuilder::create_product()
+template <Derivative<BaseModelImpl> Impl>
+std::shared_ptr<BaseModelImpl> ModelBuilder<Impl>::create_product()
 {
     return _impl;
 }

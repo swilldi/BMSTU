@@ -5,7 +5,7 @@
 #include "TransformVisitor.h"
 
 #include "Component/SceneObject/Camera/Implementor/BaseCameraImpl.h"
-#include "Component/SceneObject/Model/Structure/BaseStructure.h"
+#include "../../Component/SceneObject/Model/Implementor/BaseModelImpl.h"
 
 TransformVisitor::TransformVisitor(std::shared_ptr<TransformAction> action) : _action(action) {}
 
