@@ -15,10 +15,6 @@ public:
     explicit DefaultCamera(std::shared_ptr<BaseCameraImpl> impl);
     ~DefaultCamera() override = default;
 
-    // const Matrix<double> get_look_matrix() const noexcept override;
-    // const Matrix<double> get_projection_matrix(double ratio) const override
-    // void transform(const std::shared_ptr<const TransformAction> action) override;
-
     Point get_center() const noexcept override;
     void accept(std::shared_ptr<BaseVisitor> visitor) override;
 

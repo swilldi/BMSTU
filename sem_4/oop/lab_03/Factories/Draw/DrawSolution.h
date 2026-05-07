@@ -15,4 +15,6 @@ public:
     static std::shared_ptr<BaseDrawer> create_drawer(Args && ... args);
 };
 
+#include "DrawSolution.hpp"
+
 #endif //LAB_03_DRAWSOLUTION_H

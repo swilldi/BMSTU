@@ -31,7 +31,7 @@ public:
 
 private:
     MapObjects _objects;
-    size_t _count;
+    size_t _count{ 0 };
 };
 
 #endif //LAB_03_COMPOSITE_H
