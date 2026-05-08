@@ -6,12 +6,12 @@
 #define LAB_03_BONEMODEL_H
 
 #include "Component/SceneObject/Model/BaseModel.h"
-#include "../Implementor/BaseModelImpl.h"
+#include "Component/SceneObject/Model/Implementor/BaseModelImpl.h"
 
 class BoneModel final : public BaseModel
 {
 public:
-    BoneModel() = default;
+    BoneModel() = delete;
     explicit BoneModel(std::shared_ptr<BaseModelImpl> impl);
     virtual ~BoneModel() override = default;
 
