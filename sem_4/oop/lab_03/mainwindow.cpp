@@ -7,7 +7,6 @@
 #include "Commands/Scene/SceneCommand.h"
 #include "Exceptions/BaseException.h"
 #include "Factories/Draw/Creators/DrawerCreator.h"
-#include "Factories/Draw/DrawSolution.hpp"
 #include "ID/ID.h"
 #include "Managers/ManagerSolution.h"
 
@@ -100,7 +99,7 @@ void MainWindow::create_scene()
     ui->graphicsView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     ui->graphicsView->setScene(_scene.get());
 
-    auto drawer = DrawSolution::create_drawer<QtDrawerCreator>(_scene);
+    auto drawer = QtDrawerCreator::create(_scene);
     auto draw_manager = ManagerSolution::get_draw_manager();
     draw_manager->set_drawer(drawer);
 }
