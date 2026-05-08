@@ -7,7 +7,7 @@
 #include "Builders/Creator/BuilderCreator.h"
 #include "Exceptions/Solution/Builder/BuilderSolutionException.h"
 
-std::shared_ptr<BaseBuilder<BaseModelImpl>> BuilderSolution::create(
+std::shared_ptr<BaseModelBuilder> BuilderSolution::create(
     std::shared_ptr<ModelReader> reader, ModelRepresentationID representation_id)
 {
     if (representation_id == ListRepresentationID)

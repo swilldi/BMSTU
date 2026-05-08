@@ -27,9 +27,9 @@ public:
 #include "BuilderCreator.hpp"
 
 using BoneBuilderCreator =
-    BuilderCreator<BaseBuilder<BaseModelImpl>, ListBoneModelBuilder, std::shared_ptr<ModelReader>>;
+    BuilderCreator<BaseModelBuilder, ListBoneModelBuilder, std::shared_ptr<ModelReader>>;
 
 using MatrixBuilderCreator =
-    BuilderCreator<BaseBuilder<BaseModelImpl>, MatrixBoneModelBuilder, std::shared_ptr<ModelReader>>;
+    BuilderCreator<BaseModelBuilder, MatrixBoneModelBuilder, std::shared_ptr<ModelReader>>;
 
 #endif //LAB_03_BUILDERCREATOR_H

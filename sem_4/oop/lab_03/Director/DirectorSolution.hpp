@@ -9,7 +9,7 @@
 #include "DirectorSolution.h"
 
 template <typename... SupportedArgs>
-template <Derivative<BaseModelDirector> Derived, typename... Args> requires
+template <Derivative<BaseDirector> Derived, typename... Args> requires
     (IsSupportedArgs<Args, SupportedArgs...> && ...) && ConstructableWith<Derived, Args...>
 void DirectorSolution<SupportedArgs...>::registrate(size_t id)
 {
@@ -22,7 +22,7 @@ void DirectorSolution<SupportedArgs...>::registrate(size_t id)
 template <typename... SupportedArgs>
 template <typename... Args>
     requires(IsSupportedArgs<Args, SupportedArgs...> && ...)
-std::unique_ptr<BaseModelDirector> DirectorSolution<SupportedArgs...>::create(size_t id, Args &&...args)
+std::unique_ptr<BaseDirector> DirectorSolution<SupportedArgs...>::create(size_t id, Args &&...args)
 {
     auto it = _creators.find(id);
     if (it != _creators.end())

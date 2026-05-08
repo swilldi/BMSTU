@@ -6,7 +6,7 @@
 #define LAB_03_MODELDIRECTOR_H
 #include "Director/BaseDirector.h"
 
-class ModelDirector : public BaseModelDirector
+class ModelDirector : public BaseDirector
 {
 public:
     ModelDirector() = default;

@@ -4,8 +4,7 @@
 
 #ifndef LAB_03_BUILDERSOLUTION_H
 #define LAB_03_BUILDERSOLUTION_H
-#include "Builders/BaseBuilder.h"
-#include "../../Component/SceneObject/Model/Implementor/BaseModelImpl.h"
+#include "Builders/Model/BaseModelBuilder.h"
 #include "ID/ID.h"
 #include "Reader/ModelReader.h"
 
@@ -18,7 +17,7 @@ public:
     BuilderSolution() = default;
     ~BuilderSolution() = default;
 
-    std::shared_ptr<BaseBuilder<BaseModelImpl>> create(std::shared_ptr<ModelReader> reader, ModelRepresentationID representation_id);
+    std::shared_ptr<BaseModelBuilder> create(std::shared_ptr<ModelReader> reader, ModelRepresentationID representation_id);
 };
 
 
