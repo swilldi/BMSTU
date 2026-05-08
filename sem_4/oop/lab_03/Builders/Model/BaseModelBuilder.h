@@ -23,12 +23,17 @@ public:
     explicit BaseModelBuilder(std::shared_ptr<ModelReader> reader);
     virtual ~BaseModelBuilder() override = default;
 
-    virtual bool build_points() = 0;
-    virtual bool build_edges() = 0;
-    virtual bool build_center() = 0;
+    bool build_points();
+    bool build_edges();
+    bool build_center();
+
+    std::shared_ptr<BaseModelImpl> create_product() override;
 
 protected:
+    virtual std::shared_ptr<BaseModelImpl> create_impl() = 0;
+
     std::shared_ptr<ModelReader> _reader;
+    std::shared_ptr<BaseModelImpl> _impl;
 };
 
 #endif //LAB_03_BASEMODELBUILDER_H
