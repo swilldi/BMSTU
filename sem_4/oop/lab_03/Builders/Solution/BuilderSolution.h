@@ -13,6 +13,7 @@
 
 
 class BuilderSolution {
+
 public:
     BuilderSolution() = default;
     ~BuilderSolution() = default;
