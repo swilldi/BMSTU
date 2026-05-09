@@ -3,7 +3,6 @@
 //
 
 #include "ElevatorDoor.h"
-#include "ElevatorDoor.h"
 
 #define START_OPENING_DOOR_MESSAGE "[Лифт %lu] Двери открываются"
 #define END_OPEN_DOOR_MESSAGE "[Лифт %lu] Двери открылись"
