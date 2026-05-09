@@ -10,6 +10,20 @@ Task::Task(size_t floor, CabinID id, TaskType type) : _floor(floor), _cabin_id(i
 {
 }
 
+size_t Task::get_floor() const
+{
+    return _floor;
+}
+
+CabinID Task::get_cabin_id() const
+{
+    return _cabin_id;
+}
+TaskType Task::get_task_type() const
+{
+    return _type;
+}
+
 bool Task::operator==(const Task& other) const
 {
     return _floor == other._floor && _cabin_id == other._cabin_id && _type == other._type;
