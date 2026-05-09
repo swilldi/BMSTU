@@ -20,4 +20,6 @@ enum CabinID : size_t
     SECOND
 };
 
+#define WAIT_TIME 1000
+
 #endif //LAB_04_DEFINES_H
