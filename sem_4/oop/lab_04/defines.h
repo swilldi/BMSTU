@@ -20,6 +20,12 @@ enum CabinID : size_t
     SECOND
 };
 
+enum TaskType: size_t
+{
+    FLOOR_CALL,
+    CABIN_CALL
+};
+
 #define WAIT_TIME 1000
 
 #endif //LAB_04_DEFINES_H
