@@ -27,5 +27,6 @@ enum TaskType: size_t
 };
 
 #define WAIT_TIME 1000
+#define MOVE_TIME 700
 
 #endif //LAB_04_DEFINES_H
