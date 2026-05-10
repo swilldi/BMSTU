@@ -12,7 +12,7 @@
 class Task
 {
 public:
-    Task(size_t floor, CabinID id, TaskType type);
+    Task(size_t floor, Direction direction, CabinID id, TaskType type);
 
     size_t get_floor() const;
     CabinID get_cabin_id() const;
@@ -25,6 +25,7 @@ public:
 private:
     size_t _floor;
     CabinID _cabin_id;
+    Direction _direction;
     TaskType _type;
 };
 
