@@ -7,11 +7,11 @@
 
 #include <cstddef>
 
-enum Direction : size_t
+enum Direction : int
 {
-    DOWN,
-    STAY,
-    UP
+    DOWN = -1,
+    IDLE = 0,
+    UP = 1
 };
 
 enum CabinID : size_t
@@ -28,5 +28,11 @@ enum TaskType: size_t
 
 #define WAIT_TIME 1000
 #define MOVE_TIME 700
+
+#define CABINS_COUNT 2
+
+#define DIRECTIONS_COUNT 2
+#define FLOOR_COUNT 10
+#define START_FLOOR 3
 
 #endif //LAB_04_DEFINES_H
