@@ -26,15 +26,15 @@ signals:
     void cabin_button_change_color_signal(size_t floor, CabinID id, bool is_active);
     void cabin_position_change_signal(CabinID id, size_t floor);
 
-    void button_deactivate_signal(CabinID id);
+    void button_deactivated_signal(CabinID id);
     void free_cabin_signal(CabinID id);
     void move_cabin_signal(CabinID id, size_t floor, Direction direction);
     void stop_cabin_signal(CabinID id, size_t floor);
     void free_controller_signal();
 
 public slots:
-    void floor_destanation_slot(size_t floor);
-    void floor_destanation_slot(size_t floor, CabinID id);
+    void floor_destanation_slot(size_t floor, Direction direction);
+    void cabin_destanation_slot(size_t floor, CabinID id);
 
     void manage_move_slot(CabinID id);
     void manage_cabin_slot(CabinID id);
@@ -58,14 +58,14 @@ private:
     void setup_internal_connection();
 
 
-    Direction get_direction(size_t diff);
+    Direction get_direction(int diff);
     Direction get_next_direction(CabinID id);
     CabinID get_deside_cabin_id(size_t floor);
 
     double cabin_weight(CabinID id, size_t target_floor, Direction direction);
     size_t get_next_visit_floor(CabinID id);
     size_t next_floor_in_direction(CabinID id, Direction direction, size_t current_floor);
-    bool all_cabins_free();
+    bool all_cabins_free() const;
 
     ControllerState _state = FREE;
     std::unique_ptr<Cabin> _cabins[CABINS_COUNT] {};
