@@ -5,6 +5,7 @@
 #include "TaskManager.h"
 
 #include <chrono>
+#include <QDebug>
 
 TaskManager::TaskManager()
 {
@@ -12,12 +13,17 @@ TaskManager::TaskManager()
 
 bool TaskManager::add(const Task& task)
 {
+
+
     auto it = std::find(_tasks.begin(), _tasks.end(), task);
     if (it == _tasks.end())
     {
         _tasks.push_back(task);
+        qInfo("[Успешно] Добавлена задача: :%s", task.to_string().c_str());
         return true;
     }
+
+    qInfo("[Внимание] Задача уже создана: :%s", task.to_string().c_str());
     return false;
 }
 
@@ -27,8 +33,11 @@ bool TaskManager::remove(const Task& task)
     if (it != _tasks.end())
     {
         _tasks.erase(it);
+        qInfo("[Успешно] Удалена задача: :%s", task.to_string().c_str());
         return true;
     }
+
+    qInfo("[Внимание] Задача отсутствует: :%s", task.to_string().c_str());
     return false;
 }
 
@@ -143,4 +152,14 @@ size_t TaskManager::get_count_for_cabin(CabinID id) const
 std::vector<Task> TaskManager::get_all() const
 {
     return _tasks;
+}
+
+void TaskManager::print_tasks() const
+{
+    qInfo("=== ===");
+
+    for (const auto &task : _tasks)
+        qInfo("%s", task.to_string().c_str());
+
+    qInfo("=== === ===");
 }

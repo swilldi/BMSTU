@@ -36,6 +36,8 @@ public:
     size_t get_count_for_cabin(CabinID id) const;
     std::vector<Task> get_all() const;
 
+    void print_tasks() const;
+
 private:
     std::vector<Task> _tasks;
 
