@@ -6,7 +6,7 @@
 #include "Cabin.h"
 
 #define ELEVATOR_MOVE_TO_MESSAGE "[Лифт %lu] Переход %lu -> %lu"
-#define ELEVATOR_STAY_MESSAGE "[Лифт %lu] Остановился на %lu"
+#define ELEVATOR_IDLE_MESSAGE "[Лифт %lu] Остановился на %lu"
 #define ELEVATOR_END_BOARDING_MESSAGE "[Лифт %lu] Завершил высадку/посадку"
 
 Cabin::Cabin(CabinID id, QObject* parent) : QObject(parent), _id(id), _state(FREE), _door(id)
@@ -43,7 +43,7 @@ void Cabin::cabin_start_boarding_slot(size_t floor)
 
     _state = BOARDING_STARTED;
     emit open_door_signal();
-    qInfo(ELEVATOR_STAY_MESSAGE, _id + 1, floor + 1);
+    qInfo(ELEVATOR_IDLE_MESSAGE, _id + 1, floor + 1);
 }
 
 void Cabin::cabin_end_boarding_slot()
