@@ -65,10 +65,7 @@ private:
     floor_t get_next_visit_floor(CabinID id);
     floor_t next_floor_in_direction(CabinID id, Direction direction, floor_t current_floor);
 
-    // Каждая кабина имеет ОТДЕЛЬНУЮ модель Мура — это позволяет двум лифтам
-    // работать параллельно. Раньше состояние было общим, и таймер одной кабины
-    // блокировал обработку другой.
-    ControllerState _states[CABINS_COUNT] = { FREE, FREE };
+    ControllerState _state = FREE;
     std::unique_ptr<Cabin> _cabins[CABINS_COUNT] {};
     floor_t _current_floor[CABINS_COUNT] {};
     Direction _current_directions[CABINS_COUNT] {};

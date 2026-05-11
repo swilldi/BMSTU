@@ -111,8 +111,11 @@ void Controller::setup_internal_connection()
 
 void Controller::floor_destination_slot(floor_t floor)
 {
-    // Каждая кабина имеет свою модель Мура → новые запросы принимаются всегда,
-    // достаточно проверить, что вызов с этого этажа ещё не закреплён ни за кем.
+    // Контроллер принимает новые запросы только если он не в середине обработки
+    // другого (REQUEST/REACH_DST_FLOOR — переходные состояния).
+    if (_state != FREE && _state != MANAGING_CABIN && _state != MANAGING_MOVE)
+        return;
+
     for (size_t i = 0; i < CABINS_COUNT; ++i)
     {
         const CabinID id = static_cast<CabinID>(i);
@@ -145,12 +148,15 @@ void Controller::floor_destination_slot(floor_t floor)
 
     _floor_buttons[floor - 1]->activate();   // UI feedback через сигнал кнопки
 
-    _states[decided_id] = FLOOR_REQUEST;
+    _state = FLOOR_REQUEST;
     manage_cabin_slot(decided_id);
 }
 
 void Controller::cabin_destination_slot(floor_t floor, CabinID id)
 {
+    if (_state != FREE && _state != MANAGING_CABIN && _state != MANAGING_MOVE)
+        return;
+
     if (_task_manager.has_cabin_call(id, floor))
         return;
 
@@ -159,18 +165,16 @@ void Controller::cabin_destination_slot(floor_t floor, CabinID id)
 
     _cabin_buttons[id][floor - 1]->activate();   // UI feedback
 
-    _states[id] = CABIN_REQUEST;
+    _state = CABIN_REQUEST;
     manage_cabin_slot(id);
 }
 
 void Controller::manage_move_slot(CabinID id)
 {
-    // Таймер кабины id отработал — продвигаем кабину на следующий этаж.
-    // Состояния других кабин нас не касаются — модели Мура независимы.
-    if (_states[id] != MANAGING_CABIN)
+    if (_state != MANAGING_CABIN)
         return;
 
-    _states[id] = MANAGING_MOVE;
+    _state = MANAGING_MOVE;
     _current_floor[id] += _current_directions[id];
 
     emit cabin_position_change_signal(id, _current_floor[id] + 1);
@@ -182,16 +186,14 @@ static constexpr floor_t FLOOR_NOT_FOUND = -1;
 
 void Controller::manage_cabin_slot(CabinID id)
 {
-    // Защита только от рекурсивного входа для ЭТОЙ кабины.
-    if (_states[id] == MANAGING_CABIN)
+    if (_state == FREE || _state == MANAGING_CABIN)
         return;
 
-    _states[id] = MANAGING_CABIN;
+    _state = MANAGING_CABIN;
     const floor_t next_floor = get_next_visit_floor(id);
     if (next_floor == FLOOR_NOT_FOUND)
     {
         _current_directions[id] = IDLE;
-        _states[id] = FREE;
         emit free_cabin_signal(id);
     }
     else if (next_floor > _current_floor[id])
@@ -209,15 +211,17 @@ void Controller::manage_cabin_slot(CabinID id)
         _current_directions[id] = get_next_direction(id);
         emit stop_cabin_signal(id, _current_floor[id]);
     }
+
+    if (!_task_manager.has_any())
+        emit free_controller_signal();
 }
 
 void Controller::reach_dst_floor_slot(CabinID id)
 {
-    // Защита только от повторного входа в это же состояние для этой кабины.
-    if (_states[id] == REACH_DST_FLOOR)
+    if (_state != MANAGING_CABIN)
         return;
 
-    _states[id] = REACH_DST_FLOOR;
+    _state = REACH_DST_FLOOR;
     const floor_t floor = _current_floor[id] + 1;
 
     qInfo("=== Обработка задач лифта %lu на этаже %d ===", id + 1, floor);
@@ -247,9 +251,10 @@ void Controller::reach_dst_floor_slot(CabinID id)
 
 void Controller::free_controller_slot()
 {
-    // Сохранено для обратной совместимости с сигнальной шиной, но при
-    // per-cabin state контроллер сам по себе глобального FREE не имеет —
-    // каждая кабина независима.
+    if (_state == FREE)
+        return;
+
+    _state = FREE;
     qInfo("[Контролер] Активных задач нет");
 }
 
