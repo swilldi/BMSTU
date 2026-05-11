@@ -34,3 +34,13 @@ void FloorButton::deactivate_slot()
     qInfo(INACTIVATE_FLOOR_BUTTON_MESSAGE, _floor);
     emit deactivated_signal();
 }
+
+void FloorButton::activate()
+{
+    emit activate_signal();
+}
+
+void FloorButton::deactivate()
+{
+    emit deactivate_signal();
+}

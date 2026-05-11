@@ -16,6 +16,9 @@ public:
     CabinButton(size_t floor, CabinID id, QWidget *parent = nullptr);
     ~CabinButton() override = default;
 
+    void activate();
+    void deactivate();
+
 signals:
     void activate_signal();
     void deactivate_signal();

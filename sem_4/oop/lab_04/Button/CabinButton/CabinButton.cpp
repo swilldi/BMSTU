@@ -32,3 +32,13 @@ void CabinButton::deactivate_slot()
     _state = INACTIVE;
     qInfo(INACTIVATE_CABIN_BUTTON_MESSAGE, _id + 1, _floor);
 }
+
+void CabinButton::activate()
+{
+    emit activate_signal();
+}
+
+void CabinButton::deactivate()
+{
+    emit deactivate_signal();
+}

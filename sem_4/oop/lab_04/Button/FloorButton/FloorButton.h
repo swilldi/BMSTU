@@ -16,6 +16,9 @@ public:
     FloorButton(size_t floor, QWidget *parent = nullptr);
     ~FloorButton() override = default;
 
+    void activate();
+    void deactivate();
+
 signals:
     void activate_signal();
     void deactivate_signal();

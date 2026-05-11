@@ -42,10 +42,11 @@ void Controller::setup_floor_buttons()
         const size_t floor = i + 1;
         _floor_buttons[i] = std::make_shared<FloorButton>(floor);
 
-        connect(_floor_buttons[i].get(), &FloorButton::activate_signal, this, [this, i, floor]
+        // Лямбда отвечает только за обратную связь UI (смена цвета).
+        // Бизнес-логика (создание задачи, выбор кабины, запуск планировщика)
+        // выполняется в floor_destanation_slot — точке входа для события нажатия.
+        connect(_floor_buttons[i].get(), &FloorButton::activate_signal, this, [this, floor]
         {
-            CabinID id = get_deside_cabin_id(i);
-            manage_cabin_slot(id);
             emit floor_button_change_color_signal(floor, true);
         });
 
@@ -67,9 +68,10 @@ void Controller::setup_cabin_buttons()
             const size_t floor = i + 1;
             _cabin_buttons[id][i] = std::make_shared<CabinButton>(floor, id);
 
+            // Лямбда отвечает только за обратную связь UI (смена цвета).
+            // Бизнес-логика — в cabin_destanation_slot.
             connect(_cabin_buttons[id][i].get(), &CabinButton::activate_signal, this, [this, id, floor]
             {
-                manage_cabin_slot(id);
                 emit cabin_button_change_color_signal(floor, id, true);
             });
 
@@ -115,7 +117,7 @@ void Controller::floor_destanation_slot(size_t floor)
     for (size_t i = CabinID::FIRST; i < CABINS_COUNT; ++i)
     {
         CabinID id = static_cast<CabinID>(i);
-        if (_task_manager.has_for_floor(floor))
+        if (_task_manager.has_floor_call(id, floor))
             return;
     }
 
@@ -154,7 +156,8 @@ void Controller::floor_destanation_slot(size_t floor)
     Task new_task(floor, IDLE, desided_id, FLOOR_CALL);
     _task_manager.add(new_task);
 
-    emit _floor_buttons[floor - 1]->activate_signal();
+    _floor_buttons[floor - 1]->activate();   // UI feedback через сигнал кнопки
+    manage_cabin_slot(desided_id);           // запуск планировщика для выбранной кабины
 }
 
 void Controller::cabin_destanation_slot(size_t floor, CabinID id)
@@ -170,7 +173,8 @@ void Controller::cabin_destanation_slot(size_t floor, CabinID id)
     Task new_task(floor, IDLE, id, CABIN_CALL);
     _task_manager.add(new_task);
 
-    emit _cabin_buttons[id][floor - 1]->activate_signal();
+    _cabin_buttons[id][floor - 1]->activate();   // UI feedback
+    manage_cabin_slot(id);                       // запуск планировщика
 }
 
 void Controller::manage_move_slot(CabinID id)
@@ -182,11 +186,11 @@ void Controller::manage_move_slot(CabinID id)
     _current_floor[id] += _current_directions[id];
 
     emit cabin_position_change_signal(id, _current_floor[id] + 1);
-    emit manage_cabin_slot(id);
+    manage_cabin_slot(id);
 }
 
 
-#define FLOOR_NOT_FOUND -1
+static constexpr int FLOOR_NOT_FOUND = -1;
 
 void Controller::manage_cabin_slot(CabinID id)
 {
@@ -205,7 +209,7 @@ void Controller::manage_cabin_slot(CabinID id)
         _current_directions[id] = UP;
         emit move_cabin_signal(id, _current_floor[id], UP);
     }
-    else if (next_floor < _current_directions[id])
+    else if (next_floor < _current_floor[id])
     {
         _current_directions[id] = DOWN;
         emit move_cabin_signal(id, _current_floor[id], DOWN);
@@ -236,14 +240,14 @@ void Controller::reach_dst_floor_slot(CabinID id)
     {
         Task task(floor, IDLE, id, CABIN_CALL);
         _task_manager.remove(task);
-        emit _cabin_buttons[id][_current_floor[id]]->deactivate_signal();
+        _cabin_buttons[id][_current_floor[id]]->deactivate();
     }
 
     if (_task_manager.has_floor_call(id, floor))
     {
         Task task(floor, IDLE, id, FLOOR_CALL);
         _task_manager.remove(task);
-        emit _floor_buttons[_current_floor[id]]->deactivate_signal();
+        _floor_buttons[_current_floor[id]]->deactivate();
     }
 
     qInfo("Задач после удаления: %lu", _task_manager.get_count_for_cabin(id));
@@ -272,18 +276,6 @@ Direction Controller::get_direction(int diff)
         return UP;
 
     return DOWN;
-}
-
-CabinID Controller::get_deside_cabin_id(size_t floor)
-{
-    for (size_t i = 0; i < CABINS_COUNT; ++i)
-    {
-        if (_task_manager.has_for_floor(floor))
-            return static_cast<CabinID>(i);
-    }
-
-    // TODO сделать более рациональный выбор
-    return CabinID::FIRST;
 }
 
 size_t Controller::get_next_visit_floor(CabinID id)

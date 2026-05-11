@@ -60,7 +60,6 @@ private:
 
     Direction get_direction(int diff);
     Direction get_next_direction(CabinID id);
-    CabinID get_deside_cabin_id(size_t floor);
 
     double cabin_weight(CabinID id, size_t target_floor, Direction direction);
     size_t get_next_visit_floor(CabinID id);
