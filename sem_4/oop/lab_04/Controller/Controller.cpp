@@ -4,8 +4,8 @@
 
 #include "Controller.h"
 
-#define ELEVATOR_WEIGHT_MESSAGE "[Вес лифта %lu]: %.2f (этаж – %lu; направление – %lu)"
-#define BEST_ELEVATOR_WEIGHT_MESSAGE "Выбран лифт %d с весом %.2f для этажа %d (направление %s)"
+#define ELEVATOR_WEIGHT_MESSAGE "[Вес лифта %lu]: %.2f (этаж – %lu; направление – %d)"
+#define BEST_ELEVATOR_WEIGHT_MESSAGE "Выбран лифт %lu с весом %.2f для этажа %lu (направление %s)"
 
 Controller::Controller(QObject* parent) : QObject(parent)
 {
@@ -107,7 +107,7 @@ void Controller::setup_internal_connection()
         emit cabin_position_change_signal(static_cast<CabinID>(i), START_FLOOR);
 }
 
-void Controller::floor_destanation_slot(size_t floor, Direction direction)
+void Controller::floor_destanation_slot(size_t floor)
 {
     if (_state != FREE && _state != MANAGING_CABIN && _state != MANAGING_MOVE)
         return;
@@ -135,7 +135,7 @@ void Controller::floor_destanation_slot(size_t floor, Direction direction)
     for (size_t i = 0; i < CABINS_COUNT; ++i)
     {
         const CabinID id = static_cast<CabinID>(i);
-        double current_weight = cabin_weight(id, floor, direction);
+        double current_weight = cabin_weight(id, floor, _current_directions[id]);
         if (current_weight < best_weight)
         {
             best_weight = current_weight;
@@ -143,13 +143,15 @@ void Controller::floor_destanation_slot(size_t floor, Direction direction)
         }
 
 
-        qInfo(ELEVATOR_WEIGHT_MESSAGE, id + 1, current_weight, floor, direction);
+        qInfo(ELEVATOR_WEIGHT_MESSAGE, id + 1, current_weight, floor, _current_directions[id]);
     }
 
-    qInfo(BEST_ELEVATOR_WEIGHT_MESSAGE, desided_id, best_weight, floor, direction == UP ? "Вверх" : "Вниз");
+    // TODO
+    // qInfo(BEST_ELEVATOR_WEIGHT_MESSAGE, desided_id, best_weight, floor, UP == UP ? "Вверх" : "Вниз");
+    qInfo(BEST_ELEVATOR_WEIGHT_MESSAGE, desided_id, best_weight, floor, "Вверх");
 
     _task_manager.print_tasks();
-    Task new_task(floor, direction, desided_id, FLOOR_CALL);
+    Task new_task(floor, IDLE, desided_id, FLOOR_CALL);
     _task_manager.add(new_task);
 
     emit _floor_buttons[floor - 1]->activate_signal();
@@ -268,8 +270,8 @@ Direction Controller::get_direction(int diff)
         return IDLE;
     if (diff > 0)
         return UP;
-    if (diff < 0)
-        return DOWN;
+
+    return DOWN;
 }
 
 CabinID Controller::get_deside_cabin_id(size_t floor)
@@ -508,7 +510,7 @@ size_t Controller::next_floor_in_direction(CabinID id, Direction direction, size
                 }
                 else if (furthest_down_call == FLOOR_NOT_FOUND)
                 {
-                    qInfo("[Лифт %lu] Найден этаж %lu по ходу вверх", id, floor);
+                    qInfo("[Лифт %lu] Найден этаж %d по ходу вверх", id, floor);
                     return floor - 1;
                 }
             }
