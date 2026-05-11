@@ -5,8 +5,8 @@
 
 #include "Cabin.h"
 
-#define ELEVATOR_MOVE_TO_MESSAGE "[Лифт %lu] Переход %lu -> %lu"
-#define ELEVATOR_IDLE_MESSAGE "[Лифт %lu] Остановился на %lu"
+#define ELEVATOR_MOVE_TO_MESSAGE "[Лифт %lu] Переход %d -> %d"
+#define ELEVATOR_IDLE_MESSAGE "[Лифт %lu] Остановился на %d"
 #define ELEVATOR_END_BOARDING_MESSAGE "[Лифт %lu] Завершил высадку/посадку"
 
 Cabin::Cabin(CabinID id, QObject* parent) : QObject(parent), _id(id), _state(FREE), _door(id)
@@ -24,22 +24,28 @@ void Cabin::cabin_free_slot()
     _state = FREE;
 }
 
-void Cabin::cabin_moving_slot(size_t floor, Direction direction)
+void Cabin::cabin_moving_slot(floor_t floor, Direction direction)
 {
     if (_state == BOARDING_STARTED)
         return;
 
-    ++floor;
-    size_t next_floor = direction == UP ? floor + 1 : floor - 1;
+    // floor приходит 0-based; для лога переводим в 1-based
+    const floor_t cur_floor = floor + 1;
+    const floor_t next_floor = direction == UP ? cur_floor + 1 : cur_floor - 1;
     _state = MOVE;
     move_timer.start(MOVE_TIME);
-    qInfo(ELEVATOR_MOVE_TO_MESSAGE, _id, floor, next_floor);
+    qInfo(ELEVATOR_MOVE_TO_MESSAGE, _id, cur_floor, next_floor);
 }
 
-void Cabin::cabin_start_boarding_slot(size_t floor)
+void Cabin::cabin_start_boarding_slot(floor_t floor)
 {
-    if (_state == BOARDING_STARTED | _state == BOARDING_ENDED)
+    if (_state == BOARDING_STARTED || _state == BOARDING_ENDED)
         return;
+
+    // Если кабина была в MOVE — гасим висящий move_timer.
+    // Иначе он сработает уже во время посадки и manage_move_slot
+    // сдвинет _current_floor, хотя кабина физически стоит.
+    move_timer.stop();
 
     _state = BOARDING_STARTED;
     emit open_door_signal();

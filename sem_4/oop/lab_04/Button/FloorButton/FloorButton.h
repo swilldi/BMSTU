@@ -13,7 +13,7 @@ class FloorButton : public BaseButton
     Q_OBJECT
 
 public:
-    FloorButton(size_t floor, QWidget *parent = nullptr);
+    FloorButton(floor_t floor, QWidget *parent = nullptr);
     ~FloorButton() override = default;
 
     void activate();
@@ -31,7 +31,7 @@ public slots:
     void deactivate_slot();
 
 private:
-    size_t _floor;
+    floor_t _floor;
 };
 
 

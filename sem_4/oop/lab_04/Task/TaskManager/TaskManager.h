@@ -21,17 +21,17 @@ public:
     void clear_cabin(CabinID id);
 
     std::vector<Task> get_for_cabin(CabinID id) const;
-    std::vector<Task> get_for_floor(size_t floor) const;
-    std::vector<Task> get_for_cabin_and_floor(CabinID id, size_t floor) const;
+    std::vector<Task> get_for_floor(floor_t floor) const;
+    std::vector<Task> get_for_cabin_and_floor(CabinID id, floor_t floor) const;
     std::vector<Task> get_by_task(TaskType type) const;
 
     bool has_for_cabin(CabinID id) const;
-    bool has_for_floor(size_t floor) const;
-    bool has_for_cabin_and_floor(CabinID id, size_t floor) const;
+    bool has_for_floor(floor_t floor) const;
+    bool has_for_cabin_and_floor(CabinID id, floor_t floor) const;
     bool has_any() const;
 
-    bool has_cabin_call(CabinID id, size_t floor) const;
-    bool has_floor_call(CabinID id, size_t floor) const;
+    bool has_cabin_call(CabinID id, floor_t floor) const;
+    bool has_floor_call(CabinID id, floor_t floor) const;
 
     size_t get_count_for_cabin(CabinID id) const;
     std::vector<Task> get_all() const;

@@ -75,12 +75,12 @@ std::vector<Task> TaskManager::get_for_cabin(CabinID id) const
     return filter_tasks([id](const Task& task){ return task.get_cabin_id() == id; });
 }
 
-std::vector<Task> TaskManager::get_for_floor(size_t floor) const
+std::vector<Task> TaskManager::get_for_floor(floor_t floor) const
 {
     return filter_tasks([floor](const Task &task) { return task.get_floor() == floor; });
 }
 
-std::vector<Task> TaskManager::get_for_cabin_and_floor(CabinID id, size_t floor) const
+std::vector<Task> TaskManager::get_for_cabin_and_floor(CabinID id, floor_t floor) const
 {
     return filter_tasks([id, floor](const Task &task)
     {
@@ -108,12 +108,12 @@ bool TaskManager::has_for_cabin(CabinID id) const
     return any_of([id](const Task& task) { return task.get_cabin_id() == id; });
 }
 
-bool TaskManager::has_for_floor(size_t floor) const
+bool TaskManager::has_for_floor(floor_t floor) const
 {
     return any_of([floor](const Task& task) { return task.get_floor() == floor; });
 }
 
-bool TaskManager::has_for_cabin_and_floor(CabinID id, size_t floor) const
+bool TaskManager::has_for_cabin_and_floor(CabinID id, floor_t floor) const
 {
     return any_of([id, floor](const Task& task)
     {
@@ -126,7 +126,7 @@ bool TaskManager::has_any() const
     return !_tasks.empty();
 }
 
-bool TaskManager::has_cabin_call(CabinID id, size_t floor) const
+bool TaskManager::has_cabin_call(CabinID id, floor_t floor) const
 {
     return any_of([id, floor](const Task& task)
     {
@@ -134,7 +134,7 @@ bool TaskManager::has_cabin_call(CabinID id, size_t floor) const
     });
 }
 
-bool TaskManager::has_floor_call(CabinID id, size_t floor) const
+bool TaskManager::has_floor_call(CabinID id, floor_t floor) const
 {
     return any_of([id, floor](const Task& task)
     {

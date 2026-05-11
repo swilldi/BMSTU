@@ -6,10 +6,10 @@
 
 #include <format>
 
-Task::Task(size_t floor, Direction direction, CabinID id, TaskType type) :
+Task::Task(floor_t floor, Direction direction, CabinID id, TaskType type) :
     _floor(floor), _cabin_id(id), _direction(direction), _type(type) { }
 
-size_t Task::get_floor() const
+floor_t Task::get_floor() const
 {
     return _floor;
 }

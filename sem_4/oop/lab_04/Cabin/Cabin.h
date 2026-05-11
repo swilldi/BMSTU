@@ -30,9 +30,9 @@ signals:
 
 public slots:
     void cabin_free_slot();
-    void cabin_moving_slot(size_t floor, Direction direction);
+    void cabin_moving_slot(floor_t floor, Direction direction);
     void cabin_end_boarding_slot();
-    void cabin_start_boarding_slot(size_t floor);
+    void cabin_start_boarding_slot(floor_t floor);
 
 private:
     enum CabinState

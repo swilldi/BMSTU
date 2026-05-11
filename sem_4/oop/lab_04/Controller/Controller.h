@@ -22,19 +22,19 @@ public:
     ~Controller();
 
 signals:
-    void floor_button_change_color_signal(size_t floor, bool is_active);
-    void cabin_button_change_color_signal(size_t floor, CabinID id, bool is_active);
-    void cabin_position_change_signal(CabinID id, size_t floor);
+    void floor_button_change_color_signal(floor_t floor, bool is_active);
+    void cabin_button_change_color_signal(floor_t floor, CabinID id, bool is_active);
+    void cabin_position_change_signal(CabinID id, floor_t floor);
 
     void button_deactivated_signal(CabinID id);
     void free_cabin_signal(CabinID id);
-    void move_cabin_signal(CabinID id, size_t floor, Direction direction);
-    void stop_cabin_signal(CabinID id, size_t floor);
+    void move_cabin_signal(CabinID id, floor_t floor, Direction direction);
+    void stop_cabin_signal(CabinID id, floor_t floor);
     void free_controller_signal();
 
 public slots:
-    void floor_destanation_slot(size_t floor);
-    void cabin_destanation_slot(size_t floor, CabinID id);
+    void floor_destination_slot(floor_t floor);
+    void cabin_destination_slot(floor_t floor, CabinID id);
 
     void manage_move_slot(CabinID id);
     void manage_cabin_slot(CabinID id);
@@ -61,14 +61,16 @@ private:
     Direction get_direction(int diff);
     Direction get_next_direction(CabinID id);
 
-    double cabin_weight(CabinID id, size_t target_floor, Direction direction);
-    size_t get_next_visit_floor(CabinID id);
-    size_t next_floor_in_direction(CabinID id, Direction direction, size_t current_floor);
-    bool all_cabins_free() const;
+    double cabin_weight(CabinID id, floor_t target_floor, Direction direction);
+    floor_t get_next_visit_floor(CabinID id);
+    floor_t next_floor_in_direction(CabinID id, Direction direction, floor_t current_floor);
 
-    ControllerState _state = FREE;
+    // Каждая кабина имеет ОТДЕЛЬНУЮ модель Мура — это позволяет двум лифтам
+    // работать параллельно. Раньше состояние было общим, и таймер одной кабины
+    // блокировал обработку другой.
+    ControllerState _states[CABINS_COUNT] = { FREE, FREE };
     std::unique_ptr<Cabin> _cabins[CABINS_COUNT] {};
-    size_t _current_floor[CABINS_COUNT] {};
+    floor_t _current_floor[CABINS_COUNT] {};
     Direction _current_directions[CABINS_COUNT] {};
     Direction _preferred_directions[CABINS_COUNT] {};
 

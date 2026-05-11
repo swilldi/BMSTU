@@ -13,7 +13,7 @@ class CabinButton : public BaseButton
     Q_OBJECT
 
 public:
-    CabinButton(size_t floor, CabinID id, QWidget *parent = nullptr);
+    CabinButton(floor_t floor, CabinID id, QWidget *parent = nullptr);
     ~CabinButton() override = default;
 
     void activate();
@@ -32,7 +32,7 @@ public slots:
 
 private:
     CabinID _id;
-    size_t _floor;
+    floor_t _floor;
 };
 
 

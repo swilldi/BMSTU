@@ -4,8 +4,8 @@
 
 #include "Controller.h"
 
-#define ELEVATOR_WEIGHT_MESSAGE "[Вес лифта %lu]: %.2f (этаж – %lu; направление – %d)"
-#define BEST_ELEVATOR_WEIGHT_MESSAGE "Выбран лифт %lu с весом %.2f для этажа %lu (направление %s)"
+#define ELEVATOR_WEIGHT_MESSAGE "[Вес лифта %lu]: %.2f (этаж – %d; направление – %d)"
+#define BEST_ELEVATOR_WEIGHT_MESSAGE "Выбран лифт %lu с весом %.2f для этажа %d (направление %s)"
 
 Controller::Controller(QObject* parent) : QObject(parent)
 {
@@ -39,12 +39,12 @@ void Controller::setup_floor_buttons()
 {
     for (size_t i = 0; i < FLOOR_COUNT; ++i)
     {
-        const size_t floor = i + 1;
+        const floor_t floor = static_cast<floor_t>(i) + 1;
         _floor_buttons[i] = std::make_shared<FloorButton>(floor);
 
         // Лямбда отвечает только за обратную связь UI (смена цвета).
         // Бизнес-логика (создание задачи, выбор кабины, запуск планировщика)
-        // выполняется в floor_destanation_slot — точке входа для события нажатия.
+        // выполняется в floor_destination_slot — точке входа для события нажатия.
         connect(_floor_buttons[i].get(), &FloorButton::activate_signal, this, [this, floor]
         {
             emit floor_button_change_color_signal(floor, true);
@@ -65,11 +65,11 @@ void Controller::setup_cabin_buttons()
         const CabinID id = static_cast<CabinID>(c);
         for (size_t i = 0; i < FLOOR_COUNT; ++i)
         {
-            const size_t floor = i + 1;
+            const floor_t floor = static_cast<floor_t>(i) + 1;
             _cabin_buttons[id][i] = std::make_shared<CabinButton>(floor, id);
 
             // Лямбда отвечает только за обратную связь UI (смена цвета).
-            // Бизнес-логика — в cabin_destanation_slot.
+            // Бизнес-логика — в cabin_destination_slot.
             connect(_cabin_buttons[id][i].get(), &CabinButton::activate_signal, this, [this, id, floor]
             {
                 emit cabin_button_change_color_signal(floor, id, true);
@@ -91,11 +91,11 @@ void Controller::setup_internal_connection()
     {
         _cabins[id]->cabin_free_slot();
     });
-    connect(this, &Controller::move_cabin_signal, this, [this](CabinID id, size_t floor, Direction direction)
+    connect(this, &Controller::move_cabin_signal, this, [this](CabinID id, floor_t floor, Direction direction)
     {
         _cabins[id]->cabin_moving_slot(floor, direction);
     });
-    connect(this, &Controller::stop_cabin_signal, this, [this](CabinID id, size_t floor)
+    connect(this, &Controller::stop_cabin_signal, this, [this](CabinID id, floor_t floor)
     {
         _cabins[id]->cabin_start_boarding_slot(floor);
     });
@@ -109,80 +109,68 @@ void Controller::setup_internal_connection()
         emit cabin_position_change_signal(static_cast<CabinID>(i), START_FLOOR);
 }
 
-void Controller::floor_destanation_slot(size_t floor)
+void Controller::floor_destination_slot(floor_t floor)
 {
-    if (_state != FREE && _state != MANAGING_CABIN && _state != MANAGING_MOVE)
-        return;
-
-    for (size_t i = CabinID::FIRST; i < CABINS_COUNT; ++i)
+    // Каждая кабина имеет свою модель Мура → новые запросы принимаются всегда,
+    // достаточно проверить, что вызов с этого этажа ещё не закреплён ни за кем.
+    for (size_t i = 0; i < CABINS_COUNT; ++i)
     {
-        CabinID id = static_cast<CabinID>(i);
+        const CabinID id = static_cast<CabinID>(i);
         if (_task_manager.has_floor_call(id, floor))
             return;
     }
 
-    for (size_t id = CabinID::FIRST; id < CABINS_COUNT; ++id)
-    {
-        if (_current_floor[id] == floor - 1 && _current_directions[id] == IDLE)
-        {
-            emit stop_cabin_signal(static_cast<CabinID>(id), _current_floor[id]);
-            return;
-        }
-    }
-
-    _state = FLOOR_REQUEST;
-    CabinID desided_id = CabinID::FIRST;
+    // Выбор кабины по минимальному весу (упрощённый SCAN)
+    CabinID decided_id = CabinID::FIRST;
     double best_weight = std::numeric_limits<double>::max();
 
     for (size_t i = 0; i < CABINS_COUNT; ++i)
     {
         const CabinID id = static_cast<CabinID>(i);
-        double current_weight = cabin_weight(id, floor, _current_directions[id]);
+        const double current_weight = cabin_weight(id, floor, _current_directions[id]);
         if (current_weight < best_weight)
         {
             best_weight = current_weight;
-            desided_id = id;
+            decided_id = id;
         }
-
 
         qInfo(ELEVATOR_WEIGHT_MESSAGE, id + 1, current_weight, floor, _current_directions[id]);
     }
 
-    // TODO
-    // qInfo(BEST_ELEVATOR_WEIGHT_MESSAGE, desided_id, best_weight, floor, UP == UP ? "Вверх" : "Вниз");
-    qInfo(BEST_ELEVATOR_WEIGHT_MESSAGE, desided_id, best_weight, floor, "Вверх");
+    qInfo(BEST_ELEVATOR_WEIGHT_MESSAGE, decided_id, best_weight, floor, "—");
 
     _task_manager.print_tasks();
-    Task new_task(floor, IDLE, desided_id, FLOOR_CALL);
+    Task new_task(floor, IDLE, decided_id, FLOOR_CALL);
     _task_manager.add(new_task);
 
     _floor_buttons[floor - 1]->activate();   // UI feedback через сигнал кнопки
-    manage_cabin_slot(desided_id);           // запуск планировщика для выбранной кабины
+
+    _states[decided_id] = FLOOR_REQUEST;
+    manage_cabin_slot(decided_id);
 }
 
-void Controller::cabin_destanation_slot(size_t floor, CabinID id)
+void Controller::cabin_destination_slot(floor_t floor, CabinID id)
 {
-    if (_state != FREE && _state != MANAGING_CABIN && _state != MANAGING_MOVE)
-        return;
-
     if (_task_manager.has_cabin_call(id, floor))
         return;
-
-    _state = CABIN_REQUEST;
 
     Task new_task(floor, IDLE, id, CABIN_CALL);
     _task_manager.add(new_task);
 
     _cabin_buttons[id][floor - 1]->activate();   // UI feedback
-    manage_cabin_slot(id);                       // запуск планировщика
+
+    _states[id] = CABIN_REQUEST;
+    manage_cabin_slot(id);
 }
 
 void Controller::manage_move_slot(CabinID id)
 {
-    if (_state != MANAGING_CABIN)
+    // Таймер кабины id отработал — продвигаем кабину на следующий этаж.
+    // Состояния других кабин нас не касаются — модели Мура независимы.
+    if (_states[id] != MANAGING_CABIN)
         return;
 
-    _state = MANAGING_MOVE;
+    _states[id] = MANAGING_MOVE;
     _current_floor[id] += _current_directions[id];
 
     emit cabin_position_change_signal(id, _current_floor[id] + 1);
@@ -190,18 +178,20 @@ void Controller::manage_move_slot(CabinID id)
 }
 
 
-static constexpr int FLOOR_NOT_FOUND = -1;
+static constexpr floor_t FLOOR_NOT_FOUND = -1;
 
 void Controller::manage_cabin_slot(CabinID id)
 {
-    if (_state == FREE || _state == MANAGING_CABIN)
+    // Защита только от рекурсивного входа для ЭТОЙ кабины.
+    if (_states[id] == MANAGING_CABIN)
         return;
 
-    _state = MANAGING_CABIN;
-    size_t next_floor = get_next_visit_floor(id);
+    _states[id] = MANAGING_CABIN;
+    const floor_t next_floor = get_next_visit_floor(id);
     if (next_floor == FLOOR_NOT_FOUND)
     {
         _current_directions[id] = IDLE;
+        _states[id] = FREE;
         emit free_cabin_signal(id);
     }
     else if (next_floor > _current_floor[id])
@@ -219,21 +209,18 @@ void Controller::manage_cabin_slot(CabinID id)
         _current_directions[id] = get_next_direction(id);
         emit stop_cabin_signal(id, _current_floor[id]);
     }
-
-    if (all_cabins_free())
-        emit free_controller_signal();
 }
 
 void Controller::reach_dst_floor_slot(CabinID id)
 {
-    if (_state != MANAGING_CABIN)
+    // Защита только от повторного входа в это же состояние для этой кабины.
+    if (_states[id] == REACH_DST_FLOOR)
         return;
 
-    _state = REACH_DST_FLOOR;
-    size_t floor = _current_floor[id] + 1;
+    _states[id] = REACH_DST_FLOOR;
+    const floor_t floor = _current_floor[id] + 1;
 
-    qInfo("=== Обработка задач лифта %lu на этаже %lu ===", id + 1, floor);
-
+    qInfo("=== Обработка задач лифта %lu на этаже %d ===", id + 1, floor);
     qInfo("Задач до удаления: %lu", _task_manager.get_count_for_cabin(id));
 
     if (_task_manager.has_cabin_call(id, floor))
@@ -251,7 +238,6 @@ void Controller::reach_dst_floor_slot(CabinID id)
     }
 
     qInfo("Задач после удаления: %lu", _task_manager.get_count_for_cabin(id));
-    qInfo("=== Состояние всех задач после остановки ===");
     _task_manager.print_tasks();
 
     _current_directions[id] = IDLE;
@@ -261,10 +247,9 @@ void Controller::reach_dst_floor_slot(CabinID id)
 
 void Controller::free_controller_slot()
 {
-    if (_state == FREE)
-        return;
-
-    _state = FREE;
+    // Сохранено для обратной совместимости с сигнальной шиной, но при
+    // per-cabin state контроллер сам по себе глобального FREE не имеет —
+    // каждая кабина независима.
     qInfo("[Контролер] Активных задач нет");
 }
 
@@ -278,7 +263,7 @@ Direction Controller::get_direction(int diff)
     return DOWN;
 }
 
-size_t Controller::get_next_visit_floor(CabinID id)
+floor_t Controller::get_next_visit_floor(CabinID id)
 {
     std::vector<Task> tasks = _task_manager.get_for_cabin(id);
 
@@ -288,15 +273,16 @@ size_t Controller::get_next_visit_floor(CabinID id)
         return FLOOR_NOT_FOUND;
     }
 
-    size_t floor = _current_floor[id] + 1;
-    qInfo("[Лифт %lu] Поиск следующего этажа (кол-во текущих задач: %lu, текущий этаж: %lu, направление %d)", id,
+    const floor_t floor = _current_floor[id] + 1;
+    qInfo("[Лифт %lu] Поиск следующего этажа (кол-во текущих задач: %lu, текущий этаж: %d, направление %d)", id,
           tasks.size(), floor, _current_directions[id]);
 
-
-    bool floor_already_call = false;
-    if (_task_manager.has_for_floor(floor))
+    // Важно: проверяем задачу именно ЭТОЙ кабины. Раньше использовался
+    // has_for_floor (по всем кабинам) — из-за этого одна кабина «реагировала»
+    // на задачи другой, что приводило к нарушению параллельной работы.
+    if (_task_manager.has_for_cabin_and_floor(id, floor))
     {
-        qInfo("[Лифт %lu] Задача для этажа %lu уже существует", id, floor);
+        qInfo("[Лифт %lu] Задача для этажа %d уже существует", id, floor);
         return _current_floor[id];
     }
 
@@ -309,25 +295,13 @@ size_t Controller::get_next_visit_floor(CabinID id)
         for (const auto& task : tasks)
         {
             if (_preferred_directions[id] == UP && task.get_floor() > floor)
-            {
-                // При движении вверх: подбираем ВСЕ задачи на этажах выше
                 has_tasks_in_preferred = true;
-            }
             else if (_preferred_directions[id] == DOWN && task.get_floor() < floor)
-            {
-                // При движении вниз: подбираем ВСЕ задачи на этажах ниже
                 has_tasks_in_preferred = true;
-            }
             else if (_preferred_directions[id] == UP && task.get_floor() < floor)
-            {
-                // Задачи в обратном направлении (для разворота)
                 has_tasks_in_opposite = true;
-            }
             else if (_preferred_directions[id] == DOWN && task.get_floor() > floor)
-            {
-                // Задачи в обратном направлении (для разворота)
                 has_tasks_in_opposite = true;
-            }
         }
 
         qInfo("[Лифт %lu] стоит: предпочтительное направление=%d, задачи в направлении=%s, задачи в обратном=%s",
@@ -337,33 +311,33 @@ size_t Controller::get_next_visit_floor(CabinID id)
 
         if (has_tasks_in_preferred)
         {
-            size_t target_floor = next_floor_in_direction(id, _preferred_directions[id], floor);
+            const floor_t target_floor = next_floor_in_direction(id, _preferred_directions[id], floor);
             if (target_floor != FLOOR_NOT_FOUND)
                 return target_floor;
         }
         else if (has_tasks_in_opposite)
         {
             _preferred_directions[id] = (_preferred_directions[id] == UP) ? DOWN : UP;
-            qInfo("[Лифт %lu] Изменение направление. Новое направление %d", id, _preferred_directions[id]);
+            qInfo("[Лифт %lu] Изменение направления. Новое направление %d", id, _preferred_directions[id]);
 
             if (_preferred_directions[id] == UP)
             {
-                for (size_t new_floor = floor + 1; new_floor < FLOOR_COUNT; ++new_floor)
+                for (floor_t new_floor = floor + 1; new_floor <= FLOOR_COUNT; ++new_floor)
                 {
                     if (_task_manager.has_cabin_call(id, new_floor) || _task_manager.has_floor_call(id, new_floor))
                     {
-                        qInfo("Лифт %lu: после разворота едем вверх к этажу %lu", id, new_floor);
-                        return new_floor + 1;
+                        qInfo("Лифт %lu: после разворота едем вверх к этажу %d", id, new_floor);
+                        return new_floor - 1;
                     }
                 }
             }
             else
             {
-                for (size_t new_floor = floor - 1; new_floor < FLOOR_COUNT; --new_floor)
+                for (floor_t new_floor = floor - 1; new_floor >= 1; --new_floor)
                 {
                     if (_task_manager.has_cabin_call(id, new_floor) || _task_manager.has_floor_call(id, new_floor))
                     {
-                        qInfo("Лифт %lu: после разворота едем вниз к этажу %lu", id, new_floor);
+                        qInfo("Лифт %lu: после разворота едем вниз к этажу %d", id, new_floor);
                         return new_floor - 1;
                     }
                 }
@@ -374,7 +348,7 @@ size_t Controller::get_next_visit_floor(CabinID id)
     }
     else
     {
-        size_t target_floor = next_floor_in_direction(id, _current_directions[id], floor);
+        const floor_t target_floor = next_floor_in_direction(id, _current_directions[id], floor);
         if (target_floor != FLOOR_NOT_FOUND)
             return target_floor;
     }
@@ -392,12 +366,12 @@ Direction Controller::get_next_direction(CabinID id)
 
     if (_current_directions[id] == IDLE)
     {
-        int dst_visit_floor = -1;
+        floor_t dst_visit_floor = FLOOR_NOT_FOUND;
         int min_dst = FLOOR_COUNT + 1;
 
         for (const auto& task : tasks)
         {
-            int diff = std::abs(static_cast<int>(_current_floor[id]) + 1 - static_cast<int>(task.get_floor()));
+            const int diff = std::abs(_current_floor[id] + 1 - task.get_floor());
             if (diff > 0 && diff < min_dst)
             {
                 min_dst = diff;
@@ -405,7 +379,7 @@ Direction Controller::get_next_direction(CabinID id)
             }
         }
 
-        if (dst_visit_floor == -1)
+        if (dst_visit_floor == FLOOR_NOT_FOUND)
             return IDLE;
         else if (dst_visit_floor > _current_floor[id] + 1)
             return UP;
@@ -413,14 +387,14 @@ Direction Controller::get_next_direction(CabinID id)
             return DOWN;
     }
 
-    size_t target_floor = get_next_visit_floor(id);
+    const floor_t target_floor = get_next_visit_floor(id);
     if (target_floor == FLOOR_NOT_FOUND)
         return IDLE;
 
-    size_t target_real_floor = target_floor + 1;
-    size_t current_real_floor = _current_floor[id] + 1;
+    const floor_t target_real_floor = target_floor + 1;
+    const floor_t current_real_floor = _current_floor[id] + 1;
 
-    qInfo("Лифт %lu: текущий этаж %lu, целевой этаж %lu", id, current_real_floor, target_real_floor);
+    qInfo("Лифт %lu: текущий этаж %d, целевой этаж %d", id, current_real_floor, target_real_floor);
 
     if (target_real_floor > current_real_floor)
         return UP;
@@ -430,22 +404,16 @@ Direction Controller::get_next_direction(CabinID id)
         return IDLE;
 }
 
-bool Controller::all_cabins_free() const
-{
-    return !_task_manager.has_any();
-}
-
-
 #define DISTANCE_COEF 10.0
 #define TASK_COUNT_COEF 20.0
-double Controller::cabin_weight(CabinID id, size_t target_floor, Direction direction)
+double Controller::cabin_weight(CabinID id, floor_t target_floor, Direction direction)
 {
     double weight = 0;
-    int distance = std::abs(static_cast<int>(target_floor) - (static_cast<int>(_current_floor[id]) + 1));
+    const int distance = std::abs(target_floor - (_current_floor[id] + 1));
     weight += distance * DISTANCE_COEF;
 
-    int task_count = _task_manager.get_count_for_cabin(id);
-    weight += TASK_COUNT_COEF;
+    const int task_count = static_cast<int>(_task_manager.get_count_for_cabin(id));
+    weight += task_count * TASK_COUNT_COEF;
 
     if (_current_directions[id] == IDLE)
     {
@@ -454,90 +422,52 @@ double Controller::cabin_weight(CabinID id, size_t target_floor, Direction direc
     }
     else
     {
-        int cur_dist = static_cast<int>(target_floor) - (static_cast<int>(_current_floor[id]) + 1);
-        Direction move_direction = get_direction(cur_dist);
+        const int cur_dist = target_floor - (_current_floor[id] + 1);
+        const Direction move_direction = get_direction(cur_dist);
 
         if (_current_directions[id] == move_direction && _current_directions[id] == direction)
-        {
-            // движение в приоритетном направлении
-            weight -= 25;
-        }
+            weight -= 25;  // движение в приоритетном направлении
         else if (_current_directions[id] != move_direction)
-        {
             weight += 30;
-        }
     }
 
     if (_current_directions[id] != IDLE)
     {
-        int cur_dist = static_cast<int>(target_floor) - (static_cast<int>(_current_floor[id]) + 1);
-        Direction required_direction = get_direction(cur_dist);
+        const int cur_dist = target_floor - (_current_floor[id] + 1);
+        const Direction required_direction = get_direction(cur_dist);
 
         if (_current_directions[id] != required_direction && required_direction != IDLE)
-        {
             weight += 15;
-        }
     }
 
     return weight;
 }
 
-size_t Controller::next_floor_in_direction(CabinID id, Direction direction, size_t current_floor)
+floor_t Controller::next_floor_in_direction(CabinID id, Direction direction, floor_t current_floor)
 {
     if (direction == UP)
     {
-        int furthest_down_call = FLOOR_NOT_FOUND;
-        for (int floor = FLOOR_COUNT; floor >= current_floor + 1; --floor)
-            if (_task_manager.has_floor_call(id, floor))
-                furthest_down_call = floor;
-
-        for (int floor = current_floor + 1; floor <= FLOOR_COUNT; ++floor)
-        {
-            if (_task_manager.has_cabin_call(id, floor) || _task_manager.has_floor_call(id, floor))
-            {
-                if (furthest_down_call != FLOOR_NOT_FOUND && floor < furthest_down_call)
-                {
-                    qInfo("[Лифт %lu] Найден этаж %d по пути к конечному этажу %d", id, floor, furthest_down_call);
-                    return floor - 1;
-                }
-                else if (furthest_down_call == FLOOR_NOT_FOUND)
-                {
-                    qInfo("[Лифт %lu] Найден этаж %d по ходу вверх", id, floor);
-                    return floor - 1;
-                }
-            }
-        }
-
-        if (furthest_down_call != FLOOR_NOT_FOUND)
-        {
-            qInfo("[Лифт %lu] Едет к %d для смены направления", id, furthest_down_call);
-            return furthest_down_call - 1;
-        }
-    }
-    else if (direction == DOWN)
-    {
-        int furthest_up_call = FLOOR_NOT_FOUND;
-        for (int floor = 1; floor <= current_floor - 1; ++floor)
-        {
+        // Самый верхний floor_call (для разворота в конце поездки)
+        floor_t furthest_up_call = FLOOR_NOT_FOUND;
+        for (floor_t floor = FLOOR_COUNT; floor >= current_floor + 1; --floor)
             if (_task_manager.has_floor_call(id, floor))
             {
                 furthest_up_call = floor;
                 break;
             }
-        }
 
-        for (int floor = current_floor - 1; floor >= 1; --floor)
+        for (floor_t floor = current_floor + 1; floor <= FLOOR_COUNT; ++floor)
         {
             if (_task_manager.has_cabin_call(id, floor) || _task_manager.has_floor_call(id, floor))
             {
-                if (furthest_up_call != FLOOR_NOT_FOUND && floor > furthest_up_call)
+                if (furthest_up_call != FLOOR_NOT_FOUND && floor < furthest_up_call)
                 {
                     qInfo("[Лифт %lu] Найден этаж %d по пути к конечному этажу %d", id, floor, furthest_up_call);
                     return floor - 1;
                 }
                 else if (furthest_up_call == FLOOR_NOT_FOUND)
                 {
-                    qInfo("[Лифт %lu] Найден этаж %d по ходу вниз", id, floor);
+                    qInfo("[Лифт %lu] Найден этаж %d по ходу вверх", id, floor);
                     return floor - 1;
                 }
             }
@@ -547,6 +477,42 @@ size_t Controller::next_floor_in_direction(CabinID id, Direction direction, size
         {
             qInfo("[Лифт %lu] Едет к %d для смены направления", id, furthest_up_call);
             return furthest_up_call - 1;
+        }
+    }
+    else if (direction == DOWN)
+    {
+        // Самый нижний floor_call (для разворота в конце поездки)
+        floor_t furthest_down_call = FLOOR_NOT_FOUND;
+        for (floor_t floor = 1; floor <= current_floor - 1; ++floor)
+        {
+            if (_task_manager.has_floor_call(id, floor))
+            {
+                furthest_down_call = floor;
+                break;
+            }
+        }
+
+        for (floor_t floor = current_floor - 1; floor >= 1; --floor)
+        {
+            if (_task_manager.has_cabin_call(id, floor) || _task_manager.has_floor_call(id, floor))
+            {
+                if (furthest_down_call != FLOOR_NOT_FOUND && floor > furthest_down_call)
+                {
+                    qInfo("[Лифт %lu] Найден этаж %d по пути к конечному этажу %d", id, floor, furthest_down_call);
+                    return floor - 1;
+                }
+                else if (furthest_down_call == FLOOR_NOT_FOUND)
+                {
+                    qInfo("[Лифт %lu] Найден этаж %d по ходу вниз", id, floor);
+                    return floor - 1;
+                }
+            }
+        }
+
+        if (furthest_down_call != FLOOR_NOT_FOUND)
+        {
+            qInfo("[Лифт %lu] Едет к %d для смены направления", id, furthest_down_call);
+            return furthest_down_call - 1;
         }
     }
 

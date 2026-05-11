@@ -7,6 +7,11 @@
 
 #include <cstddef>
 
+// Тип номера этажа.
+// int (не size_t) — чтобы можно было без хитростей сравнивать с -1 (FLOOR_NOT_FOUND)
+// и делать арифметику без риска переполнения при декременте от нуля.
+using floor_t = int;
+
 enum Direction : int
 {
     DOWN = -1,

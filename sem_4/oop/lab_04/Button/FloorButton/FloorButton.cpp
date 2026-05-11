@@ -6,13 +6,12 @@
 #include <QDebug>
 
 
-#define ACTIVATE_FLOOR_BUTTON_MESSAGE "[Этаж %lu]: кнопка активирована"
-#define INACTIVATE_FLOOR_BUTTON_MESSAGE "[Этаж %lu]: кнопка деактивирована"
+#define ACTIVATE_FLOOR_BUTTON_MESSAGE "[Этаж %d]: кнопка активирована"
+#define INACTIVATE_FLOOR_BUTTON_MESSAGE "[Этаж %d]: кнопка деактивирована"
 
-FloorButton::FloorButton(size_t floor, QWidget *parent) : BaseButton(parent), _floor(floor)
+FloorButton::FloorButton(floor_t floor, QWidget *parent) : BaseButton(parent), _floor(floor)
 {
-    connect(this, &FloorButton::activate_signal, this, &FloorButton::activate_slot);
-    connect(this, &FloorButton::deactivate_signal, this, &FloorButton::deactivate_slot);
+    _state = INACTIVE;
 }
 
 void FloorButton::activate_slot()
@@ -37,10 +36,14 @@ void FloorButton::deactivate_slot()
 
 void FloorButton::activate()
 {
+    // Меняем состояние и оповещаем подписчиков (Controller, UI).
+    // Самоконнекта на собственный сигнал нет — переход состояния явный.
+    activate_slot();
     emit activate_signal();
 }
 
 void FloorButton::deactivate()
 {
+    deactivate_slot();
     emit deactivate_signal();
 }
