@@ -33,7 +33,7 @@ signals:
     void free_controller_signal();
 
 public slots:
-    void floor_destanation_slot(size_t floor, Direction direction);
+    void floor_destanation_slot(size_t floor);
     void cabin_destanation_slot(size_t floor, CabinID id);
 
     void manage_move_slot(CabinID id);
