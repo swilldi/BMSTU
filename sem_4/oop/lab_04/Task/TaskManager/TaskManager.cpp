@@ -13,17 +13,15 @@ TaskManager::TaskManager()
 
 bool TaskManager::add(const Task& task)
 {
-
-
     auto it = std::find(_tasks.begin(), _tasks.end(), task);
     if (it == _tasks.end())
     {
         _tasks.push_back(task);
-        qInfo("[Успешно] Добавлена задача: :%s", task.to_string().c_str());
+        qInfo("[Задачи] Добавлена: %s", task.to_string().c_str());
         return true;
     }
 
-    qInfo("[Внимание] Задача уже создана: :%s", task.to_string().c_str());
+    qInfo("[Задачи] Уже существует: %s", task.to_string().c_str());
     return false;
 }
 
@@ -33,11 +31,11 @@ bool TaskManager::remove(const Task& task)
     if (it != _tasks.end())
     {
         _tasks.erase(it);
-        qInfo("[Успешно] Удалена задача: :%s", task.to_string().c_str());
+        qInfo("[Задачи] Удалена: %s", task.to_string().c_str());
         return true;
     }
 
-    qInfo("[Внимание] Задача отсутствует: :%s", task.to_string().c_str());
+    qInfo("[Задачи] Отсутствует: %s", task.to_string().c_str());
     return false;
 }
 
@@ -156,10 +154,10 @@ std::vector<Task> TaskManager::get_all() const
 
 void TaskManager::print_tasks() const
 {
-    qInfo("=== ===");
+    qInfo("[Задачи] === Список (всего: %lu) ===", _tasks.size());
 
     for (const auto &task : _tasks)
-        qInfo("%s", task.to_string().c_str());
+        qInfo("[Задачи]   • %s", task.to_string().c_str());
 
-    qInfo("=== === ===");
+    qInfo("[Задачи] === Конец списка ===");
 }

@@ -32,10 +32,8 @@ bool Task::operator==(const Task& other) const
 
 std::string Task::to_string() const
 {
-    std::string msg = std::format(
-        "Task: cabin = {}, floor = {}, type = {}",
-        _cabin_id + 1, _floor, _type == FLOOR_CALL ? "FLOOR" : "CABIN"
+    return std::format(
+        "{{кабина={}, этаж={}, тип={}}}",
+        static_cast<int>(_cabin_id) + 1, _floor, _type == FLOOR_CALL ? "вызов" : "кабина"
     );
-
-    return msg;
 }

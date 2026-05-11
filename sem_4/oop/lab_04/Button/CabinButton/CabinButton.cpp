@@ -5,9 +5,6 @@
 #include "CabinButton.h"
 #include <QDebug>
 
-#define ACTIVATE_CABIN_BUTTON_MESSAGE "[Лифт %lu]: кнопка N-%d активирована"
-#define INACTIVATE_CABIN_BUTTON_MESSAGE "[Лифт %lu]: кнопка N-%d деактивирована"
-
 CabinButton::CabinButton(floor_t floor, CabinID id, QWidget *parent) : BaseButton(parent), _floor(floor), _id(id)
 {
     _state = INACTIVE;
@@ -19,7 +16,7 @@ void CabinButton::activate_slot()
         return;
 
     _state = ACTIVE;
-    qInfo(ACTIVATE_CABIN_BUTTON_MESSAGE, _id + 1, _floor);
+    qInfo("[Кабина %lu][Этаж %d] Кнопка активирована", _id + 1, _floor);
     emit activated_signal();
 }
 
@@ -29,7 +26,7 @@ void CabinButton::deactivate_slot()
         return;
 
     _state = INACTIVE;
-    qInfo(INACTIVATE_CABIN_BUTTON_MESSAGE, _id + 1, _floor);
+    qInfo("[Кабина %lu][Этаж %d] Кнопка деактивирована", _id + 1, _floor);
     emit deactivated_signal();
 }
 

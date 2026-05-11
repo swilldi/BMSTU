@@ -5,10 +5,6 @@
 
 #include "Cabin.h"
 
-#define ELEVATOR_MOVE_TO_MESSAGE "[Лифт %lu] Переход %d -> %d"
-#define ELEVATOR_IDLE_MESSAGE "[Лифт %lu] Остановился на %d"
-#define ELEVATOR_END_BOARDING_MESSAGE "[Лифт %lu] Завершил высадку/посадку"
-
 Cabin::Cabin(CabinID id, QObject* parent) : QObject(parent), _id(id), _state(FREE), _door(id)
 {
     move_timer.setSingleShot(true);
@@ -22,6 +18,7 @@ void Cabin::cabin_free_slot()
         return;
 
     _state = FREE;
+    qInfo("[Лифт %lu] Свободен", _id + 1);
 }
 
 void Cabin::cabin_moving_slot(floor_t floor, Direction direction)
@@ -34,7 +31,7 @@ void Cabin::cabin_moving_slot(floor_t floor, Direction direction)
     const floor_t next_floor = direction == UP ? cur_floor + 1 : cur_floor - 1;
     _state = MOVE;
     move_timer.start(MOVE_TIME);
-    qInfo(ELEVATOR_MOVE_TO_MESSAGE, _id, cur_floor, next_floor);
+    qInfo("[Лифт %lu] Едет %d → %d", _id + 1, cur_floor, next_floor);
 }
 
 void Cabin::cabin_start_boarding_slot(floor_t floor)
@@ -49,7 +46,7 @@ void Cabin::cabin_start_boarding_slot(floor_t floor)
 
     _state = BOARDING_STARTED;
     emit open_door_signal();
-    qInfo(ELEVATOR_IDLE_MESSAGE, _id + 1, floor + 1);
+    qInfo("[Лифт %lu] Остановился на этаже %d → посадка/высадка", _id + 1, floor + 1);
 }
 
 void Cabin::cabin_end_boarding_slot()
@@ -58,6 +55,6 @@ void Cabin::cabin_end_boarding_slot()
         return;
 
     _state = BOARDING_ENDED;
+    qInfo("[Лифт %lu] Посадка/высадка завершена", _id + 1);
     emit cabin_end_boarding_signal(_id);
-    qInfo(ELEVATOR_END_BOARDING_MESSAGE, _id + 1);
 }

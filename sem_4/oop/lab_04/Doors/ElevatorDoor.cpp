@@ -4,11 +4,6 @@
 
 #include "ElevatorDoor.h"
 
-#define START_OPENING_DOOR_MESSAGE "[Лифт %lu] Двери открываются"
-#define END_OPEN_DOOR_MESSAGE "[Лифт %lu] Двери открылись"
-#define START_CLOSING_DOOR_MESSAGE "[Лифт %lu] Двери закрываются"
-#define END_CLOSING_DOOR_MESSAGE "[Лифт %lu] Двери закрылись"
-
 ElevatorDoor::ElevatorDoor(CabinID id, QObject *parent) : QObject(parent), _id(id), _state(CLOSED)
 {
     _open_timer.setSingleShot(true);
@@ -34,7 +29,7 @@ void ElevatorDoor::start_opening_slot()
 
     _open_timer.start(time_to_open);
     _state = OPENING;
-    qInfo(START_OPENING_DOOR_MESSAGE, _id + 1);
+    qInfo("[Двери %lu] Открываются", _id + 1);
 }
 
 void ElevatorDoor::start_closing_slot()
@@ -44,7 +39,7 @@ void ElevatorDoor::start_closing_slot()
 
     _state = CLOSING;
     _close_timer.start(WAIT_TIME);
-    qInfo(START_CLOSING_DOOR_MESSAGE, _id + 1);
+    qInfo("[Двери %lu] Закрываются", _id + 1);
 }
 
 void ElevatorDoor::open_slot()
@@ -54,7 +49,7 @@ void ElevatorDoor::open_slot()
 
     _state = OPENED;
     _open_state_timer.start(WAIT_TIME);
-    qInfo(END_OPEN_DOOR_MESSAGE, _id + 1);
+    qInfo("[Двери %lu] Открылись", _id + 1);
 }
 
 void ElevatorDoor::close_slot()
@@ -63,6 +58,6 @@ void ElevatorDoor::close_slot()
         return;
 
     _state = CLOSED;
+    qInfo("[Двери %lu] Закрылись", _id + 1);
     emit is_closed();
-    qInfo(END_CLOSING_DOOR_MESSAGE, _id + 1);
 }
