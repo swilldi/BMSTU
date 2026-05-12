@@ -60,12 +60,12 @@ void Controller::setup_floor_buttons()
         // Лямбда отвечает только за обратную связь UI (смена цвета).
         // Бизнес-логика (создание задачи, выбор кабины, запуск планировщика)
         // выполняется в floor_destination_slot — точке входа для события нажатия.
-        connect(_floor_buttons[i].get(), &FloorButton::activate_signal, this, [this, floor]
+        connect(_floor_buttons[i].get(), &FloorButton::activated_signal, this, [this, floor]
         {
             emit floor_button_change_color_signal(floor, true);
         });
 
-        connect(_floor_buttons[i].get(), &FloorButton::deactivate_signal, this, [this, floor]
+        connect(_floor_buttons[i].get(), &FloorButton::deactivated_signal, this, [this, floor]
         {
             emit floor_button_change_color_signal(floor, false);
         });
@@ -85,12 +85,12 @@ void Controller::setup_cabin_buttons()
 
             // Лямбда отвечает только за обратную связь UI (смена цвета).
             // Бизнес-логика — в cabin_destination_slot.
-            connect(_cabin_buttons[id][i].get(), &CabinButton::activate_signal, this, [this, id, floor]
+            connect(_cabin_buttons[id][i].get(), &CabinButton::activated_signal, this, [this, id, floor]
             {
                 emit cabin_button_change_color_signal(floor, id, true);
             });
 
-            connect(_cabin_buttons[id][i].get(), &CabinButton::deactivate_signal, this, [this, id, floor]
+            connect(_cabin_buttons[id][i].get(), &CabinButton::deactivated_signal, this, [this, id, floor]
             {
                 emit cabin_button_change_color_signal(floor, id, false);
             });
@@ -172,7 +172,7 @@ void Controller::floor_destination_slot(floor_t floor)
     Task new_task(floor, IDLE, decided_id, FLOOR_CALL);
     _task_manager.add(new_task);
 
-    _floor_buttons[floor - 1]->activate();   // UI feedback через сигнал кнопки
+    _floor_buttons[floor - 1]->activate_slot();   // UI feedback через сигнал кнопки
 
     _state = FLOOR_REQUEST;
     manage_cabin_slot(decided_id);
@@ -197,7 +197,7 @@ void Controller::cabin_destination_slot(floor_t floor, CabinID id)
     Task new_task(floor, IDLE, id, CABIN_CALL);
     _task_manager.add(new_task);
 
-    _cabin_buttons[id][floor - 1]->activate();   // UI feedback
+    _cabin_buttons[id][floor - 1]->activate_slot();   // UI feedback
 
     _state = CABIN_REQUEST;
     manage_cabin_slot(id);
@@ -276,14 +276,14 @@ void Controller::reach_dst_floor_slot(CabinID id)
     {
         Task task(floor, IDLE, id, CABIN_CALL);
         _task_manager.remove(task);
-        _cabin_buttons[id][_current_floor[id]]->deactivate();
+        _cabin_buttons[id][_current_floor[id]]->deactivate_slot();
     }
 
     if (_task_manager.has_floor_call(id, floor))
     {
         Task task(floor, IDLE, id, FLOOR_CALL);
         _task_manager.remove(task);
-        _floor_buttons[_current_floor[id]]->deactivate();
+        _floor_buttons[_current_floor[id]]->deactivate_slot();
     }
 
     qInfo("[Лифт %lu] Задач после удаления: %lu", id + 1, _task_manager.get_count_for_cabin(id));

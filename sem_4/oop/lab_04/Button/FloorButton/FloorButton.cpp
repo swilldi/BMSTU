@@ -29,17 +29,3 @@ void FloorButton::deactivate_slot()
     qInfo("[Этаж %d] Кнопка вызова деактивирована", _floor);
     emit deactivated_signal();
 }
-
-void FloorButton::activate()
-{
-    // Меняем состояние и оповещаем подписчиков (Controller, UI).
-    // Самоконнекта на собственный сигнал нет — переход состояния явный.
-    activate_slot();
-    emit activate_signal();
-}
-
-void FloorButton::deactivate()
-{
-    deactivate_slot();
-    emit deactivate_signal();
-}

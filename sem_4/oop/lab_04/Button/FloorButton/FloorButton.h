@@ -16,17 +16,19 @@ public:
     FloorButton(floor_t floor, QWidget *parent = nullptr);
     ~FloorButton() override = default;
 
-    void activate();
-    void deactivate();
-
 signals:
-    void activate_signal();
-    void deactivate_signal();
-
+    // ============================================================
+    // ВНУТРЕННИЕ СИГНАЛЫ — фронты изменения состояния кнопки.
+    // Public, чтобы Controller мог слушать (UI-фидбэк и снятие задачи).
+    // ============================================================
     void activated_signal();
     void deactivated_signal();
 
 public slots:
+    // ============================================================
+    // ВНЕШНИЕ СЛОТЫ — точки входа от Controller.
+    // Слот делает ровно одно: меняет состояние и эмит'ит фронт.
+    // ============================================================
     void activate_slot();
     void deactivate_slot();
 

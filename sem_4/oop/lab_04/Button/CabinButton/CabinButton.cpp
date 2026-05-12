@@ -29,15 +29,3 @@ void CabinButton::deactivate_slot()
     qInfo("[Кабина %lu][Этаж %d] Кнопка деактивирована", _id + 1, _floor);
     emit deactivated_signal();
 }
-
-void CabinButton::activate()
-{
-    activate_slot();
-    emit activate_signal();
-}
-
-void CabinButton::deactivate()
-{
-    deactivate_slot();
-    emit deactivate_signal();
-}

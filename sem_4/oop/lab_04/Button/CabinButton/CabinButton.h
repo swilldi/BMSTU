@@ -16,17 +16,18 @@ public:
     CabinButton(floor_t floor, CabinID id, QWidget *parent = nullptr);
     ~CabinButton() override = default;
 
-    void activate();
-    void deactivate();
-
 signals:
-    void activate_signal();
-    void deactivate_signal();
-
+    // ============================================================
+    // ВНУТРЕННИЕ СИГНАЛЫ — фронты изменения состояния кнопки.
+    // Public, чтобы Controller мог слушать (UI-фидбэк и снятие задачи).
+    // ============================================================
     void activated_signal();
     void deactivated_signal();
 
 public slots:
+    // ============================================================
+    // ВНЕШНИЕ СЛОТЫ — точки входа от Controller.
+    // ============================================================
     void activate_slot();
     void deactivate_slot();
 

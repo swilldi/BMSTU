@@ -4,32 +4,48 @@
 
 #include "ElevatorDoor.h"
 
-ElevatorDoor::ElevatorDoor(CabinID id, QObject *parent) : QObject(parent), _id(id), _state(CLOSED)
+#include <QDebug>
+
+#define START_OPENING_DOOR_MESSAGE "[Двери %lu] Открываются"
+#define END_OPEN_DOOR_MESSAGE      "[Двери %lu] Открылись"
+#define START_CLOSING_DOOR_MESSAGE "[Двери %lu] Закрываются"
+#define END_CLOSING_DOOR_MESSAGE   "[Двери %lu] Закрылись"
+
+ElevatorDoor::ElevatorDoor(CabinID id, QObject* parent) : QObject(parent), _id(id), _state(CLOSED)
 {
     _open_timer.setSingleShot(true);
     _close_timer.setSingleShot(true);
     _open_state_timer.setSingleShot(true);
 
-    connect(&_open_timer, &QTimer::timeout, this, &ElevatorDoor::open_slot);
+    // --- Цепочка декомпозированных внутренних подписок ---
+    // start_opening_slot → opening_signal → on_opening (запуск таймера)
+    connect(this, &ElevatorDoor::opening_signal, this, &ElevatorDoor::on_opening);
+    // _open_timer ➜ on_open_timer_done (фиксирует OPENED + opened_signal)
+    connect(&_open_timer, &QTimer::timeout, this, &ElevatorDoor::on_open_timer_done);
+    // opened_signal → on_opened (запуск таймера удержания)
+    connect(this, &ElevatorDoor::opened_signal, this, &ElevatorDoor::on_opened);
+    // _open_state_timer ➜ start_closing_slot (как только удержание истекло —
+    // эмулируем «внешний» запрос на закрытие)
     connect(&_open_state_timer, &QTimer::timeout, this, &ElevatorDoor::start_closing_slot);
-    connect(&_close_timer, &QTimer::timeout, this, &ElevatorDoor::close_slot);
+    // start_closing_slot → closing_signal → on_closing (запуск таймера)
+    connect(this, &ElevatorDoor::closing_signal, this, &ElevatorDoor::on_closing);
+    // _close_timer ➜ on_close_timer_done (фиксирует CLOSED + is_closed)
+    connect(&_close_timer, &QTimer::timeout, this, &ElevatorDoor::on_close_timer_done);
 }
+
+// =============================================================================
+// Внешние точки входа (start_opening_slot, start_closing_slot).
+// Делают РОВНО три вещи: проверка ТПС, смена состояния, эмит внутреннего сигнала.
+// Вся остальная работа — в обработчиках внутренних событий.
+// =============================================================================
 
 void ElevatorDoor::start_opening_slot()
 {
     if (_state != CLOSED && _state != CLOSING)
         return;
 
-    int time_to_open = WAIT_TIME;
-    if (_state == CLOSING)
-    {
-        int remining_time = _close_timer.remainingTime();
-        time_to_open = remining_time > 0 ? (WAIT_TIME * remining_time / WAIT_TIME) : WAIT_TIME;
-    }
-
-    _open_timer.start(time_to_open);
     _state = OPENING;
-    qInfo("[Двери %lu] Открываются", _id + 1);
+    emit opening_signal();
 }
 
 void ElevatorDoor::start_closing_slot()
@@ -38,26 +54,46 @@ void ElevatorDoor::start_closing_slot()
         return;
 
     _state = CLOSING;
-    _close_timer.start(WAIT_TIME);
-    qInfo("[Двери %lu] Закрываются", _id + 1);
+    emit closing_signal();
 }
 
-void ElevatorDoor::open_slot()
+// =============================================================================
+// Внутренние обработчики — каждая функция выполняет ровно одну операцию.
+// =============================================================================
+
+void ElevatorDoor::on_opening()
+{
+    _open_timer.start(WAIT_TIME);
+    qInfo(START_OPENING_DOOR_MESSAGE, _id + 1);
+}
+
+void ElevatorDoor::on_open_timer_done()
 {
     if (_state != OPENING)
         return;
 
     _state = OPENED;
-    _open_state_timer.start(WAIT_TIME);
-    qInfo("[Двери %lu] Открылись", _id + 1);
+    qInfo(END_OPEN_DOOR_MESSAGE, _id + 1);
+    emit opened_signal();
 }
 
-void ElevatorDoor::close_slot()
+void ElevatorDoor::on_opened()
+{
+    _open_state_timer.start(WAIT_TIME);
+}
+
+void ElevatorDoor::on_closing()
+{
+    _close_timer.start(WAIT_TIME);
+    qInfo(START_CLOSING_DOOR_MESSAGE, _id + 1);
+}
+
+void ElevatorDoor::on_close_timer_done()
 {
     if (_state != CLOSING)
         return;
 
     _state = CLOSED;
-    qInfo("[Двери %lu] Закрылись", _id + 1);
+    qInfo(END_CLOSING_DOOR_MESSAGE, _id + 1);
     emit is_closed();
 }
