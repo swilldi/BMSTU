@@ -18,37 +18,22 @@ public:
     explicit ElevatorDoor(CabinID id, QObject *parent = nullptr);
 
 signals:
-    // === Внутренние события сущности «дверь» =================================
-    // Эти сигналы могут слушаться как ВНУТРИ сущности (для декомпозиции
-    // монолитного обработчика на цепочку коротких слотов), так и СНАРУЖИ
-    // (например, UI может слушать их, чтобы анимировать двери).
-    void opening_signal();   // запрос на открытие принят → следующий шаг
+    // Внутренние сигналы
+    void opening_signal();   // запрос на открытие принят
     void opened_signal();    // двери полностью открыты
-    void closing_signal();   // запрос на закрытие принят → следующий шаг
-    void is_closed();        // двери полностью закрыты (используется Cabin'ом)
+    void closing_signal();   // запрос на закрытие принят
+    void is_closed();        // двери полностью закрыты
 
 public slots:
-    // === Внешние события (точки входа от других сущностей) ===================
-    void start_opening_slot();
-    void start_closing_slot();
+    void start_opening_slot();  // emit opening_signal
+    void start_closing_slot();  // emit closing_signal
 
 private slots:
-    // === Внутренние обработчики ==============================================
-    // Каждый делает РОВНО одну вещь: либо запустить таймер, либо
-    // зафиксировать переход состояния. Декомпозиция обработчика start_opening
-    // достигается тем, что вместо одного «толстого» метода теперь цепочка:
-    //   start_opening_slot   → emit opening_signal
-    //   on_opening           → запуск таймера открытия
-    //   on_open_timer_done   → переход OPENING→OPENED + emit opened_signal
-    //   on_opened            → запуск таймера удержания
-    //   start_closing_slot   → emit closing_signal
-    //   on_closing           → запуск таймера закрытия
-    //   on_close_timer_done  → переход CLOSING→CLOSED + emit is_closed
-    void on_opening();
-    void on_open_timer_done();
-    void on_opened();
-    void on_closing();
-    void on_close_timer_done();
+    void on_opening();          // запуск таймера открытия
+    void on_open_timer_done();  // таймер открытия завершился
+    void on_opened();           // запуск таймера ожидания на этаже
+    void on_closing();          // запуск таймера закрытия
+    void on_close_timer_done(); // таймер закрытия завершился
 
 private:
     enum ElevatorDoorState

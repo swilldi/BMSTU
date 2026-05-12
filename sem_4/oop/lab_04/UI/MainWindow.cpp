@@ -27,8 +27,6 @@ namespace
 
     inline bool is_button_active(QPushButton* button)
     {
-        // ACTIVE_NOT_CURRENT использует #4a3a6e, ACTIVE_CURRENT — #8d6cd1.
-        // Общий признак — белый цвет текста, в неактивных стилях его нет.
         return button->styleSheet().contains("color: white");
     }
 } // namespace
