@@ -6,10 +6,10 @@
 
 #include <QDebug>
 
-#define START_OPENING_DOOR_MESSAGE "[Двери %lu] Открываются"
-#define END_OPEN_DOOR_MESSAGE      "[Двери %lu] Открылись"
-#define START_CLOSING_DOOR_MESSAGE "[Двери %lu] Закрываются"
-#define END_CLOSING_DOOR_MESSAGE   "[Двери %lu] Закрылись"
+#define START_OPENING_DOOR_MESSAGE "[Двери %d] Открываются"
+#define END_OPEN_DOOR_MESSAGE      "[Двери %d] Открылись"
+#define START_CLOSING_DOOR_MESSAGE "[Двери %d] Закрываются"
+#define END_CLOSING_DOOR_MESSAGE   "[Двери %d] Закрылись"
 
 ElevatorDoor::ElevatorDoor(CabinID id, QObject* parent) : QObject(parent), _id(id), _state(CLOSED)
 {

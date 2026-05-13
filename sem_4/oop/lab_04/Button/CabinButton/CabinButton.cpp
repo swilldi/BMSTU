@@ -16,7 +16,7 @@ void CabinButton::activate_slot()
         return;
 
     _state = ACTIVE;
-    qInfo("[Кабина %lu][Этаж %d] Кнопка активирована", _id + 1, _floor);
+    qInfo("[Кабина %d][Этаж %d] Кнопка активирована", _id + 1, _floor);
     emit activated_signal();
 }
 
@@ -26,6 +26,6 @@ void CabinButton::deactivate_slot()
         return;
 
     _state = INACTIVE;
-    qInfo("[Кабина %lu][Этаж %d] Кнопка деактивирована", _id + 1, _floor);
+    qInfo("[Кабина %d][Этаж %d] Кнопка деактивирована", _id + 1, _floor);
     emit deactivated_signal();
 }
