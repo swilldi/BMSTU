@@ -17,27 +17,14 @@ ElevatorDoor::ElevatorDoor(CabinID id, QObject* parent) : QObject(parent), _id(i
     _close_timer.setSingleShot(true);
     _open_state_timer.setSingleShot(true);
 
-    // --- Цепочка декомпозированных внутренних подписок ---
-    // start_opening_slot → opening_signal → on_opening (запуск таймера)
-    connect(this, &ElevatorDoor::opening_signal, this, &ElevatorDoor::on_opening);
-    // _open_timer ➜ on_open_timer_done (фиксирует OPENED + opened_signal)
-    connect(&_open_timer, &QTimer::timeout, this, &ElevatorDoor::on_open_timer_done);
-    // opened_signal → on_opened (запуск таймера удержания)
-    connect(this, &ElevatorDoor::opened_signal, this, &ElevatorDoor::on_opened);
-    // _open_state_timer ➜ start_closing_slot (как только удержание истекло —
-    // эмулируем «внешний» запрос на закрытие)
+    connect(this, &ElevatorDoor::opening_signal, this, &ElevatorDoor::on_opening);  // запуск таймера открытия
+    connect(&_open_timer, &QTimer::timeout, this, &ElevatorDoor::on_open_timer_done);  // запуск таймера удержания
+    connect(this, &ElevatorDoor::opened_signal, this, &ElevatorDoor::on_opened); // запуск таймера открытого состояния
     connect(&_open_state_timer, &QTimer::timeout, this, &ElevatorDoor::start_closing_slot);
-    // start_closing_slot → closing_signal → on_closing (запуск таймера)
-    connect(this, &ElevatorDoor::closing_signal, this, &ElevatorDoor::on_closing);
-    // _close_timer ➜ on_close_timer_done (фиксирует CLOSED + is_closed)
+    connect(this, &ElevatorDoor::closing_signal, this, &ElevatorDoor::on_closing);  // запуск таймера закрытия
     connect(&_close_timer, &QTimer::timeout, this, &ElevatorDoor::on_close_timer_done);
 }
 
-// =============================================================================
-// Внешние точки входа (start_opening_slot, start_closing_slot).
-// Делают РОВНО три вещи: проверка ТПС, смена состояния, эмит внутреннего сигнала.
-// Вся остальная работа — в обработчиках внутренних событий.
-// =============================================================================
 
 void ElevatorDoor::start_opening_slot()
 {
@@ -57,10 +44,7 @@ void ElevatorDoor::start_closing_slot()
     emit closing_signal();
 }
 
-// =============================================================================
-// Внутренние обработчики — каждая функция выполняет ровно одну операцию.
-// =============================================================================
-
+// Внутренние слоты
 void ElevatorDoor::on_opening()
 {
     _open_timer.start(WAIT_TIME);

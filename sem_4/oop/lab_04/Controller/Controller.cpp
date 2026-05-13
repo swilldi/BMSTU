@@ -6,10 +6,6 @@
 
 namespace
 {
-    // === Единый формат отладочных сообщений ===
-    // [Контроллер] ...   — глобальные события контроллера
-    // [Лифт N] ...       — действия конкретного лифта (N — 1-based)
-    // Направление выводится словом (вверх / вниз / стоит).
     inline const char* dir_str(Direction d)
     {
         switch (d)
@@ -57,9 +53,6 @@ void Controller::setup_floor_buttons()
         const floor_t floor = static_cast<floor_t>(i) + 1;
         _floor_buttons[i] = std::make_shared<FloorButton>(floor);
 
-        // Лямбда отвечает только за обратную связь UI (смена цвета).
-        // Бизнес-логика (создание задачи, выбор кабины, запуск планировщика)
-        // выполняется в floor_destination_slot — точке входа для события нажатия.
         connect(_floor_buttons[i].get(), &FloorButton::activated_signal, this, [this, floor]
         {
             emit floor_button_change_color_signal(floor, true);
@@ -327,9 +320,6 @@ floor_t Controller::get_next_visit_floor(CabinID id)
     qInfo("[Лифт %lu] Поиск следующего этажа (задач: %lu, текущий этаж: %d, направление: %s)",
           id + 1, tasks.size(), floor, dir_str(_current_directions[id]));
 
-    // Важно: проверяем задачу именно ЭТОЙ кабины. Раньше использовался
-    // has_for_floor (по всем кабинам) — из-за этого одна кабина «реагировала»
-    // на задачи другой, что приводило к нарушению параллельной работы.
     if (_task_manager.has_for_cabin_and_floor(id, floor))
     {
         qInfo("[Лифт %lu] Есть задача на текущем этаже %d → остановка", id + 1, floor);
