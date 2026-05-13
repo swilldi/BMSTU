@@ -64,7 +64,6 @@ void Controller::setup_floor_buttons()
 
 void Controller::setup_cabin_buttons()
 {
-    // === Создание и настройка кнопок ===
     for (size_t c = 0; c < CABINS_COUNT; ++c)
     {
         const CabinID id = static_cast<CabinID>(c);
@@ -73,8 +72,6 @@ void Controller::setup_cabin_buttons()
             const floor_t floor = static_cast<floor_t>(i) + 1;
             _cabin_buttons[id][i] = std::make_shared<CabinButton>(floor, id);
 
-            // Лямбда отвечает только за обратную связь UI
-            // Бизнес-логика — в cabin_destination_slot.
             connect(_cabin_buttons[id][i].get(), &CabinButton::activated_signal, this, [this, id, floor]
             {
                 emit cabin_button_change_color_signal(floor, id, true);

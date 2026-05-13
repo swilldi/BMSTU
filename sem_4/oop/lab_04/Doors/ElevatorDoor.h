@@ -47,8 +47,8 @@ private:
     CabinID _id;
     ElevatorDoorState _state;
 
-    QTimer _open_timer;          // таймер длительности открытия
-    QTimer _close_timer;         // таймер длительности закрытия
+    QTimer _open_timer;          // таймер открытия
+    QTimer _close_timer;         // таймер закрытия
     QTimer _open_state_timer;    // таймер удержания дверей открытыми
 
 };

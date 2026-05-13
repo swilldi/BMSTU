@@ -19,10 +19,8 @@
     "QGroupBox::title { subcontrol-origin: margin; left: 10px;" \
     "  padding: 0 6px; }"
 
-// ============================================================================
-// Кнопки этажа (вызов лифта)
-// ============================================================================
 
+// Кнопки этажа (вызов лифта)
 #define INACTIVE_FLOOR_BUTTON \
     "QPushButton { min-width: 50px; min-height: 36px;" \
     "  border: 1px solid #aaa; border-radius: 4px;" \
@@ -34,13 +32,8 @@
     "  border: 1px solid #5a4a82; border-radius: 4px;" \
     "  background-color: #4a3a6e; color: white; font-weight: bold; }"
 
-// ============================================================================
-// Кнопки внутри кабины
-// ============================================================================
-// current — кабина сейчас на этом этаже
-// active  — кнопка нажата (есть задача)
-// ============================================================================
 
+// Кнопки внутри кабины
 #define INACTIVE_NOT_CURRENT_CABIN_BUTTON \
     "QPushButton { min-width: 44px; min-height: 30px;" \
     "  border: 1px solid #aaa; border-radius: 4px;" \

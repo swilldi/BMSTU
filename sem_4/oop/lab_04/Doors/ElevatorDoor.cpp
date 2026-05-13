@@ -17,11 +17,13 @@ ElevatorDoor::ElevatorDoor(CabinID id, QObject* parent) : QObject(parent), _id(i
     _close_timer.setSingleShot(true);
     _open_state_timer.setSingleShot(true);
 
-    connect(this, &ElevatorDoor::opening_signal, this, &ElevatorDoor::on_opening);  // запуск таймера открытия
-    connect(&_open_timer, &QTimer::timeout, this, &ElevatorDoor::on_open_timer_done);  // запуск таймера удержания
-    connect(this, &ElevatorDoor::opened_signal, this, &ElevatorDoor::on_opened); // запуск таймера открытого состояния
+    connect(this, &ElevatorDoor::opening_signal, this, &ElevatorDoor::on_opening);      // запуск таймера открытия
+    connect(&_open_timer, &QTimer::timeout, this, &ElevatorDoor::on_open_timer_done);
+
+    connect(this, &ElevatorDoor::opened_signal, this, &ElevatorDoor::on_opened);        // запуск таймера открытого состояния
     connect(&_open_state_timer, &QTimer::timeout, this, &ElevatorDoor::start_closing_slot);
-    connect(this, &ElevatorDoor::closing_signal, this, &ElevatorDoor::on_closing);  // запуск таймера закрытия
+
+    connect(this, &ElevatorDoor::closing_signal, this, &ElevatorDoor::on_closing);      // запуск таймера закрытия
     connect(&_close_timer, &QTimer::timeout, this, &ElevatorDoor::on_close_timer_done);
 }
 
