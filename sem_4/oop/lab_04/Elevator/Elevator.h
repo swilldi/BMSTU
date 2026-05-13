@@ -18,17 +18,21 @@ public:
     explicit Elevator(QObject *parent = nullptr);
 
 signals:
+    // Сигналы к MainWindow
+    void floor_button_call_signal(floor_t floor);               // Вызов лифта на этаж
+    void cabin_button_call_signal(floor_t floor, CabinID id);   // Выбор этажа в кабине
+
+    // Сигналы к Controller
     void floor_button_change_color_signal(floor_t floor, bool is_active);
     void cabin_button_change_color_signal(floor_t floor, CabinID id, bool is_active);
     void change_cabin_position_signal(CabinID id, floor_t floor);
 
-    void floor_button_call_signal(floor_t floor);
-    void cabin_button_call_signal(floor_t floor, CabinID id);
-
 public slots:
-    void manage_floor_call_slot(floor_t floor);
-    void manage_cabin_call_slot(floor_t floor, CabinID id);
+    // Входы от MainWindow
+    void manage_floor_call_slot(floor_t floor);             // emit floor_button_call_signal
+    void manage_cabin_call_slot(floor_t floor, CabinID id); // emit cabin_button_call_signal
 
+    // Входы от Controller
     void change_floor_button_color_slot(floor_t floor, bool is_active);
     void change_cabin_button_color_slot(floor_t floor, CabinID id, bool is_active);
     void change_cabin_position_slot(CabinID id, floor_t floor);

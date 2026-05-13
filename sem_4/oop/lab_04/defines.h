@@ -19,13 +19,13 @@ enum Direction : int
     UP = 1
 };
 
-enum CabinID : size_t
+enum CabinID : int
 {
     FIRST,
     SECOND
 };
 
-enum TaskType: size_t
+enum TaskType: int
 {
     FLOOR_CALL,
     CABIN_CALL

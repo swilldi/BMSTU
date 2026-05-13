@@ -25,7 +25,7 @@ void Cabin::cabin_free_slot()
         return;
 
     _state = FREE;
-    qInfo("[Лифт %lu] Свободен", _id + 1);
+    qInfo("[Лифт %d] Свободен", _id + 1);
 }
 
 void Cabin::cabin_moving_slot(floor_t floor, Direction direction)
@@ -63,17 +63,17 @@ void Cabin::on_moving(floor_t floor, Direction direction)
     const floor_t cur_floor = floor + 1;
     const floor_t next_floor = direction == UP ? cur_floor + 1 : cur_floor - 1;
     move_timer.start(MOVE_TIME);
-    qInfo("[Лифт %lu] Едет %d → %d", _id + 1, cur_floor, next_floor);
+    qInfo("[Лифт %d] Едет %d → %d", _id + 1, cur_floor, next_floor);
 }
 
 void Cabin::on_boarding(floor_t floor)
 {
     emit open_door_signal();
-    qInfo("[Лифт %lu] Остановился на этаже %d → посадка/высадка", _id + 1, floor + 1);
+    qInfo("[Лифт %d] Остановился на этаже %d → посадка/высадка", _id + 1, floor + 1);
 }
 
 void Cabin::on_end_boarding()
 {
-    qInfo("[Лифт %lu] Посадка/высадка завершена", _id + 1);
+    qInfo("[Лифт %d] Посадка/высадка завершена", _id + 1);
     emit cabin_end_boarding_signal(_id);
 }
