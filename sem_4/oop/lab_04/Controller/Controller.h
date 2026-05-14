@@ -38,17 +38,17 @@ public slots:
     void floor_destination_slot(floor_t floor);                             // Elevator: кнопка вызова на этаже
     void cabin_destination_slot(floor_t floor, CabinID id);                 // Elevator: кнопка внутри кабины
 
-    void manage_move_slot(CabinID id);                                      // вход от Cabin::move_timer
-    void manage_cabin_slot(CabinID id);                                     // подписан на button_deactivate_signal
-    void reach_dst_floor_slot(CabinID id);                                  // вход от Cabin::cabin_end_boarding
     void free_controller_slot();                                            // подписан на free_controller_signal
+    void manage_cabin_slot(CabinID id);                                     // подписан на button_deactivate_signal
+    void manage_move_slot(CabinID id);                                      // вход от Cabin::move_timer
+    void reach_dst_floor_slot(CabinID id);                                  // вход от Cabin::cabin_end_boarding
 
 private:
     enum ControllerState
     {
-        FREE,
-        CABIN_REQUEST,
         FLOOR_REQUEST,
+        CABIN_REQUEST,
+        FREE,
         MANAGING_CABIN,
         MANAGING_MOVE,
         REACH_DST_FLOOR

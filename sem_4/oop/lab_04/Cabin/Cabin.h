@@ -36,12 +36,8 @@ public slots:
     void cabin_free_slot();                                     // приказ от Controller освободится
     void cabin_moving_slot(floor_t floor, Direction direction); // приказ от Controller ехать
     void cabin_start_boarding_slot(floor_t floor);              // приказ от Controller остановиться
-
-private slots:
     void cabin_end_boarding_slot();                     // подписан на ElevatorDoor:is_closed
-    void on_moving(floor_t floor, Direction direction); // запуск move_timer
-    void on_boarding(floor_t floor);                    // emit open_door_signal
-    void on_end_boarding();                             // emit cabin_end_boarding_signal
+
 
 private:
     enum CabinState

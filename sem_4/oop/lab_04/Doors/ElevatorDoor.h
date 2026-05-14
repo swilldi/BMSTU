@@ -18,10 +18,6 @@ public:
     explicit ElevatorDoor(CabinID id, QObject *parent = nullptr);
 
 signals:
-    // Внутренние сигналы
-    void opening_signal();   // запрос на открытие принят
-    void opened_signal();    // двери полностью открыты
-    void closing_signal();   // запрос на закрытие принят
     void is_closed();        // двери полностью закрыты
 
 public slots:
