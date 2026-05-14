@@ -25,15 +25,12 @@ signals:
     void is_closed();        // двери полностью закрыты
 
 public slots:
-    void start_opening_slot();  // emit opening_signal
-    void start_closing_slot();  // emit closing_signal
+    void start_opening_slot();
+    void start_closing_slot();
 
 private slots:
-    void on_opening();          // запуск таймера открытия
-    void on_open_timer_done();  // таймер открытия завершился
-    void on_opened();           // запуск таймера ожидания на этаже
-    void on_closing();          // запуск таймера закрытия
-    void on_close_timer_done(); // таймер закрытия завершился
+    void open_slot();
+    void close_slot();
 
 private:
     enum ElevatorDoorState
