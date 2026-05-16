@@ -20,7 +20,7 @@ struct ContentView: View {
             Divider()
             
             ContolPanel(viewModel: $viewModel)
-                .frame(width: 200)
+                .frame(width: 300)
                 .padding()
         }
         .frame(minWidth: 900, minHeight: 600)

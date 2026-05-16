@@ -77,8 +77,9 @@ struct DrawingCanvas: View {
                     ))
                     
                 default:
+                    let endPoint = viewModel.constrainedEnd(from: first, to: hover)
                     path.move(to: first)
-                    path.addLine(to: hover)
+                    path.addLine(to: endPoint)
                 }
                 
                 context.stroke(path, with: .color(.gray), lineWidth: 2)

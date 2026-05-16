@@ -29,7 +29,19 @@ struct ContolPanel: View {
                     Text("Кирус-Бек").tag(Algorithm.cyrusBeck)
                 }
             }
-            
+
+            // Тип отрезка (свободный / горизонтальный / вертикальный)
+            if viewModel.mode == .segments {
+                Text("Тип отрезка")
+                    .font(.headline)
+                Picker("", selection: $viewModel.lineConstraint) {
+                    ForEach(LineConstraint.allCases, id: \.self) { c in
+                        Text(c.label).tag(c)
+                    }
+                }
+                .pickerStyle(.segmented)
+            }
+
             Divider()
             
             // Выбор цыетов
@@ -121,6 +133,12 @@ struct ContolPanel: View {
             VStack {
                 Button("Сбросить отрезки") {
                     viewModel.segments = []
+                    viewModel.clippedSegments = []
+                }
+                .disabled(viewModel.segments.isEmpty)
+                
+                Button("Сбросить отсеченные отрезки") {
+                    viewModel.clippedSegments = []
                 }
                 .disabled(viewModel.segments.isEmpty)
                 

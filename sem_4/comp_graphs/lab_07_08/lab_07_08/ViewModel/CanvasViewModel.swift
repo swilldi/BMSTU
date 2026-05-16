@@ -12,6 +12,7 @@ import SwiftUI
 class CanvasViewModel {
     var mode: AppMode = .segments
     var clipperAlgorithm: Algorithm = .cohenSutherland
+    var lineConstraint: LineConstraint = .free
     
     var segments = [Segment]()
     var clippedSegments = [Segment]()
@@ -62,11 +63,20 @@ class CanvasViewModel {
             
         case (.segments, _):
             if let first = firstPoint {
-                segments.append(Segment(p1: first, p2: point))
+                segments.append(Segment(p1: first, p2: constrainedEnd(from: first, to: point)))
                 firstPoint = nil
             } else {
                 firstPoint = point
             }
+        }
+    }
+
+    func constrainedEnd(from start: CGPoint, to end: CGPoint) -> CGPoint {
+        guard mode == .segments else { return end }
+        switch lineConstraint {
+        case .free: return end
+        case .horizontal: return CGPoint(x: end.x, y: start.y)
+        case .vertical: return CGPoint(x: start.x, y: end.y)
         }
     }
     

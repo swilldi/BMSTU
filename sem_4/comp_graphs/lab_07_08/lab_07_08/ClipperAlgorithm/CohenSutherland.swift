@@ -65,26 +65,31 @@ private func clipSegment(_ point1: PointWithCode, _ point2: PointWithCode, rect:
 
 func cohenSutherland(_ segments: [Segment], _ rect: CGRect) -> [Segment] {
     var clippedSegments = [Segment]()
-    
-    // Точки с кодами
+
     for segment in segments {
         var p1 = segment.p1, p2 = segment.p2
         var code1 = pointCode(p1, rect), code2 = pointCode(p2, rect)
-        
-        if code1 & code2 != 0 {
-            continue
-        }
-        
-        while code1 | code2 != 0 {
+        var accept = false
+
+        while true {
+            if code1 & code2 != 0 {
+                //оба конца за одной стороной
+                break
+            }
+            if code1 | code2 == 0 {
+                // оба конца внутри
+                accept = true
+                break
+            }
             (p1, p2) = clipSegment((p1, code1), (p2, code2), rect: rect)
-            
             code1 = pointCode(p1, rect)
             code2 = pointCode(p2, rect)
         }
-        
-        clippedSegments.append(.init(p1: p1, p2: p2))
-        
+
+        if accept {
+            clippedSegments.append(.init(p1: p1, p2: p2))
+        }
     }
-    
+
     return clippedSegments
 }
