@@ -16,7 +16,7 @@ def progonka(B, F):
         d = alpha[i - 1] + B[i]
 
         alpha[i] = -1 / d
-        beta[i] = (F[i] + beta[i - 1]) / d
+        beta[i] = (F[i] - beta[i - 1]) / d
 
     # обратный ход
     for i in range(N - 1, 0, -1):
@@ -32,14 +32,19 @@ def solve_b(y, h):
     return -2 - 3 * y**2 * h**2
 
 def start_y_func(x):
-    return 2 * x + 1
+    if x == 0:
+        return 1
+    if x == 1:
+        return 3
+    # return 2 * x + 1
+    return 2
 
 EPS = 1e-3
 def criterion(y_values, delta_y):
     err = [np.abs(delta_y[i] / (y_values[i] + delta_y[i])) for i in range(len(y_values))]
     return max(err) > EPS
 
-def solve_diff_eq(x_values):
+def solve_diff_eq(x_values, step):
     N = len(x_values) - 1
     y_values = [start_y_func(x) for x in x_values]
 
@@ -68,14 +73,18 @@ def solve_diff_eq(x_values):
     print("y_values", y_values)
     return y_values
 
-N = 20
+N = 4
 
-for N in range(2, 30):
-    print(f"N: {N}; s: ", end="")
-    step = 1 / N
-    x_values = [step * i for i in range(N + 1)]
-    y_values = solve_diff_eq(x_values)
+# for N in range(2, 30):
+#     print(f"N: {N}; s: ", end="")
+#     step = 1 / N
+#     x_values = [step * i for i in range(N + 1)]
+#     y_values = solve_diff_eq(x_values, step)
 
-# plt.plot(x_values, y_values)
-# plt.legend()
-# plt.show()
+step = 1 / N
+x_values = [step * i for i in range(N + 1)]
+y_values = solve_diff_eq(x_values, step)
+
+plt.plot(x_values, y_values)
+plt.legend()
+plt.show()

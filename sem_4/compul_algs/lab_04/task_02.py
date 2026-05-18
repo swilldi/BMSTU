@@ -1,19 +1,21 @@
 from collections.abc import Callable
-
 import numpy as np
 
+EPS1 = 1e-5
+EPS2 = 1e-5
+EPS = 1e-5
 
 def mid_integral(a, b, f: Callable[[float], float]) -> float:
     def solve(n):
         step = (b - a) / n
         x = a + step / 2
         res = 0
-        while x < b:
+        for _ in range(n):
             # print(res, f(x), (x - a) // step)
-            res += f(x)
+            res += f(x) * step
             x += step
 
-        res *= step
+        # res *= step
         return res
 
     N = 2
@@ -21,7 +23,7 @@ def mid_integral(a, b, f: Callable[[float], float]) -> float:
     res_twoN = solve(2 * N)
     # print(res_N, N)
     # print(res_twoN, 2 * N)
-    while abs(res_N - res_twoN) > 1e-8:
+    while abs(res_N - res_twoN) > abs(res_N) * EPS1 + EPS2:
         N *= 2
         res_N = res_twoN
         res_twoN = solve(2 * N)
@@ -30,23 +32,18 @@ def mid_integral(a, b, f: Callable[[float], float]) -> float:
     return res_twoN
 
 
-# print(mid_integral(0, 10, np.sin))
-
-EPS = 1e-8
 def f(x):
     return 2 / np.sqrt(2 * np.pi) * mid_integral(0, x, lambda t: np.exp(-(t**2) / 2))
 
-def dehodomia(F, a, b) -> float:
-    fa = f(a) - F
-    fb = f(b) - F
-    if fa * fb > 0:
-        return np.nan
-
+def dehodomia(F) -> float:
+    a = 0
+    b = 10
     c = a + (b - a) / 2
-    fc = f(c) - F
 
-    while (abs(c) > 1e-10 and abs((b - a) / c) > EPS) or (abs(c) <= 1e-10 and abs(b - a) > EPS):
-        if fa * fc <= 0:
+    fc = f(c) - F
+    fa = f(a) - F
+    while abs(b - a) > EPS * max(1, abs(c)):
+        if fa * fc < 0:
             b = c
         else:
             a = c
@@ -57,5 +54,18 @@ def dehodomia(F, a, b) -> float:
 
     return c
 
-
+# print(mid_integral(0, 10, np.sin))
 #  TODO добавить тесты
+test_case = [
+    (0.1, 0.12566135),
+    (0.25, 0.31863936),
+    (0.5, 0.67448975),
+    (0.6827, 1.0),
+    (0.9545, 2.0),
+    (0.9973, 3.0),
+    (0.9999, 3.89059189)
+]
+
+for F, result in test_case:
+    cur_result = dehodomia(F)
+    print(f"dehodomia = {cur_result}, correct_result = {result} – (отн.ошибка: {abs(cur_result - result) / result}, абс.ошибка: {abs(cur_result - result)})")
