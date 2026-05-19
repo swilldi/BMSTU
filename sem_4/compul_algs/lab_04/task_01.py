@@ -5,7 +5,7 @@ import numpy as np
 from numpy import log, sin, cos, abs, linalg, sqrt
 
 MAX_S = 1e6
-MAX_S = 6
+# MAX_S = 6
 
 def f1(x, y):
     return 20 *  log(x - y) - x - y - 6
@@ -143,5 +143,9 @@ print("\n")
 run_test(START_VALUE_3)
 print("\n")
 
+print("x0 - y0 > 0")
+x = float(input("Введите x0: "))
+y = float(input("Введите y0: "))
+run_test((x, y))
 
 

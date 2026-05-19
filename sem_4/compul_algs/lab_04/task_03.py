@@ -36,8 +36,8 @@ def start_y_func(x):
         return 1
     if x == 1:
         return 3
-    # return 2 * x + 1
-    return 2
+    return 2 * x + 1
+    # return 2
 
 EPS = 1e-3
 def criterion(y_values, delta_y):
@@ -73,7 +73,7 @@ def solve_diff_eq(x_values, step):
     print("y_values", y_values)
     return y_values
 
-N = 4
+N = 10
 
 # for N in range(2, 30):
 #     print(f"N: {N}; s: ", end="")
@@ -81,10 +81,14 @@ N = 4
 #     x_values = [step * i for i in range(N + 1)]
 #     y_values = solve_diff_eq(x_values, step)
 
+N = int(input("Введите N (количесово интервалов): "))
 step = 1 / N
 x_values = [step * i for i in range(N + 1)]
 y_values = solve_diff_eq(x_values, step)
+y_start_value = [start_y_func(x) for x in x_values]
 
 plt.plot(x_values, y_values)
+plt.plot(x_values, y_start_value)
+plt.grid()
 plt.legend()
 plt.show()
