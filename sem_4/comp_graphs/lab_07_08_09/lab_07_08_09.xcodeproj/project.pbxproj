@@ -11,9 +11,9 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		2C5CF1982FB6658A0006623E /* lab_07_08 */ = {
+		2C5CF1982FB6658A0006623E /* lab_07_08_09 */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = lab_07_08;
+			path = lab_07_08_09;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -32,7 +32,7 @@
 		2C5CF18D2FB6658A0006623E = {
 			isa = PBXGroup;
 			children = (
-				2C5CF1982FB6658A0006623E /* lab_07_08 */,
+				2C5CF1982FB6658A0006623E /* lab_07_08_09 */,
 				2C5CF1972FB6658A0006623E /* Products */,
 			);
 			sourceTree = "<group>";
@@ -61,7 +61,7 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				2C5CF1982FB6658A0006623E /* lab_07_08 */,
+				2C5CF1982FB6658A0006623E /* lab_07_08_09 */,
 			);
 			name = lab_07_08_09;
 			packageProductDependencies = (
