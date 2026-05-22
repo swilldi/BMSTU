@@ -21,7 +21,7 @@ struct DrawingCanvas: View {
                     context.stroke(path, with: .color(viewModel.clipperColor), lineWidth: 2)
                 }
                 
-            case .cyrusBeck:
+            case .cyrusBeck, .sutherlandHodgman:
                 // ребра
                 if viewModel.polygon.count > 1 {
                     var path = Path()
@@ -45,7 +45,31 @@ struct DrawingCanvas: View {
                     context.fill(dot, with: .color(viewModel.clipperColor))
                 }
             }
-            
+
+            // Отсекаемый многоугольник (Сазерленд-Ходжмен)
+            if viewModel.clipperAlgorithm == .sutherlandHodgman {
+                let subject = viewModel.subjectPolygon
+                if subject.count > 1 {
+                    var path = Path()
+                    path.move(to: subject[0])
+                    for point in subject.dropFirst() {
+                        path.addLine(to: point)
+                    }
+                    if viewModel.isSubjectPolygonClosed {
+                        path.closeSubpath()
+                    }
+                    context.stroke(path, with: .color(viewModel.segmentColor), lineWidth: 2)
+                }
+
+                for point in subject {
+                    let dot = Path(ellipseIn: CGRect(
+                        x: point.x - dotSize / 2, y: point.y - dotSize / 2,
+                        width: dotSize, height: dotSize
+                    ))
+                    context.fill(dot, with: .color(viewModel.segmentColor))
+                }
+            }
+
             // Отрезки
             for segment in viewModel.segments {
                 var path = Path()
@@ -74,7 +98,7 @@ struct DrawingCanvas: View {
                     path.addRect(CGRect(
                         x: minX, y: minY,
                         width: maxX - minX, height: maxY - minY
-                    ))
+                    )) 
                     
                 default:
                     let endPoint = viewModel.constrainedEnd(from: first, to: hover)
@@ -84,7 +108,28 @@ struct DrawingCanvas: View {
                 
                 context.stroke(path, with: .color(.gray), lineWidth: 2)
             }
-            
+
+            // Предпросмотр ребра многоугольника с учётом привязки
+            if let hover = viewModel.hoverPoint {
+                let active: (points: [CGPoint], closed: Bool)?
+                switch viewModel.mode {
+                case .subjectPolygon:
+                    active = (viewModel.subjectPolygon, viewModel.isSubjectPolygonClosed)
+                case .clipper where viewModel.clipperAlgorithm != .cohenSutherland:
+                    active = (viewModel.polygon, viewModel.isPolygonClosed)
+                default:
+                    active = nil
+                }
+
+                if let active, let last = active.points.last, !active.closed {
+                    let end = viewModel.constrainedVertex(hover, appendingTo: active.points)
+                    var path = Path()
+                    path.move(to: last)
+                    path.addLine(to: end)
+                    context.stroke(path, with: .color(.gray), lineWidth: 2)
+                }
+            }
+
             // динамическая отрисовка
             if let first = viewModel.firstPoint {
                 let dot = Path(ellipseIn: CGRect(

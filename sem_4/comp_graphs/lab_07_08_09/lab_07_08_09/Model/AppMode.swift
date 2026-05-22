@@ -10,11 +10,13 @@ import Foundation
 enum Algorithm: Hashable {
     case cohenSutherland
     case cyrusBeck
+    case sutherlandHodgman
 }
 
 enum AppMode: Hashable {
     case clipper
     case segments
+    case subjectPolygon
 }
 
 enum LineConstraint: Hashable, CaseIterable {
