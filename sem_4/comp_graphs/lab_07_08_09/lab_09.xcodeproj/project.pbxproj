@@ -6,30 +6,14 @@
 	objectVersion = 77;
 	objects = {
 
-/* Begin PBXContainerItemProxy section */
-		2CFABF5A2FC0517C00E3185C /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 2C5CF18E2FB6658A0006623E /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 2C5CF1952FB6658A0006623E;
-			remoteInfo = lab_07_08_09;
-		};
-/* End PBXContainerItemProxy section */
-
 /* Begin PBXFileReference section */
-		2C5CF1962FB6658A0006623E /* lab_07_08_09.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = lab_07_08_09.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		2CFABF562FC0517C00E3185C /* SutherlandHodgmanTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SutherlandHodgmanTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		2C5CF1962FB6658A0006623E /* lab_09.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = lab_09.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		2C5CF1982FB6658A0006623E /* lab_07_08_09 */ = {
+		2C5CF1982FB6658A0006623E /* lab_09 */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = lab_07_08_09;
-			sourceTree = "<group>";
-		};
-		2CFABF572FC0517C00E3185C /* SutherlandHodgmanTests */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = SutherlandHodgmanTests;
+			path = lab_09;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -42,21 +26,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		2CFABF532FC0517C00E3185C /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
 		2C5CF18D2FB6658A0006623E = {
 			isa = PBXGroup;
 			children = (
-				2C5CF1982FB6658A0006623E /* lab_07_08_09 */,
-				2CFABF572FC0517C00E3185C /* SutherlandHodgmanTests */,
+				2C5CF1982FB6658A0006623E /* lab_09 */,
 				2C5CF1972FB6658A0006623E /* Products */,
 			);
 			sourceTree = "<group>";
@@ -64,8 +40,7 @@
 		2C5CF1972FB6658A0006623E /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				2C5CF1962FB6658A0006623E /* lab_07_08_09.app */,
-				2CFABF562FC0517C00E3185C /* SutherlandHodgmanTests.xctest */,
+				2C5CF1962FB6658A0006623E /* lab_09.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -73,9 +48,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		2C5CF1952FB6658A0006623E /* lab_07_08_09 */ = {
+		2C5CF1952FB6658A0006623E /* lab_09 */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 2C5CF1A12FB6658C0006623E /* Build configuration list for PBXNativeTarget "lab_07_08_09" */;
+			buildConfigurationList = 2C5CF1A12FB6658C0006623E /* Build configuration list for PBXNativeTarget "lab_09" */;
 			buildPhases = (
 				2C5CF1922FB6658A0006623E /* Sources */,
 				2C5CF1932FB6658A0006623E /* Frameworks */,
@@ -86,37 +61,14 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				2C5CF1982FB6658A0006623E /* lab_07_08_09 */,
+				2C5CF1982FB6658A0006623E /* lab_09 */,
 			);
-			name = lab_07_08_09;
+			name = lab_09;
 			packageProductDependencies = (
 			);
 			productName = lab_07;
-			productReference = 2C5CF1962FB6658A0006623E /* lab_07_08_09.app */;
+			productReference = 2C5CF1962FB6658A0006623E /* lab_09.app */;
 			productType = "com.apple.product-type.application";
-		};
-		2CFABF552FC0517C00E3185C /* SutherlandHodgmanTests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 2CFABF5C2FC0517C00E3185C /* Build configuration list for PBXNativeTarget "SutherlandHodgmanTests" */;
-			buildPhases = (
-				2CFABF522FC0517C00E3185C /* Sources */,
-				2CFABF532FC0517C00E3185C /* Frameworks */,
-				2CFABF542FC0517C00E3185C /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				2CFABF5B2FC0517C00E3185C /* PBXTargetDependency */,
-			);
-			fileSystemSynchronizedGroups = (
-				2CFABF572FC0517C00E3185C /* SutherlandHodgmanTests */,
-			);
-			name = SutherlandHodgmanTests;
-			packageProductDependencies = (
-			);
-			productName = SutherlandHodgmanTests;
-			productReference = 2CFABF562FC0517C00E3185C /* SutherlandHodgmanTests.xctest */;
-			productType = "com.apple.product-type.bundle.unit-test";
 		};
 /* End PBXNativeTarget section */
 
@@ -131,13 +83,9 @@
 					2C5CF1952FB6658A0006623E = {
 						CreatedOnToolsVersion = 26.2;
 					};
-					2CFABF552FC0517C00E3185C = {
-						CreatedOnToolsVersion = 26.2;
-						TestTargetID = 2C5CF1952FB6658A0006623E;
-					};
 				};
 			};
-			buildConfigurationList = 2C5CF1912FB6658A0006623E /* Build configuration list for PBXProject "lab_07_08_09" */;
+			buildConfigurationList = 2C5CF1912FB6658A0006623E /* Build configuration list for PBXProject "lab_09" */;
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -151,21 +99,13 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				2C5CF1952FB6658A0006623E /* lab_07_08_09 */,
-				2CFABF552FC0517C00E3185C /* SutherlandHodgmanTests */,
+				2C5CF1952FB6658A0006623E /* lab_09 */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
 		2C5CF1942FB6658A0006623E /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		2CFABF542FC0517C00E3185C /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -182,22 +122,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		2CFABF522FC0517C00E3185C /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXSourcesBuildPhase section */
-
-/* Begin PBXTargetDependency section */
-		2CFABF5B2FC0517C00E3185C /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 2C5CF1952FB6658A0006623E /* lab_07_08_09 */;
-			targetProxy = 2CFABF5A2FC0517C00E3185C /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		2C5CF19F2FB6658C0006623E /* Debug */ = {
@@ -378,50 +303,10 @@
 			};
 			name = Release;
 		};
-		2CFABF5D2FC0517C00E3185C /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				GENERATE_INFOPLIST_FILE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 26.2;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "swilldi.lab-07.SutherlandHodgmanTests";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				STRING_CATALOG_GENERATE_SYMBOLS = NO;
-				SWIFT_APPROACHABLE_CONCURRENCY = YES;
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
-				SWIFT_VERSION = 5.0;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/lab_07_08_09.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/lab_07_08_09";
-			};
-			name = Debug;
-		};
-		2CFABF5E2FC0517C00E3185C /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				GENERATE_INFOPLIST_FILE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 26.2;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "swilldi.lab-07.SutherlandHodgmanTests";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				STRING_CATALOG_GENERATE_SYMBOLS = NO;
-				SWIFT_APPROACHABLE_CONCURRENCY = YES;
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
-				SWIFT_VERSION = 5.0;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/lab_07_08_09.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/lab_07_08_09";
-			};
-			name = Release;
-		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		2C5CF1912FB6658A0006623E /* Build configuration list for PBXProject "lab_07_08_09" */ = {
+		2C5CF1912FB6658A0006623E /* Build configuration list for PBXProject "lab_09" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				2C5CF19F2FB6658C0006623E /* Debug */,
@@ -430,20 +315,11 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		2C5CF1A12FB6658C0006623E /* Build configuration list for PBXNativeTarget "lab_07_08_09" */ = {
+		2C5CF1A12FB6658C0006623E /* Build configuration list for PBXNativeTarget "lab_09" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				2C5CF1A22FB6658C0006623E /* Debug */,
 				2C5CF1A32FB6658C0006623E /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		2CFABF5C2FC0517C00E3185C /* Build configuration list for PBXNativeTarget "SutherlandHodgmanTests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				2CFABF5D2FC0517C00E3185C /* Debug */,
-				2CFABF5E2FC0517C00E3185C /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
