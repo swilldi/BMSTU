@@ -26,7 +26,6 @@ def get_legandro_intervals_with_roots(degree):
 
     h = (LEGANDRO_RIGHT - LEGANDRO_LEFT) / (N - 1)
     x_values = [LEGANDRO_LEFT + i * h for i in range(N)]
-    print(x_values)
 
     sign_change_intervals = []
     while len(sign_change_intervals) != degree:
@@ -60,7 +59,7 @@ def find_root_dihodomia(f, a, b):
     return c
 
 
-def gauss_integral(f, a, b, degree, eps):
+def gauss_integral(f, a, b, degree, eps, verbose=False):
     sign_change_intervals = get_legandro_intervals_with_roots(degree)
     roots = [find_root_dihodomia(lambda t: polynom_legandro(t, degree), *interval) for interval in
              sign_change_intervals]
@@ -70,6 +69,11 @@ def gauss_integral(f, a, b, degree, eps):
     F = [2 / (k + 1) if k % 2 == 0 else 0 for k in range(degree)]
     # Решение матричного уравнения для получения весовых коэф-ов
     A = np.linalg.solve(T, F)
+
+    if verbose:
+        print(f"[gauss] a={a}, b={b}, degree={degree}, eps={eps}")
+        print(f"[gauss] корни P_{degree}: {[round(r, 6) for r in roots]}")
+        print(f"[gauss] веса:        {[round(float(ai), 6) for ai in A]}")
 
     def solve(N):
         h = (b - a) / N
@@ -84,12 +88,20 @@ def gauss_integral(f, a, b, degree, eps):
 
     N = 2
     I_N = solve(N)
+    if verbose:
+        print(f"[gauss] N={N:>4}  I={I_N:.8f}")
     N *= 2
     I_2N = solve(N)
+    if verbose:
+        print(f"[gauss] N={N:>4}  I={I_2N:.8f}")
     while abs(I_N - I_2N) > eps * abs(I_2N):
         I_N = I_2N
 
         N *= 2
         I_2N = solve(N)
+        if verbose:
+            print(f"[gauss] N={N:>4}  I={I_2N:.8f}")
 
+    if verbose:
+        print(f"[gauss] сошлось при N={N}")
     return I_2N
