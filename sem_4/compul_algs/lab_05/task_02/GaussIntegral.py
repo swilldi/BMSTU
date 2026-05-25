@@ -105,3 +105,25 @@ def gauss_integral(f, a, b, degree, eps, verbose=False):
     if verbose:
         print(f"[gauss] сошлось при N={N}")
     return I_2N
+
+
+
+def gauss_integral_by_N(f, a, b, degree, N):
+    sign_change_intervals = get_legandro_intervals_with_roots(degree)
+    roots = [find_root_dihodomia(lambda t: polynom_legandro(t, degree), *interval) for interval in
+             sign_change_intervals]
+
+    # Матрица корней в степенях от 0 до N - 1
+    T = [[r ** k for r in roots] for k in range(degree)]
+    F = [2 / (k + 1) if k % 2 == 0 else 0 for k in range(degree)]
+    # Решение матричного уравнения для получения весовых коэф-ов
+    A = np.linalg.solve(T, F)
+
+    h = (b - a) / N
+    I = 0
+    for i in range(N):
+        x0, x1 = a + h * i, a + h * (i + 1)
+        convert_to_x = lambda t: (x1 - x0) / 2 * t + (x1 + x0) / 2
+        I += (x1 - x0) / 2 * sum([Ai * f(convert_to_x(t)) for t, Ai in zip(roots, A)])
+
+    return I
