@@ -96,8 +96,6 @@ START_VALUE_1 = (-0.5, -1.7)
 START_VALUE_2 = (-0.6, -1.8)
 START_VALUE_3 = (-1, -2)
 
-
-
 def run_test(start_value):
     x, y = start_value
     A = np.array([

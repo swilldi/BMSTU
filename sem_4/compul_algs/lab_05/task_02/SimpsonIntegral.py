@@ -35,8 +35,8 @@ def simpson_integral(f, a, b, eps, verbose=False):
     return I_2N
 
 
-def gauss_integral_by_N(f, a, b, N):
-    # N – кол-во интервалов
+def simpson_integral_by_N(f, a, b, N):
+    # N – кол-во интервалов (должно быть чётным)
     h = (b - a) / N
     x_values = [a + i * h for i in range(N + 1)]
 

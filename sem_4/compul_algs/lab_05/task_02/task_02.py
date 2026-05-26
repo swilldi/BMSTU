@@ -6,10 +6,10 @@ from reader import read_data
 EPS = 1e-5
 DEGREE = 3
 
-# alpha = float(input())
-# beta = float(input())
-# a = float(input())
-# b = float(input())
+# alpha = float(input("Введите α:"))
+# beta = float(input("Введите β:"))
+# a = float(input("Введите a:"))
+# b = float(input("Введите b:"))
 alpha = 1
 beta = 4
 a = 0
@@ -31,10 +31,3 @@ psi = lambda x: beta * x**2
 F_simpson = lambda x: simpson_integral(lambda y: f(x, y), phi(x), psi(x), EPS)
 I = gauss_integral(F_simpson, a, b, DEGREE, EPS, verbose=True)
 I = simpson_integral(F_simpson, a, b, EPS, verbose=True)
-
-N_values = [2, 4, 16, 64, 1024, 4096]
-gauss_degrees = [2, 3, 4, 5]
-
-
-# print("-" * 50)
-# print(f"I = {I:.8f}")
