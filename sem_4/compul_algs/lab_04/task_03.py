@@ -39,7 +39,8 @@ def start_y_func(x):
         return 1
     if abs(x - 1) <= 1e-9:
         return 3
-    return 2 * x + 1
+    # return 2 * x + 1
+    return 2
 
 EPS = 1e-3
 

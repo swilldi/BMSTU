@@ -127,6 +127,8 @@ def run_test(start_value):
         for t in titles:
             if t == "s":
                 print(f"{res[t]:^17}|", end="")
+            if t == "x" or t == "y":
+                print(f"{res[t]:^17.5}|", end="")
             else:
                 print(f"{res[t]:^17e}|", end="")
         print()

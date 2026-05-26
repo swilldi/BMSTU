@@ -3,7 +3,7 @@ import numpy as np
 
 EPS1 = 1e-5
 EPS2 = 1e-5
-EPS = 1e-5
+EPS = 1e-6
 
 def mid_integral(a, b, f: Callable[[float], float]) -> float:
     def solve(n):
@@ -11,11 +11,10 @@ def mid_integral(a, b, f: Callable[[float], float]) -> float:
         x = a + step / 2
         res = 0
         for _ in range(n):
-            # print(res, f(x), (x - a) // step)
-            res += f(x) * step
+            res += f(x)
             x += step
 
-        # res *= step
+        res *= step
         return res
 
     N = 2
@@ -24,7 +23,7 @@ def mid_integral(a, b, f: Callable[[float], float]) -> float:
     # print(res_N, N)
     # print(res_twoN, 2 * N)
     s = 0
-    while abs(res_N - res_twoN) > abs(res_N) * EPS1 + EPS2:
+    while abs(res_N - res_twoN) > abs(res_N) * EPS + EPS:
         s += 1
         N *= 2
         res_N = res_twoN
@@ -47,7 +46,7 @@ def dehodomia(F) -> float:
 
     fc = f(c) - F
     fa = f(a) - F
-    while abs(b - a) > EPS * max(1, abs(c)):
+    while abs(b - a) > EPS * abs(c) + EPS:
         if fa * fc < 0:
             b = c
         else:
@@ -72,7 +71,7 @@ test_case = [
 
 for F, result in test_case:
     cur_result = dehodomia(F)
-    print(f"dehodomia = {cur_result}, correct_result = {result} – (отн.ошибка: {abs(cur_result - result) / result:e}, абс.ошибка: {abs(cur_result - result):e})")
+    print(f"F = {F}, dehodomia = {cur_result}, correct_result = {result} – (отн.ошибка: {abs(cur_result - result) / result:e}, абс.ошибка: {abs(cur_result - result):e})")
 
 F = float(input("Введите значение функции: "))
 print("x = ", dehodomia(F))
