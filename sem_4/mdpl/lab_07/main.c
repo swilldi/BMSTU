@@ -54,46 +54,89 @@ static void show(const char *label, const char *buf, size_t n)
     printf("\"\n");
 }
 
-static void test_strlen(const char *s)
+static int report(const char *name, int ok)
 {
-    size_t a = my_strlen(s);
-    size_t b = strlen(s);
-    printf("my_strlen(\"%s\") = %zu  (libc: %zu)  %s\n",
-           s, a, b, a == b ? "OK" : "FAIL");
+    printf("[%s] %s\n", ok ? "OK  " : "FAIL", name);
+    return ok;
 }
 
-static void test_copy_no_overlap(void)
+static int my_strlen_WhenStringIsEmpty_ReturnsZero(void)
 {
+    /* Arrange */
+    const char *src = "";
+    /* Act */
+    size_t actual = my_strlen(src);
+    /* Assert */
+    return report(__func__, actual == 0);
+}
+
+static int my_strlen_WhenStringHasOneChar_ReturnsOne(void)
+{
+    /* Arrange */
+    const char *src = "a";
+    /* Act */
+    size_t actual = my_strlen(src);
+    /* Assert */
+    return report(__func__, actual == 1);
+}
+
+static int my_strlen_WhenStringIsAscii_ReturnsLibcLength(void)
+{
+    /* Arrange */
+    const char *src = "Hello, world!";
+    size_t expected = strlen(src);
+    /* Act */
+    size_t actual = my_strlen(src);
+    /* Assert */
+    return report(__func__, actual == expected);
+}
+
+static int my_strlen_WhenStringIsSixteenChars_ReturnsSixteen(void)
+{
+    /* Arrange */
+    const char *src = "0123456789abcdef";
+    /* Act */
+    size_t actual = my_strlen(src);
+    /* Assert */
+    return report(__func__, actual == 16);
+}
+
+static int my_strcpy_WhenBuffersDoNotOverlap_CopiesSourceToDestination(void)
+{
+    /* Arrange */
     const char *src = "Hello, assembler!";
     char dst[64] = {0};
     size_t n = my_strlen(src) + 1;
+    /* Act */
     my_strcpy(dst, src, n);
-    printf("copy (no overlap): \"%s\"  %s\n",
-           dst, strcmp(dst, src) == 0 ? "OK" : "FAIL");
+    /* Assert */
+    return report(__func__, strcmp(dst, src) == 0);
 }
 
-static void test_copy_forward_overlap(void)
+static int my_strcpy_WhenDstBeforeSrcAndOverlap_ShiftsBytesLeft(void)
 {
-    /* dst < src, перекрытие: сдвиг строки влево на 2 байта */
+    /* Arrange: dst < src, перекрытие — сдвиг строки влево на 2 байта */
     char buf[16] = "ABCDEFGHIJ";
-    my_strcpy(buf + 0, buf + 2, 8);     /* "CDEFGHIJ" -> в начало */
-    /* ожидаем: C D E F G H I J I J */
     const char expected[] = {'C','D','E','F','G','H','I','J','I','J','\0'};
+    /* Act */
+    my_strcpy(buf + 0, buf + 2, 8);
+    /* Assert */
     int ok = (memcmp(buf, expected, 10) == 0);
-    printf("copy (dst<src, overlap): "); show("buf", buf, 10);
-    printf("  %s\n", ok ? "OK" : "FAIL");
+    show("  buf", buf, 10);
+    return report(__func__, ok);
 }
 
-static void test_copy_backward_overlap(void)
+static int my_strcpy_WhenDstAfterSrcAndOverlap_ShiftsBytesRight(void)
 {
-    /* dst > src, перекрытие: сдвиг строки вправо на 2 байта */
+    /* Arrange: dst > src, перекрытие — сдвиг строки вправо на 2 байта */
     char buf[16] = "ABCDEFGHIJ";
-    my_strcpy(buf + 2, buf + 0, 8);     /* "ABCDEFGH" -> со сдвигом */
-    /* ожидаем: A B A B C D E F G H */
     const char expected[] = {'A','B','A','B','C','D','E','F','G','H','\0'};
+    /* Act */
+    my_strcpy(buf + 2, buf + 0, 8);
+    /* Assert */
     int ok = (memcmp(buf, expected, 10) == 0);
-    printf("copy (dst>src, overlap): "); show("buf", buf, 10);
-    printf("  %s\n", ok ? "OK" : "FAIL");
+    show("  buf", buf, 10);
+    return report(__func__, ok);
 }
 
 int main(void)
@@ -104,14 +147,17 @@ int main(void)
     printf("=== 32-bit build ===\n");
 #endif
 
-    test_strlen("");
-    test_strlen("a");
-    test_strlen("Hello, world!");
-    test_strlen("0123456789abcdef");
+    int passed = 0, total = 0;
 
-    test_copy_no_overlap();
-    test_copy_forward_overlap();
-    test_copy_backward_overlap();
+    total++; passed += my_strlen_WhenStringIsEmpty_ReturnsZero();
+    total++; passed += my_strlen_WhenStringHasOneChar_ReturnsOne();
+    total++; passed += my_strlen_WhenStringIsAscii_ReturnsLibcLength();
+    total++; passed += my_strlen_WhenStringIsSixteenChars_ReturnsSixteen();
 
-    return 0;
+    total++; passed += my_strcpy_WhenBuffersDoNotOverlap_CopiesSourceToDestination();
+    total++; passed += my_strcpy_WhenDstBeforeSrcAndOverlap_ShiftsBytesLeft();
+    total++; passed += my_strcpy_WhenDstAfterSrcAndOverlap_ShiftsBytesRight();
+
+    printf("\n%d/%d passed\n", passed, total);
+    return passed == total ? 0 : 1;
 }
