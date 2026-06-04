@@ -1,10 +1,13 @@
 #include <stdio.h>
+#include <string.h>
+#include <stddef.h>
 
-size_t strlenAsm(char *str) {
-    size_t len = 0;
+size_t strlenAsm(char *str)
+{
+    size_t len;
     asm volatile(
         "mov x0, %[str]\n"
-        "mov %[len], #0\n"
+        "mov %[len], xzr\n"
         "ldrb w1, [x0, %[len]]\n"
     "1:\n"
         "cbz w1, 2f\n"
@@ -12,23 +15,81 @@ size_t strlenAsm(char *str) {
         "ldrb w1, [x0, %[len]]\n"
         "b 1b\n"
     "2:"
-        : [len] "+r" (len) 
+        : [len] "+r" (len)
         : [str] "r" (str)
         : "cc", "memory", "x0", "x1"
     );
-
     return len;
 }
 
-size_t strlenC(char *str) {
-    size_t len = 0;
-    while (str[len] != '\0')
-        ++len;
-    return len;
+int report(const char *name, int ok)
+{
+    printf("[%s] %s\n", ok ? "OK  " : "FAIL", name);
+    return ok;
 }
 
-int main(void) {
-    printf("Hello world!!!(11): Asm[%lu], C[%lu]\n", strlenAsm("Hello world"), strlenC("Hello world"));
-    printf("<Empty>(0): Asm[%lu], C[%lu]\n", strlenAsm(""), strlenC(""));
-    printf("a(1): Asm[%lu], C[%lu]\n", strlenAsm("a"), strlenC("a"));
+int strlenAsm_WhenStringIsEmpty_ReturnsZero(void)
+{
+    /* Arrange */
+    char *src = "";
+    /* Act */
+    size_t actual = strlenAsm(src);
+    /* Assert */
+    return report(__func__, actual == 0);
+}
+
+int strlenAsm_WhenStringHasOneChar_ReturnsOne(void)
+{
+    /* Arrange */
+    char *src = "a";
+    /* Act */
+    size_t actual = strlenAsm(src);
+    /* Assert */
+    return report(__func__, actual == 1);
+}
+
+int strlenAsm_WhenStringIsAscii_ReturnsLibcLength(void)
+{
+    /* Arrange */
+    char *src = "Hello, world!";
+    size_t expected = strlen(src);
+    /* Act */
+    size_t actual = strlenAsm(src);
+    /* Assert */
+    return report(__func__, actual == expected);
+}
+
+int strlenAsm_WhenStringHasWhitespace_ReturnsThree(void)
+{
+    /* Arrange */
+    char *src = "\t\n\r";
+    /* Act */
+    size_t actual = strlenAsm(src);
+    /* Assert */
+    return report(__func__, actual == 3);
+}
+
+int strlenAsm_WhenStringHasDigitsAndLetters_ReturnsLibcLength(void)
+{
+    /* Arrange */
+    char *src = "0123456789abcdef";
+    size_t expected = strlen(src);
+    /* Act */
+    size_t actual = strlenAsm(src);
+    /* Assert */
+    return report(__func__, actual == expected);
+}
+
+int main(void)
+{
+    int passed = 0, total = 5;
+
+    passed += strlenAsm_WhenStringIsEmpty_ReturnsZero();
+    passed += strlenAsm_WhenStringHasOneChar_ReturnsOne();
+    passed += strlenAsm_WhenStringIsAscii_ReturnsLibcLength();
+    passed += strlenAsm_WhenStringHasWhitespace_ReturnsThree();
+    passed += strlenAsm_WhenStringHasDigitsAndLetters_ReturnsLibcLength();
+
+    printf("\n%d/%d passed\n", passed, total);
+    return passed == total ? 0 : 1;
 }

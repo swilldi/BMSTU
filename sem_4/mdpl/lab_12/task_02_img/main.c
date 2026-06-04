@@ -87,20 +87,79 @@ void avgColor(picture_data_t res[], picture_data_t *data, int w, int h) {
         res[i] = (picture_data_t)avg[i];
 }
 
-void setColor(picture_data_t *data, int w, int h, picture_data_t color[]) {
+// void setColor(picture_data_t *data, int w, int h, picture_data_t color[]) {
+//     for (size_t i = 0; i < w * h * 4; i += 4) {
+//         data[i] = color[0];
+//         data[i + 1] = color[1];
+//         data[i + 2] = color[2];
+//         data[i + 3] = color[3];
+//     }
+// }
+
+void setColor(picture_data_t *data, int w, int h, picture_data_t color[], int epsColor) {
     for (size_t i = 0; i < w * h * 4; i += 4) {
-        data[i] = color[0];
-        data[i + 1] = color[1];
-        data[i + 2] = color[2];
-        data[i + 3] = color[3];
+        asm volatile (
+            "ldrb w0, [%[pixel], #0]\n"
+            "ldrb w1, [%[pixel], #1]\n"
+            "ldrb w2, [%[pixel], #2]\n"
+            "ldrb w3, [%[pixel], #3]\n"
+            
+            "ldrb w4, [%[avg], #0]\n"
+            "ldrb w5, [%[avg], #1]\n"
+            "ldrb w6, [%[avg], #2]\n"
+            "ldrb w7, [%[avg], #3]\n"
+
+            // red
+            "subs w0, w0, w4\n"
+            "cneg w0, w0, mi\n"
+            "cmp w0, %w[eps]\n"
+            "b.gt 1f\n"
+
+            // green
+            "subs w1, w1, w5\n"
+            "cneg w1, w1, mi\n"
+            "cmp w1, %w[eps]\n"
+            "b.gt 1f\n"
+
+            // blue
+            "subs w2, w2, w6\n"
+            "cneg w2, w2, mi\n"
+            "cmp w2, %w[eps]\n"
+            "b.gt 1f\n"
+
+            // alpha
+            "subs w3, w3, w7\n"
+            "cneg w3, w3, mi\n"
+            "cmp w3, %w[eps]\n"
+            "b.gt 1f\n"
+
+            // установка цвета
+            "mov w0, #255\n"
+            "mov w1, #0\n"
+            "mov w2, #0\n"
+            "mov w3, #255\n"
+
+            // сохранение
+            "strb w0, [%[pixel]]\n"
+            "strb w1, [%[pixel], #1]\n"
+            "strb w2, [%[pixel], #2]\n"
+            "strb w3, [%[pixel], #3]\n"
+
+            "1:\n"
+            :
+            : [pixel] "r"(data + i), [avg] "r"(color), [eps] "r"(epsColor)
+            : "memory", "w0", "w1", "w2", "w3", "w4", "w5", "w6", "w7"
+        );
     }
 }
 
-int main(void) {
+
+
+int main(int argc, char** argv) {
     int w, h, channels;
-    // picture_data_t *data = stbi_load("imgs/3x3.png", &w, &h, &channels, 4);
-    picture_data_t *data = stbi_load("imgs/rdr2.png", &w, &h, &channels, 4);
-    // picture_data_t *data = stbi_load("imgs/astin.png", &w, &h, &channels, 4);
+    int epsColor = argc > 2 ? atoi(argv[2]) : 10;
+    
+    picture_data_t *data = stbi_load(argv[1], &w, &h, &channels, 4);
     if (!data) {
         printf("Load image error\n");
         return 1;
@@ -111,7 +170,7 @@ int main(void) {
     
     picture_data_t res[4];
     avgColor(res, data, h, w);
-    setColor(data, w, h, res);
+    setColor(data, w, h, res, epsColor);
     printf("%d %d %d %d\n", res[0], res[1], res[2], res[3]);
 
     stbi_write_png("result.png", w, h, 4, data, w * 4);
