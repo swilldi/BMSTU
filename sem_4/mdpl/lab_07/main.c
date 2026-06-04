@@ -4,7 +4,7 @@
 
 extern void my_strcpy(char *dst, const char *src, size_t len);
 
-static size_t my_strlen(const char *s)
+size_t my_strlen(const char *s)
 {
     size_t len;
 #ifdef __x86_64__
@@ -43,7 +43,7 @@ static size_t my_strlen(const char *s)
     return len;
 }
 
-static void show(const char *label, const char *buf, size_t n)
+void show(const char *label, const char *buf, size_t n)
 {
     printf("  %s = \"", label);
     for (size_t i = 0; i < n; i++) {
@@ -54,13 +54,13 @@ static void show(const char *label, const char *buf, size_t n)
     printf("\"\n");
 }
 
-static int report(const char *name, int ok)
+int report(const char *name, int ok)
 {
     printf("[%s] %s\n", ok ? "OK  " : "FAIL", name);
     return ok;
 }
 
-static int my_strlen_WhenStringIsEmpty_ReturnsZero(void)
+int my_strlen_WhenStringIsEmpty_ReturnsZero(void)
 {
     /* Arrange */
     const char *src = "";
@@ -70,7 +70,7 @@ static int my_strlen_WhenStringIsEmpty_ReturnsZero(void)
     return report(__func__, actual == 0);
 }
 
-static int my_strlen_WhenStringHasOneChar_ReturnsOne(void)
+int my_strlen_WhenStringHasOneChar_ReturnsOne(void)
 {
     /* Arrange */
     const char *src = "a";
@@ -80,7 +80,7 @@ static int my_strlen_WhenStringHasOneChar_ReturnsOne(void)
     return report(__func__, actual == 1);
 }
 
-static int my_strlen_WhenStringIsAscii_ReturnsLibcLength(void)
+int my_strlen_WhenStringIsAscii_ReturnsLibcLength(void)
 {
     /* Arrange */
     const char *src = "Hello, world!";
@@ -91,7 +91,7 @@ static int my_strlen_WhenStringIsAscii_ReturnsLibcLength(void)
     return report(__func__, actual == expected);
 }
 
-static int my_strlen_WhenStringIsSixteenChars_ReturnsSixteen(void)
+int my_strlen_WhenStringIsSixteenChars_ReturnsSixteen(void)
 {
     /* Arrange */
     const char *src = "0123456789abcdef";
@@ -101,7 +101,7 @@ static int my_strlen_WhenStringIsSixteenChars_ReturnsSixteen(void)
     return report(__func__, actual == 16);
 }
 
-static int my_strcpy_WhenBuffersDoNotOverlap_CopiesSourceToDestination(void)
+int my_strcpy_WhenBuffersDoNotOverlap_CopiesSourceToDestination(void)
 {
     /* Arrange */
     const char *src = "Hello, assembler!";
@@ -113,7 +113,7 @@ static int my_strcpy_WhenBuffersDoNotOverlap_CopiesSourceToDestination(void)
     return report(__func__, strcmp(dst, src) == 0);
 }
 
-static int my_strcpy_WhenDstBeforeSrcAndOverlap_ShiftsBytesLeft(void)
+int my_strcpy_WhenDstBeforeSrcAndOverlap_ShiftsBytesLeft(void)
 {
     /* Arrange: dst < src, перекрытие — сдвиг строки влево на 2 байта */
     char buf[16] = "ABCDEFGHIJ";
@@ -126,7 +126,7 @@ static int my_strcpy_WhenDstBeforeSrcAndOverlap_ShiftsBytesLeft(void)
     return report(__func__, ok);
 }
 
-static int my_strcpy_WhenDstAfterSrcAndOverlap_ShiftsBytesRight(void)
+int my_strcpy_WhenDstAfterSrcAndOverlap_ShiftsBytesRight(void)
 {
     /* Arrange: dst > src, перекрытие — сдвиг строки вправо на 2 байта */
     char buf[16] = "ABCDEFGHIJ";
@@ -147,16 +147,16 @@ int main(void)
     printf("=== 32-bit build ===\n");
 #endif
 
-    int passed = 0, total = 0;
+    int passed = 0, total = 7;
 
-    total++; passed += my_strlen_WhenStringIsEmpty_ReturnsZero();
-    total++; passed += my_strlen_WhenStringHasOneChar_ReturnsOne();
-    total++; passed += my_strlen_WhenStringIsAscii_ReturnsLibcLength();
-    total++; passed += my_strlen_WhenStringIsSixteenChars_ReturnsSixteen();
+    passed += my_strlen_WhenStringIsEmpty_ReturnsZero();
+    passed += my_strlen_WhenStringHasOneChar_ReturnsOne();
+    passed += my_strlen_WhenStringIsAscii_ReturnsLibcLength();
+    passed += my_strlen_WhenStringIsSixteenChars_ReturnsSixteen();
 
-    total++; passed += my_strcpy_WhenBuffersDoNotOverlap_CopiesSourceToDestination();
-    total++; passed += my_strcpy_WhenDstBeforeSrcAndOverlap_ShiftsBytesLeft();
-    total++; passed += my_strcpy_WhenDstAfterSrcAndOverlap_ShiftsBytesRight();
+    passed += my_strcpy_WhenBuffersDoNotOverlap_CopiesSourceToDestination();
+    passed += my_strcpy_WhenDstBeforeSrcAndOverlap_ShiftsBytesLeft();
+    passed += my_strcpy_WhenDstAfterSrcAndOverlap_ShiftsBytesRight();
 
     printf("\n%d/%d passed\n", passed, total);
     return passed == total ? 0 : 1;
